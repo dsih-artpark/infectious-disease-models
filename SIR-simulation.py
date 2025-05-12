@@ -78,3 +78,31 @@ result = minimize(loss, initial_guess, method='L-BFGS-B', bounds=bounds)
 beta_fit, gamma_fit = result.x
 print(f"Estimated β = {beta_fit:.4f}, γ = {gamma_fit:.4f}")
 
+#loss landscape
+
+beta_vals = np.linspace(0.15, 0.25, 100)
+gamma_vals = np.linspace(0.05, 0.15, 100)
+loss_grid = np.zeros((len(beta_vals), len(gamma_vals)))
+for i, b in enumerate(beta_vals):
+    for j, g in enumerate(gamma_vals):
+        loss_grid[i, j] = loss([b, g])
+B, G = np.meshgrid(gamma_vals, beta_vals)
+result_nm = minimize(loss, initial_guess, bounds=bounds)  
+beta_nm, gamma_nm = result_nm.x
+result_bfgs = minimize(loss, initial_guess, method='BFGS')
+beta_bfgs, gamma_bfgs = result_bfgs.x
+result_lbfgs = minimize(loss, initial_guess, method='L-BFGS-B', bounds=bounds)
+beta_lbfgs, gamma_lbfgs = result_lbfgs.x
+plt.figure(figsize=(10, 7))
+cp = plt.contourf(G, B, loss_grid, levels=50, cmap='viridis')
+plt.colorbar(cp, label='Loss (MSE)')
+plt.xlabel(r'$\gamma$')
+plt.ylabel(r'$\beta$')
+plt.title('Loss Landscape for SIR Parameter Estimation')
+plt.scatter([gamma_nm], [beta_nm], color='red', label='Nelder-Mead')
+plt.scatter([gamma_bfgs], [beta_bfgs], color='blue', label='BFGS')
+plt.scatter([gamma_lbfgs], [beta_lbfgs], color='white', label='L-BFGS-B')
+plt.scatter([gamma], [beta], color='black', marker='x', s=100, label='True Value')
+plt.legend()
+plt.grid(True)
+plt.show()
