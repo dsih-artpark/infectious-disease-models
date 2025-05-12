@@ -63,7 +63,7 @@ def loss(params):
   y0_est = S0_est, I0_est, R0_est
   sol = odeint(func, y0_est, t_subset, args=(N, beta, gamma))
   S_sim, I_sim, R_sim = sol.T
-  return np.mean((S_sim - S_subset)**2 + (I_sim - I_subset)**2 + (R_sim - R_subset)**2)
+  return np.mean((I_sim - I_subset)**2)
 initial_guess = [0.1, 0.1]
 bounds = [(0.0001, 1), (0.0001, 1)]
 result_nm = minimize(loss, initial_guess, method='Nelder-Mead', bounds=bounds)
@@ -110,3 +110,35 @@ plt.scatter([gamma], [beta], color='black', marker='x', s=100, label='True Value
 plt.legend()
 plt.grid(True)
 plt.show()
+
+
+def simulate_sir_components(beta, gamma):
+    y0_est = S0_est, I0_est, R0_est
+    sol = odeint(func, y0_est, t_subset, args=(N, beta, gamma))
+    return sol.T  
+def plot_fits(var_index, var_label, var_color):
+    plt.figure(figsize=(10, 6))
+    if var_index == 0:
+        plt.plot(t_subset, S_subset, 'k--', label='Noisy ' + var_label, linewidth=2)
+    elif var_index == 1:
+        plt.plot(t_subset, I_subset, 'k--', label='Noisy ' + var_label, linewidth=2)
+    else:
+        plt.plot(t_subset, R_subset, 'k--', label='Noisy ' + var_label, linewidth=2)
+    for method, (beta_est, gamma_est), color in zip(
+        ['Nelder-Mead', 'BFGS', 'L-BFGS-B'],
+        [(beta_nm, gamma_nm), (beta_bfgs, gamma_bfgs), (beta_lbfgs, gamma_lbfgs)],
+        ['red', 'blue', 'green']
+    ):
+        S_sim, I_sim, R_sim = simulate_sir_components(beta_est, gamma_est)
+        sim_data = [S_sim, I_sim, R_sim][var_index]
+        plt.plot(t_subset, sim_data, label=f'{method} Fit', color=color, linewidth=2)
+    plt.xlabel('Time (days)')
+    plt.ylabel(f'{var_label} individuals')
+    plt.title(f'Fitted {var_label}(t) from Different Optimization Methods')
+    plt.ylim([0, N])
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+plot_fits(0, 'Susceptible', 'orange')
+plot_fits(1, 'Infected', 'red')
+plot_fits(2, 'Recovered', 'green')
