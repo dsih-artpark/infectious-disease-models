@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import odeint
 from scipy.optimize import minimize
-
+np.random.seed(42)
 N = 1000
 I0 = 1
 R0 = 0
