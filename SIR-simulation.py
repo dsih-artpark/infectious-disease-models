@@ -29,9 +29,8 @@ plt.ylabel('Number of individuals')
 plt.ylim([0,N])
 plt.title('SIR Model')
 plt.legend()
+plt.savefig("plots/SIRmodel.png")
 plt.show()
-plt.figure()
-plt.grid()
 #noise
 noise_level = 2
 S_noisy = S + np.random.normal(0, noise_level, size=S.shape)
@@ -48,6 +47,7 @@ plt.ylabel('Number of individuals')
 plt.ylim([0,N])
 plt.title('SIR Model with noise')
 plt.legend()
+plt.savefig("plots/SIR_noise_model.png")
 plt.show()
 
 subset_days = 80
@@ -115,7 +115,12 @@ plt.legend()
 plt.grid(True)
 plt.axis('scaled')
 plt.tight_layout()
+plt.savefig("plots/loss_landscape.png")
 plt.show()
+print(f"Loss at true parameters: {loss([beta, gamma]):.2f}")
+print(f"Loss at L-BFGS-B fit:    {loss([beta_lbfgs, gamma_lbfgs]):.2f}")
+
+
 def simulate_sir_components(beta, gamma):
     y0_est = S0_est, I0_est, R0_est
     sol = odeint(func, y0_est, t_subset, args=(N, beta, gamma))
@@ -131,8 +136,10 @@ def plot_fits():
     plt.title('Fitted Infected Phase with L-BFGS-B and Noisy Data')
     plt.legend()
     plt.grid(True)
+    plt.savefig("plots/fitted_data.png")
     plt.show()
 plot_fits()
+
 
 S_true_subset, I_true_subset, R_true_subset = odeint(func, (S0, I0, R0), t_subset, args=(N, beta, gamma)).T
 loss_true_vs_noisy = np.mean((I_true_subset - I_subset) ** 2)
