@@ -65,20 +65,23 @@ def loss(params):
   y0_est = S0_est, I0_est, R0_est
   sol = odeint(func, y0_est, t_subset, args=(N, beta, gamma))
   S_sim, I_sim, R_sim = sol.T
-  return np.mean((S_sim - S_subset)**2 + (I_sim - I_subset)**2 + (R_sim - R_subset)**2)
+  return np.mean((I_sim - I_subset)**2)
 initial_guess = [0.1, 0.1]
 bounds = [(0.0001, 1), (0.0001, 1)]
-result = minimize(loss, initial_guess, bounds=bounds)
-beta_fit, gamma_fit = result.x
-print(f"Estimated β = {beta_fit:.4f}, γ = {gamma_fit:.4f}")
+result_nm = minimize(loss, initial_guess, method='Nelder-Mead', bounds=bounds)
+beta_nm, gamma_nm = result_nm.x
+step_size_nm = np.array(result_nm.x) - np.array(initial_guess) 
+print(f"[Nelder-Mead] Start point: {initial_guess}, Estimated β = {beta_nm:.8f}, γ = {gamma_nm:.8f}, Step size: {step_size_nm}, Iterations = {result_nm.nit}")
 
-result = minimize(loss, initial_guess, method='BFGS', bounds=bounds)
-beta_fit, gamma_fit = result.x
-print(f"Estimated β = {beta_fit:.4f}, γ = {gamma_fit:.4f}")
+result_bfgs = minimize(loss, initial_guess, method='BFGS')  
+beta_bfgs, gamma_bfgs = result_bfgs.x
+step_size_bfgs = np.array(result_bfgs.x) - np.array(initial_guess)  
+print(f"[BFGS] Start point: {initial_guess}, Estimated β = {beta_bfgs:.8f}, γ = {gamma_bfgs:.8f}, Step size: {step_size_bfgs}, Iterations = {result_bfgs.nit}")
 
-result = minimize(loss, initial_guess, method='L-BFGS-B', bounds=bounds)
-beta_fit, gamma_fit = result.x
-print(f"Estimated β = {beta_fit:.4f}, γ = {gamma_fit:.4f}")
+result_lbfgs = minimize(loss, initial_guess, method='L-BFGS-B', bounds=bounds)
+beta_lbfgs, gamma_lbfgs = result_lbfgs.x
+step_size_lbfgs = np.array(result_lbfgs.x) - np.array(initial_guess)  
+print(f"[L-BFGS-B] Start point: {initial_guess}, Estimated β = {beta_lbfgs:.8f}, γ = {gamma_lbfgs:.8f}, Step size: {step_size_lbfgs}, Iterations = {result_lbfgs.nit}")
 
 # loss landscape
 beta_vals = np.linspace(0.0001, 0.3, 200)
@@ -113,7 +116,6 @@ plt.grid(True)
 plt.axis('scaled')
 plt.tight_layout()
 plt.show()
-
 def simulate_sir_components(beta, gamma):
     y0_est = S0_est, I0_est, R0_est
     sol = odeint(func, y0_est, t_subset, args=(N, beta, gamma))
