@@ -9,7 +9,7 @@ R0 = 0
 S0 = N - I0 - R0
 beta = 0.2
 gamma = 1 / 10
-t = np.linspace(0, 500, 500)
+t = np.linspace(0, 200, 200)
 def func(y, t, N, beta, gamma):
   S, I, R = y
   dSdt = -beta * S * I / N
@@ -31,7 +31,7 @@ plt.title('SIR Model')
 plt.legend()
 plt.savefig("plots/SIRmodel.png")
 plt.show()
-#noise
+# Adding noise 
 noise_level = 2
 S_noisy = S + np.random.normal(0, noise_level, size=S.shape)
 I_noisy = I + np.random.normal(0, noise_level, size=I.shape)
@@ -66,24 +66,26 @@ def loss(params):
   sol = odeint(func, y0_est, t_subset, args=(N, beta, gamma))
   S_sim, I_sim, R_sim = sol.T
   return np.mean((I_sim - I_subset)**2)
-initial_guess = [0.1, 0.1]
+initial_guess_nm = np.random.uniform(0, 1, size=2)
+initial_guess_bfgs = np.random.uniform(0, 1, size=2)
+initial_guess_lbfgs = np.random.uniform(0, 1, size=2)
 bounds = [(0.0001, 1), (0.0001, 1)]
-result_nm = minimize(loss, initial_guess, method='Nelder-Mead', bounds=bounds)
+result_nm = minimize(loss, initial_guess_nm, method='Nelder-Mead', bounds=bounds)
 beta_nm, gamma_nm = result_nm.x
-step_size_nm = np.array(result_nm.x) - np.array(initial_guess) 
-print(f"[Nelder-Mead] Start point: {initial_guess}, Estimated β = {beta_nm:.8f}, γ = {gamma_nm:.8f}, Step size: {step_size_nm}, Iterations = {result_nm.nit}")
+step_size_nm = np.array(result_nm.x) - np.array(initial_guess_nm) 
+print(f"[Nelder-Mead] Start point: {initial_guess_nm}, Estimated β = {beta_nm:.8f}, γ = {gamma_nm:.8f}, Step size: {step_size_nm}, Iterations = {result_nm.nit}")
 
-result_bfgs = minimize(loss, initial_guess, method='BFGS')  
+result_bfgs = minimize(loss, initial_guess_bfgs, method='BFGS')  
 beta_bfgs, gamma_bfgs = result_bfgs.x
-step_size_bfgs = np.array(result_bfgs.x) - np.array(initial_guess)  
-print(f"[BFGS] Start point: {initial_guess}, Estimated β = {beta_bfgs:.8f}, γ = {gamma_bfgs:.8f}, Step size: {step_size_bfgs}, Iterations = {result_bfgs.nit}")
+step_size_bfgs = np.array(result_bfgs.x) - np.array(initial_guess_bfgs)  
+print(f"[BFGS] Start point: {initial_guess_bfgs}, Estimated β = {beta_bfgs:.8f}, γ = {gamma_bfgs:.8f}, Step size: {step_size_bfgs}, Iterations = {result_bfgs.nit}")
 
-result_lbfgs = minimize(loss, initial_guess, method='L-BFGS-B', bounds=bounds)
+result_lbfgs = minimize(loss, initial_guess_lbfgs, method='L-BFGS-B', bounds=bounds)
 beta_lbfgs, gamma_lbfgs = result_lbfgs.x
-step_size_lbfgs = np.array(result_lbfgs.x) - np.array(initial_guess)  
-print(f"[L-BFGS-B] Start point: {initial_guess}, Estimated β = {beta_lbfgs:.8f}, γ = {gamma_lbfgs:.8f}, Step size: {step_size_lbfgs}, Iterations = {result_lbfgs.nit}")
+step_size_lbfgs = np.array(result_lbfgs.x) - np.array(initial_guess_lbfgs)  
+print(f"[L-BFGS-B] Start point: {initial_guess_lbfgs}, Estimated β = {beta_lbfgs:.8f}, γ = {gamma_lbfgs:.8f}, Step size: {step_size_lbfgs}, Iterations = {result_lbfgs.nit}")
 
-# loss landscape
+# Plotting the loss landscape
 beta_vals = np.linspace(0.0001, 0.3, 200)
 gamma_vals = np.linspace(0.0001, 0.18, 200)
 loss_grid = np.zeros((len(beta_vals), len(gamma_vals)))
@@ -92,13 +94,15 @@ for i, b in enumerate(beta_vals):
         loss_grid[i, j] = loss([b, g])
 log_loss_grid = np.log10(loss_grid + 1e-10)
 G, B = np.meshgrid(gamma_vals, beta_vals)
-initial_guess = [0.1, 0.1]
+initial_guess_nm = np.random.uniform(0, 1, size=2)
+initial_guess_bfgs = np.random.uniform(0, 1, size=2)
+initial_guess_lbfgs = np.random.uniform(0, 1, size=2)
 bounds = [(0, 1), (0, 1)]
-result_nm = minimize(loss, initial_guess, bounds=bounds)
+result_nm = minimize(loss, initial_guess_nm, bounds=bounds)
 beta_nm, gamma_nm = result_nm.x
-result_bfgs = minimize(loss, initial_guess, method='BFGS')
+result_bfgs = minimize(loss, initial_guess_bfgs, method='BFGS')
 beta_bfgs, gamma_bfgs = result_bfgs.x
-result_lbfgs = minimize(loss, initial_guess, method='L-BFGS-B', bounds=bounds)
+result_lbfgs = minimize(loss, initial_guess_lbfgs, method='L-BFGS-B', bounds=bounds)
 beta_lbfgs, gamma_lbfgs = result_lbfgs.x
 plt.figure(figsize=(10, 8))
 cp = plt.contourf(G, B, log_loss_grid, levels=100, cmap='viridis')
@@ -140,6 +144,7 @@ def plot_fits():
     plt.show()
 plot_fits()
 
+# Error Calculation
 
 S_true_subset, I_true_subset, R_true_subset = odeint(func, (S0, I0, R0), t_subset, args=(N, beta, gamma)).T
 loss_true_vs_noisy = np.mean((I_true_subset - I_subset) ** 2)
@@ -150,3 +155,19 @@ print(f"Loss (L-BFGS-B Fit vs Noisy): {loss_fit_vs_noisy:.2f}")
 print(len(I_fit_lbfgs))
 print(len(I_subset))
 
+# Fitted data in terms of percentage of population
+plt.figure(figsize=(10, 6))
+I_true_pct = (I / N) * 100
+I_lbfgs_pct = (I_fit_lbfgs / N) * 100
+I_noisy_pct = (I_subset / N) * 100
+plt.plot(t, I_true_pct, 'k-', label='True Infected (%)', linewidth=2)
+plt.plot(t_subset, I_lbfgs_pct, 'g-', label='L-BFGS-B Fit (%)', linewidth=2)
+plt.scatter(t_subset, I_noisy_pct, color='red', marker='x', label='Noisy Infected (%)')
+plt.xlabel('Time (days)')
+plt.ylabel('Infected (% of population)')
+plt.title('Fitted Infected Phase (L-BFGS-B) and Noisy Data as % of Population')
+plt.legend()
+plt.grid(True)
+plt.tight_layout()
+plt.savefig("plots/fitted_data_percentage.png")
+plt.show()
