@@ -20,6 +20,26 @@ def seirs_model(y, t, N, beta, gamma, sigma, xi):
     dRdt = gamma * I - xi * R
     return dSdt, dEdt, dIdt, dRdt
 
+def si_model(y, t, N, beta):
+    S, I = y
+    dSdt = -beta * S * I / N
+    dIdt = beta * S * I / N
+    return dSdt, dIdt
+
+def sis_model(y, t, N, beta, gamma):
+    S, I = y
+    dSdt = -beta * S * I / N + gamma * I
+    dIdt = beta * S * I / N - gamma * I
+    return dSdt, dIdt
+
+def seir_model(y, t, N, beta, gamma, sigma):
+    S, E, I, R = y
+    dSdt = -beta * S * I / N
+    dEdt = beta * S * I / N - sigma * E
+    dIdt = sigma * E - gamma * I
+    dRdt = gamma * I
+    return dSdt, dEdt, dIdt, dRdt
+
 def init_sir(N):
     I0 = 1
     R0 = 0
