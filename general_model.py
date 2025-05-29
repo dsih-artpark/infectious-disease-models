@@ -119,44 +119,44 @@ class EpidemicModel:
         self.model_func = model_func
         self.t = np.linspace(0, 200, 200)
         self.result = None
+        self.S = self.E = self.I = self.R = None
 
     def simulate(self):
         self.result = odeint(self.model_func, self.y0, self.t, args=(self.N, *self.params))
-        self.compartment_names = ['S', 'E', 'I', 'R', 'B']
-        compartment_values = self.result.T
-        self.compartment_dict = {}
-        for i, val in enumerate(compartment_values):
-            if i < len(self.compartment_names):
-                self.compartment_dict[self.compartment_names[i]] = val
-        self.S = self.compartment_dict['S']
-        self.I = self.compartment_dict.get('I', None)
-        self.R = self.compartment_dict.get('R', None)
-        self.E = self.compartment_dict.get('E', None)
+        self.compartment_names = [chr(65 + i) for i in range(self.result.shape[1])]  # A, B, C... fallback
+        known_compartments = {'S', 'E', 'I', 'R'}
+        inferred_names = [name for name in self.model_func.__code__.co_varnames if name in known_compartments]
+        if len(inferred_names) == self.result.shape[1]:
+            self.compartment_names = inferred_names
+        self.compartment_dict = {name: self.result[:, i] for i, name in enumerate(self.compartment_names)}
+        for name in self.compartment_names:
+            setattr(self, name, self.compartment_dict[name])
+
 
     def add_noise(self, noise_level=2):
-        self.S_noisy = np.clip(self.S + np.random.normal(0, noise_level, size=self.S.shape), 0, self.N)
-        self.I_noisy = np.clip(self.I + np.random.normal(0, noise_level, size=self.I.shape), 0, self.N)
-        self.R_noisy = np.clip(self.R + np.random.normal(0, noise_level, size=self.R.shape), 0, self.N)
+        if self.S is not None:
+            self.S_noisy = np.clip(self.S + np.random.normal(0, noise_level, size=self.S.shape), 0, self.N)
+        if self.I is not None:
+            self.I_noisy = np.clip(self.I + np.random.normal(0, noise_level, size=self.I.shape), 0, self.N)
+        if self.R is not None:
+            self.R_noisy = np.clip(self.R + np.random.normal(0, noise_level, size=self.R.shape), 0, self.N)
         if self.E is not None:
             self.E_noisy = np.clip(self.E + np.random.normal(0, noise_level, size=self.E.shape), 0, self.N)
-
+    
     def sample_subset(self, num_points=80):
         idx = np.sort(np.random.choice(len(self.t), size=num_points, replace=False))
         self.t_subset = self.t[idx]
-        self.I_subset = self.I_noisy[idx]
-        self.S0_est = self.S_noisy[idx[0]]
-        self.I0_est = self.I_noisy[idx[0]]
-        self.R0_est = self.R_noisy[idx[0]]
-        if self.E is not None:
-            self.E0_est = self.E_noisy[idx[0]]
+        for name in self.compartment_names:
+            noisy_attr = f"{name}_noisy"
+            if hasattr(self, noisy_attr):
+                setattr(self, f"{name}0_est", getattr(self, noisy_attr)[idx[0]])
+                if name == 'I':
+                    self.I_subset = getattr(self, noisy_attr)[idx]
 
     def loss(self, params):
-        if self.name in ["SEIR", "SEIRS"]:
-            y0 = (self.S0_est, self.E0_est, self.I0_est, self.R0_est)
-        else:
-            y0 = (self.S0_est, self.I0_est, self.R0_est)
+        y0 = tuple(getattr(self, f"{name}0_est") for name in self.compartment_names)
         sol = odeint(self.model_func, y0, self.t_subset, args=(self.N, *params))
-        I_index = ['S', 'E', 'I', 'R', 'B'].index('I')
+        I_index = self.compartment_names.index('I')
         return np.mean((sol[:, I_index] - self.I_subset) ** 2)
 
     def fit(self):
@@ -166,10 +166,7 @@ class EpidemicModel:
         self.fitted_params = res.x
 
     def simulate_with_fit(self):
-        if self.name in ["SEIR", "SEIRS"]:
-            y0 = (self.S0_est, self.E0_est, self.I0_est, self.R0_est)
-        else:
-            y0 = (self.S0_est, self.I0_est, self.R0_est)
+        y0 = tuple(getattr(self, f"{name}0_est") for name in self.compartment_names)
         sol = odeint(self.model_func, y0, self.t_subset, args=(self.N, *self.fitted_params))
         return sol.T
         
@@ -233,7 +230,8 @@ class EpidemicModel:
 
     def plot_fitted_vs_noisy(self):
         result = self.simulate_with_fit()
-        I_fit = result[['S', 'E', 'I', 'R', 'B'].index('I')]
+        I_index = self.compartment_names.index('I')
+        I_fit = result[I_index]
         plt.figure()
         plt.plot(self.t, (self.I / self.N) * 100, 'k-', label='True Infected (%)', linewidth=2)
         plt.plot(self.t_subset, (I_fit / self.N) * 100, 'g-', label='Fitted Infected (%)', linewidth=2)
@@ -245,6 +243,7 @@ class EpidemicModel:
         plt.grid()
         plt.tight_layout()
         plt.show()
+
         
 def run_epidemic_model(model_name, N=1000, noise_level=2, num_points=80):
     if model_name not in models:
@@ -264,4 +263,4 @@ def run_epidemic_model(model_name, N=1000, noise_level=2, num_points=80):
     model.plot_fitted_vs_noisy()
 
 if __name__ == '__main__':
-    run_epidemic_model('SEIRS')
+    run_epidemic_model('SIS')
