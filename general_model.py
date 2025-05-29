@@ -53,6 +53,18 @@ def init_seirs(N):
     S0 = N - E0 - I0 - R0
     return (S0, E0, I0, R0)
 
+def init_si(N):
+    I0 = 1
+    return (N - I0, I0)
+
+def init_sis(N):
+    I0 = 1
+    return (N - I0, I0)
+
+def init_seir(N):
+    E0, I0, R0 = 0, 1, 0
+    return (N - E0 - I0 - R0, E0, I0, R0)
+
 models = {
     "SIR": {
         "init": init_sir,
@@ -71,6 +83,30 @@ models = {
             "xi": 1 / 90
         },
         "model_func": seirs_model
+    },
+    "SI": {
+        "init": init_si,
+        "params": {
+            "beta": 0.2
+        },
+        "model_func": si_model
+    },
+    "SIS": {
+        "init": init_sis,
+        "params": {
+            "beta": 0.2, 
+            "gamma": 1 / 10
+        },
+        "model_func": sis_model
+    },
+    "SEIR": {
+        "init": init_seir,
+        "params": {
+            "beta": 0.2, 
+            "gamma": 1 / 10, 
+            "sigma": 1 / 5.2
+        },
+        "model_func": seir_model
     }
 }
 
