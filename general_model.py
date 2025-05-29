@@ -213,7 +213,7 @@ class EpidemicModel:
         beta_vals = np.linspace(0.01, 1.0, 50)
         gamma_vals = np.linspace(0.01, 1.0, 50)
         loss_vals = np.zeros((len(beta_vals), len(gamma_vals)))
-
+        log_loss_grid = np.log10(loss_vals + 1e-10)
         for i, beta in enumerate(beta_vals):
             for j, gamma in enumerate(gamma_vals):
                 loss_vals[i, j] = self.loss([beta, gamma])
@@ -263,4 +263,4 @@ def run_epidemic_model(model_name, N=1000, noise_level=2, num_points=80):
     model.plot_fitted_vs_noisy()
 
 if __name__ == '__main__':
-    run_epidemic_model('SIS')
+    run_epidemic_model('SIR')
