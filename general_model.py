@@ -122,17 +122,22 @@ class EpidemicModel:
 
     def simulate(self):
         self.result = odeint(self.model_func, self.y0, self.t, args=(self.N, *self.params))
-        self.S, *rest = self.result.T
-        if self.name == "SIR":
-            self.I, self.R = rest
-        elif self.name == "SEIRS":
-            self.E, self.I, self.R = rest
+        self.compartment_names = ['S', 'E', 'I', 'R', 'B']
+        compartment_values = self.result.T
+        self.compartment_dict = {}
+        for i, val in enumerate(compartment_values):
+            if i < len(self.compartment_names):
+                self.compartment_dict[self.compartment_names[i]] = val
+        self.S = self.compartment_dict['S']
+        self.I = self.compartment_dict.get('I', None)
+        self.R = self.compartment_dict.get('R', None)
+        self.E = self.compartment_dict.get('E', None)
 
     def add_noise(self, noise_level=2):
         self.S_noisy = np.clip(self.S + np.random.normal(0, noise_level, size=self.S.shape), 0, self.N)
         self.I_noisy = np.clip(self.I + np.random.normal(0, noise_level, size=self.I.shape), 0, self.N)
         self.R_noisy = np.clip(self.R + np.random.normal(0, noise_level, size=self.R.shape), 0, self.N)
-        if self.name == "SEIRS":
+        if self.E is not None:
             self.E_noisy = np.clip(self.E + np.random.normal(0, noise_level, size=self.E.shape), 0, self.N)
 
     def sample_subset(self, num_points=80):
@@ -142,14 +147,17 @@ class EpidemicModel:
         self.S0_est = self.S_noisy[idx[0]]
         self.I0_est = self.I_noisy[idx[0]]
         self.R0_est = self.R_noisy[idx[0]]
+        if self.E is not None:
+            self.E0_est = self.E_noisy[idx[0]]
 
     def loss(self, params):
-        if self.name == "SIR":
-            y0 = (self.S0_est, self.I0_est, self.R0_est)
+        if self.name in ["SEIR", "SEIRS"]:
+            y0 = (self.S0_est, self.E0_est, self.I0_est, self.R0_est)
         else:
-            y0 = (self.S0_est, 0, self.I0_est, self.R0_est)
+            y0 = (self.S0_est, self.I0_est, self.R0_est)
         sol = odeint(self.model_func, y0, self.t_subset, args=(self.N, *params))
-        return np.mean((sol[:, -2] - self.I_subset) ** 2)
+        I_index = ['S', 'E', 'I', 'R', 'B'].index('I')
+        return np.mean((sol[:, I_index] - self.I_subset) ** 2)
 
     def fit(self):
         guess = np.random.uniform(0, 1, size=len(self.params))
@@ -158,24 +166,26 @@ class EpidemicModel:
         self.fitted_params = res.x
 
     def simulate_with_fit(self):
-        if self.name == "SIR":
-            y0 = (self.S0_est, self.I0_est, self.R0_est)
+        if self.name in ["SEIR", "SEIRS"]:
+            y0 = (self.S0_est, self.E0_est, self.I0_est, self.R0_est)
         else:
-            y0 = (self.S0_est, 0, self.I0_est, self.R0_est)
+            y0 = (self.S0_est, self.I0_est, self.R0_est)
         sol = odeint(self.model_func, y0, self.t_subset, args=(self.N, *self.fitted_params))
         return sol.T
-
+        
     def plot_trajectories(self):
         plt.figure()
-        plt.plot(self.t, self.S, 'orange', label='Susceptible')
-        if self.name == "SEIRS":
-            plt.plot(self.t, self.E, 'blue', label='Exposed')
-        plt.plot(self.t, self.I, 'red', label='Infected')
-        plt.plot(self.t, self.R, 'green', label='Recovered')
-        plt.title(f'{self.name} Model')
+        if self.S is not None:
+            plt.plot(self.t, self.S, label='Susceptible', color='orange')
+        if self.E is not None:
+            plt.plot(self.t, self.E, label='Exposed', color='blue')
+        if self.I is not None:
+            plt.plot(self.t, self.I, label='Infected', color='red')
+        if self.R is not None:
+            plt.plot(self.t, self.R, label='Recovered', color='green')
+        plt.title(f'{self.name} Model Dynamics')
         plt.xlabel('Time (days)')
-        plt.ylabel('Number of individuals')
-        plt.ylim([0, self.N])
+        plt.ylabel('Population')
         plt.legend()
         plt.grid()
         plt.tight_layout()
@@ -183,15 +193,17 @@ class EpidemicModel:
 
     def plot_noisy_data(self):
         plt.figure()
-        plt.plot(self.t, self.S_noisy, 'orange', label='Susceptible (noisy)')
-        if self.name == "SEIRS":
-            plt.plot(self.t, self.E_noisy, 'blue', label='Exposed (noisy)')
-        plt.plot(self.t, self.I_noisy, 'red', label='Infected (noisy)')
-        plt.plot(self.t, self.R_noisy, 'green', label='Recovered (noisy)')
-        plt.title(f'{self.name} Model with Noise')
+        if hasattr(self, 'S_noisy'):
+            plt.plot(self.t, self.S_noisy, label='Noisy Susceptible', alpha=1)
+        if hasattr(self, 'E_noisy'):
+            plt.plot(self.t, self.E_noisy, label='Noisy Exposed', alpha=1)
+        if hasattr(self, 'I_noisy'):
+            plt.plot(self.t, self.I_noisy, label='Noisy Infected', alpha=1)
+        if hasattr(self, 'R_noisy'):
+            plt.plot(self.t, self.R_noisy, label='Noisy Recovered', alpha=1)
+        plt.title(f'{self.name} Noisy Data')
         plt.xlabel('Time (days)')
-        plt.ylabel('Number of individuals')
-        plt.ylim([0, self.N])
+        plt.ylabel('Population')
         plt.legend()
         plt.grid()
         plt.tight_layout()
@@ -199,31 +211,29 @@ class EpidemicModel:
 
     def plot_loss_landscape(self):
         if len(self.params) != 2:
-            print("Loss landscape only available for 2D parameter models like SIR.")
+            print("Loss landscape only supported for models with 2 parameters.")
             return
-        beta_vals = np.linspace(0.0001, 0.3, 100)
-        gamma_vals = np.linspace(0.0001, 0.3, 100)
-        B, G = np.meshgrid(beta_vals, gamma_vals)
-        Loss = np.zeros_like(B)
-        for i in range(B.shape[0]):
-            for j in range(B.shape[1]):
-                Loss[i, j] = self.loss([B[i, j], G[i, j]])
-        plt.figure(figsize=(8, 6))
-        cp = plt.contourf(G, B, np.log10(Loss + 1e-10), levels=100, cmap='viridis')
-        plt.colorbar(cp, label=r'$\log_{10}$(Loss)')
-        plt.xlabel(r'$\gamma$')
-        plt.ylabel(r'$\beta$')
+        beta_vals = np.linspace(0.01, 1.0, 50)
+        gamma_vals = np.linspace(0.01, 1.0, 50)
+        loss_vals = np.zeros((len(beta_vals), len(gamma_vals)))
+
+        for i, beta in enumerate(beta_vals):
+            for j, gamma in enumerate(gamma_vals):
+                loss_vals[i, j] = self.loss([beta, gamma])
+
+        B, G = np.meshgrid(gamma_vals, beta_vals)  # Note: reversed order to match axes
+        plt.figure()
+        cp = plt.contourf(G, B, loss_vals, 50, cmap='viridis')
+        plt.colorbar(cp)
+        plt.xlabel('Gamma')
+        plt.ylabel('Beta')
         plt.title('Loss Landscape')
-        plt.scatter([self.params[1]], [self.params[0]], c='black', marker='x', s=100, label='True')
-        plt.scatter([self.fitted_params[1]], [self.fitted_params[0]], c='red', marker='o', label='Fit')
-        plt.legend()
-        plt.grid(True)
         plt.tight_layout()
         plt.show()
 
     def plot_fitted_vs_noisy(self):
         result = self.simulate_with_fit()
-        I_fit = result[-2]
+        I_fit = result[['S', 'E', 'I', 'R', 'B'].index('I')]
         plt.figure()
         plt.plot(self.t, (self.I / self.N) * 100, 'k-', label='True Infected (%)', linewidth=2)
         plt.plot(self.t_subset, (I_fit / self.N) * 100, 'g-', label='Fitted Infected (%)', linewidth=2)
@@ -235,7 +245,7 @@ class EpidemicModel:
         plt.grid()
         plt.tight_layout()
         plt.show()
-
+        
 def run_epidemic_model(model_name, N=1000, noise_level=2, num_points=80):
     if model_name not in models:
         raise ValueError(f"Unknown model: {model_name}")
@@ -254,4 +264,4 @@ def run_epidemic_model(model_name, N=1000, noise_level=2, num_points=80):
     model.plot_fitted_vs_noisy()
 
 if __name__ == '__main__':
-    run_epidemic_model('SEIRS')    
+    run_epidemic_model('SEIRS')
