@@ -217,15 +217,35 @@ class EpidemicModel:
         for i, beta in enumerate(beta_vals):
             for j, gamma in enumerate(gamma_vals):
                 loss_vals[i, j] = self.loss([beta, gamma])
+        G, B = np.meshgrid(gamma_vals, beta_vals)  # Note: reversed order to match axes
+        initial_guess_nm = np.random.uniform(0, 1, size=2)
+        initial_guess_bfgs = np.random.uniform(0, 1, size=2)
+        initial_guess_lbfgs = np.random.uniform(0, 1, size=2)
+        bounds = [(0, 1), (0, 1)]
+        result_nm = minimize(lambda x: self.loss(x), initial_guess_nm, bounds=bounds)
+        beta_nm, gamma_nm = result_nm.x
+        result_bfgs = minimize(lambda x: self.loss(x), initial_guess_bfgs, method='BFGS')
+        beta_bfgs, gamma_bfgs = result_bfgs.x
+        result_lbfgs = minimize(lambda x: self.loss(x), initial_guess_lbfgs, method='L-BFGS-B', bounds=bounds)
+        beta_lbfgs, gamma_lbfgs = result_lbfgs.x
+        plt.figure(figsize=(10, 8))
+        cp = plt.contourf(G, B, log_loss_grid, levels=100, cmap='viridis')
+        cbar = plt.colorbar(cp)
+        cbar.set_label(r'$\log_{10}$(Loss)')
+        plt.xlabel(r'$\gamma$')
+        plt.ylabel(r'$\beta$')
+        plt.title('Log-Scaled Loss Landscape for SIR Parameter Estimation')
+        plt.scatter([gamma_nm], [beta_nm], color='red', marker='s', label='Nelder-Mead')
+        plt.scatter([gamma_bfgs], [beta_bfgs], color='blue', marker='o', label='BFGS')
+        plt.scatter([gamma_lbfgs], [beta_lbfgs], color='white', marker='^', label='L-BFGS-B')
+        true_beta, true_gamma = self.params
+        plt.scatter([true_gamma], [true_beta], color='black', marker='x', s=100, label='True Value')
 
-        B, G = np.meshgrid(gamma_vals, beta_vals)  # Note: reversed order to match axes
-        plt.figure()
-        cp = plt.contourf(G, B, loss_vals, 50, cmap='viridis')
-        plt.colorbar(cp)
-        plt.xlabel('Gamma')
-        plt.ylabel('Beta')
-        plt.title('Loss Landscape')
+        plt.legend()
+        plt.grid(True)
+        plt.axis('scaled')
         plt.tight_layout()
+        plt.savefig("plots/loss_landscape.png")
         plt.show()
 
     def plot_fitted_vs_noisy(self):
