@@ -240,12 +240,10 @@ class EpidemicModel:
         plt.scatter([gamma_lbfgs], [beta_lbfgs], color='white', marker='^', label='L-BFGS-B')
         true_beta, true_gamma = self.params
         plt.scatter([true_gamma], [true_beta], color='black', marker='x', s=100, label='True Value')
-
         plt.legend()
         plt.grid(True)
         plt.axis('scaled')
         plt.tight_layout()
-        plt.savefig("plots/loss_landscape.png")
         plt.show()
 
     def plot_fitted_vs_noisy(self):
