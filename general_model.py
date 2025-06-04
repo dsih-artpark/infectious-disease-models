@@ -281,4 +281,4 @@ def run_epidemic_model(model_name, N=1000, noise_level=2, num_points=80):
     model.plot_fitted_vs_noisy()
 
 if __name__ == '__main__':
-    run_epidemic_model('SIR')
+    run_epidemic_model('SIS')

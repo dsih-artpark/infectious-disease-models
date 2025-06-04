@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import odeint
 from scipy.optimize import minimize
+from scipy.optimize import basinhopping
 np.random.seed(42)
 N = 1000
 I0 = 1
@@ -171,3 +172,10 @@ plt.grid(True)
 plt.tight_layout()
 plt.savefig("plots/fitted_data_percentage.png")
 plt.show()
+
+initial_guess_basin = np.random.uniform(0.0001, 1, size=2)
+minimizer_kwargs = {"method": "L-BFGS-B", "bounds": bounds}
+result_basin = basinhopping(loss, initial_guess_basin, minimizer_kwargs=minimizer_kwargs, niter=100)
+beta_basin, gamma_basin = result_basin.x
+step_size_basin = np.array(result_basin.x) - np.array(initial_guess_basin)
+print(f"[Basin-Hopping] Start point: {initial_guess_basin}, Estimated β = {beta_basin:.8f}, γ = {gamma_basin:.8f}, Step size: {step_size_basin}, nfev = {result_basin.nfev}")
