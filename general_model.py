@@ -120,6 +120,8 @@ class EpidemicModel:
         self.t = np.linspace(0, 200, 200)
         self.result = None
         self.S = self.E = self.I = self.R = None
+        self.param_names = list(models[name]['params'].keys())
+        self.compartment_names = self.model_func.__code__.co_varnames[:len(y0)]
 
     def simulate(self):
         self.result = odeint(self.model_func, self.y0, self.t, args=(self.N, *self.params))
@@ -160,7 +162,8 @@ class EpidemicModel:
         return np.mean((sol[:, I_index] - self.I_subset) ** 2)
 
     def fit(self):
-        guess = np.random.uniform(0, 1, size=len(self.params))
+        guess = np.array(self.params) * (1 + 0.1 * np.random.randn(len(self.params)))  # small noise around true
+        guess = np.clip(guess, 0.0001, 1)
         bounds = [(0.0001, 1)] * len(self.params)
         res = minimize(self.loss, guess, method='L-BFGS-B', bounds=bounds)
         self.fitted_params = res.x
@@ -213,10 +216,11 @@ class EpidemicModel:
         beta_vals = np.linspace(0.01, 1.0, 50)
         gamma_vals = np.linspace(0.01, 1.0, 50)
         loss_vals = np.zeros((len(beta_vals), len(gamma_vals)))
-        log_loss_grid = np.log10(loss_vals + 1e-10)
+        
         for i, beta in enumerate(beta_vals):
             for j, gamma in enumerate(gamma_vals):
                 loss_vals[i, j] = self.loss([beta, gamma])
+        log_loss_grid = np.log10(loss_vals + 1e-10)
         G, B = np.meshgrid(gamma_vals, beta_vals)  # Note: reversed order to match axes
         initial_guess_nm = np.random.uniform(0, 1, size=2)
         initial_guess_bfgs = np.random.uniform(0, 1, size=2)
@@ -262,7 +266,29 @@ class EpidemicModel:
         plt.tight_layout()
         plt.show()
 
-        
+    def print_fitted_parameters(self):
+        bounds = [(0, 1)] * len(self.params)
+        param_names = ['beta', 'gamma', 'sigma', 'omega', 'mu'][:len(self.params)]
+
+        def run_optimizer(method, bounds=None):
+            result = minimize(self.loss, np.random.uniform(0, 1, len(self.params)), method=method, bounds=bounds)
+            return result
+
+        optimizers = {
+            'Nelder-Mead': run_optimizer('Nelder-Mead'),
+            'BFGS': run_optimizer('BFGS'),
+            'L-BFGS-B': run_optimizer('L-BFGS-B', bounds)
+        }
+
+        for name, result in optimizers.items():
+            fitted_params = result.x
+            loss = result.fun
+            param_str = ", ".join(f"{n}: {v:.4f}" for n, v in zip(param_names, fitted_params))
+            print(f"[{name}] {param_str}, loss: {loss:.6f}")
+
+        true_params_str = ", ".join(f"{n}: {v:.4f}" for n, v in zip(param_names, self.params))
+        print(f"[True Params] {true_params_str}")
+
 def run_epidemic_model(model_name, N=1000, noise_level=2, num_points=80):
     if model_name not in models:
         raise ValueError(f"Unknown model: {model_name}")
@@ -279,6 +305,6 @@ def run_epidemic_model(model_name, N=1000, noise_level=2, num_points=80):
     model.plot_noisy_data()
     model.plot_loss_landscape()
     model.plot_fitted_vs_noisy()
-
+    model.print_fitted_parameters()
 if __name__ == '__main__':
-    run_epidemic_model('SIS')
+    run_epidemic_model('SEIR')
