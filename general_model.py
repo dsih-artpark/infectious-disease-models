@@ -269,23 +269,19 @@ class EpidemicModel:
     def print_fitted_parameters(self):
         bounds = [(0, 1)] * len(self.params)
         param_names = ['beta', 'gamma', 'sigma', 'omega', 'mu'][:len(self.params)]
-
         def run_optimizer(method, bounds=None):
             result = minimize(self.loss, np.random.uniform(0, 1, len(self.params)), method=method, bounds=bounds)
             return result
-
         optimizers = {
             'Nelder-Mead': run_optimizer('Nelder-Mead'),
             'BFGS': run_optimizer('BFGS'),
             'L-BFGS-B': run_optimizer('L-BFGS-B', bounds)
         }
-
         for name, result in optimizers.items():
             fitted_params = result.x
             loss = result.fun
             param_str = ", ".join(f"{n}: {v:.4f}" for n, v in zip(param_names, fitted_params))
             print(f"[{name}] {param_str}, loss: {loss:.6f}")
-
         true_params_str = ", ".join(f"{n}: {v:.4f}" for n, v in zip(param_names, self.params))
         print(f"[True Params] {true_params_str}")
 
@@ -307,4 +303,4 @@ def run_epidemic_model(model_name, N=1000, noise_level=2, num_points=80):
     model.plot_fitted_vs_noisy()
     model.print_fitted_parameters()
 if __name__ == '__main__':
-    run_epidemic_model('SEIR')
+    run_epidemic_model('SIR')
