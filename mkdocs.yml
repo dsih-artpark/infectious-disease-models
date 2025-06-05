@@ -1,0 +1,38 @@
+site_name: Epidemic Modeling Framework Documentation
+site_description: Documentation for Epidemic Modeling Framework
+site_author: Shreya Mukherjee
+
+theme:
+  name: material
+
+markdown_extensions:
+  - pymdownx.arithmatex:
+      generic: true
+
+extra_javascript:
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
+extra_css:
+  - https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css
+
+nav:
+  - Home: index.md
+  - Data Overview:
+    - Dataset Description: data/dataset-description.md
+    - Exploratory Analysis: data/exploratory-analysis.md
+  - Analysis:
+    - Methodology: analysis/methodology.md
+  - Experiments:
+    - Overview: experiments/overview.md
+    - Results and Model Evaluation: experiments/model-evaluation.md
+  - References: references.md
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: google
+            show_source: true
+            show_root_heading: true
