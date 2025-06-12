@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import odeint
 from scipy.optimize import minimize
-
+from model import CompartmentalModel, Population
 np.random.seed(42)
 
 class Population:
