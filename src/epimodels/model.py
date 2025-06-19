@@ -5,11 +5,11 @@ from scipy.optimize import minimize
 class EpidemicModel:
     def __init__(self, model_name, initial_params, initial_state, population, T):
         self.model_name = model_name.upper()
-        self.params = list(initial_params)  # Ensure it's a list
+        self.params = list(initial_params)  
         self.initial_state = initial_state
         self.N = population
         self.T = T
-        self.t = np.arange(T)  # Ensures integer time steps
+        self.t = np.arange(T)  
         self.subset_indices = None
         self.fitted_params = None
 
