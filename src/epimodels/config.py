@@ -1,21 +1,20 @@
 from pathlib import Path
 import logging
 import yaml
+import os
+#CONFIG_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "config.yaml")
 
-DEFAULT_CONFIG_PATH = Path(__file__).parent.parent.parent / "config.yaml"
+from config_loader import load_config
 
+cfg = load_config("../../config.yaml")
 
-def load_config(path: Path | str | None = None) -> dict:
-    """Load YAML config from given path or default project root config.yaml."""
-    if path is None:
-        path = DEFAULT_CONFIG_PATH
-    else:
-        path = Path(path)
-    with open(path, "r") as f:
-        return yaml.safe_load(f)
-
-
-CONFIG = load_config()
+MODEL = cfg["model"]
+T = cfg["days"]
+POPULATION = cfg["population"]
+NOISE_STD = cfg["noise_std"]
+SUBSET_RATIO = cfg["subset_ratio"]
+OPTIMIZERS = cfg["optimizers"]
+PARAMS = cfg["models"]
 
 
 def setup_logging(log_file: str = None, level: int = logging.INFO) -> logging.Logger:

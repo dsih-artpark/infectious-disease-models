@@ -1,92 +1,74 @@
 import numpy as np
-
-class Population:
-    def __init__(self, patch_population, compartments, patch_id=None):
-        """
-        Initializes the population with compartments and a patch population.
-        
-        :param patch_population: Total population for this patch at the start of the simulation.
-        :param compartments: A dictionary of compartments and their counts (e.g., susceptible, infected, etc.).
-        :param patch_id: An optional identifier for this specific patch (e.g., district name or ID).
-        """
-        self.patch_population = patch_population
-        self.compartments = compartments
-        self.patch_id = patch_id
-        self._validate_population()
-
-    def _validate_population(self):
-        """
-        Validates that the total population equals the sum of the compartments at the start.
-        """
-        total_compartment_sum = sum(self.compartments.values())
-        if total_compartment_sum != self.patch_population:
-            raise ValueError(f"Compartment sum ({total_compartment_sum}) must equal the patch population ({self.patch_population}).")
-
-    def update_population(self, new_population):
-        """
-        Updates the patch population over time (could vary based on external factors).
-
-        :param new_population: New total population for the patch.
-        """
-        self.patch_population = new_population
-
-    def update_compartment(self, compartment_name, new_value):
-        """
-        Updates the value of a specific compartment.
-        
-        :param compartment_name: The name of the compartment to update.
-        :param new_value: The new value for the compartment.
-        """
-        if compartment_name not in self.compartments:
-            raise ValueError(f"Compartment {compartment_name} does not exist.")
-        self.compartments[compartment_name] = new_value
-
-    def get_compartment(self, compartment_name):
-        """
-        Retrieves the current value of a specific compartment.
-        
-        :param compartment_name: The name of the compartment to retrieve.
-        :return: The current value of the compartment.
-        """
-        return self.compartments.get(compartment_name, None)
-
-    def __str__(self):
-        return f"Patch {self.patch_id}: Population: {self.patch_population}, Compartments: {self.compartments}"
+from scipy.integrate import odeint
+from scipy.optimize import minimize
 
 
-class CompartmentalModel:
-    def __init__(self, compartments, parameters, transitions):
-        self.compartments = compartments
-        self.parameters = parameters
-        self.transitions = transitions
+class EpidemicModel:
+    def __init__(self, model_name, initial_params, initial_state, population, t):
+        self.model_name = model_name.upper()
+        self.params = initial_params
+        self.initial_state = initial_state
+        self.N = population
+        self.T = t
+        self.t = np.linspace(0, t, t)
+        self.subset_indices = None
+        self.fitted_params = None
 
-    def compute_transition_rates(self, state, extras=None):
-        local_env = {**state, **self.parameters}
-        if extras:
-            local_env.update(extras)
+    def _sir(self, y, t, beta, gamma):
+        S, I, R = y
+        dSdt = -beta * S * I / self.N
+        dIdt = beta * S * I / self.N - gamma * I
+        dRdt = gamma * I
+        return [dSdt, dIdt, dRdt]
 
-        deltas = {c: 0.0 for c in self.compartments}
-        for tr in self.transitions:
-            src = tr['from']
-            dst = tr['to']
-            rate_expr = tr['rate']
-            rate = eval(rate_expr, {}, local_env)
+    def _seir(self, y, t, beta, sigma, gamma):
+        S, E, I, R = y
+        dSdt = -beta * S * I / self.N
+        dEdt = beta * S * I / self.N - sigma * E
+        dIdt = sigma * E - gamma * I
+        dRdt = gamma * I
+        return [dSdt, dEdt, dIdt, dRdt]
 
-            if src:
-                deltas[src] -= rate
-            if dst:
-                deltas[dst] += rate
+    def simulate(self, params=None, y0=None, t=None):
+        if params is None:
+            params = self.params
+        if y0 is None:
+            y0 = self.initial_state
+        if t is None:
+            t = self.t
 
-        return deltas
+        if self.model_name == "SIR":
+            return odeint(self._sir, y0, t, args=tuple(params))
+        elif self.model_name == "SEIR":
+            return odeint(self._seir, y0, t, args=tuple(params))
+        else:
+            raise NotImplementedError(f"Model {self.model_name} not implemented.")
 
-    def ode_rhs(self, y, t, extras_fn=None):
-        """
-        Returns the ODE right-hand side for use with ODE solvers.
-        y: list/array of compartment values in the order of self.compartments
-        t: current time (passed by ODE solver)
-        extras_fn: optional function to provide extra variables (e.g., force of infection)
-        """
-        state = {c: y[i] for i, c in enumerate(self.compartments)}
-        extras = extras_fn(t, y) if extras_fn else None
-        deltas = self.compute_transition_rates(state, extras)
-        return [deltas[c] for c in self.compartments]
+    def add_noise(self, data, std=5.0):
+        noise = np.random.normal(0, std, size=data.shape)
+        return np.clip(data + noise, 0, None)
+
+    def subset_data(self, data, ratio):
+        n = int(len(data) * ratio)
+        indices = np.sort(np.random.choice(len(data), n, replace=False))
+        self.subset_indices = indices
+        return data[indices]
+
+    def loss(self, params, observed_data):
+        sim = self.simulate(params)
+        if self.subset_indices is not None:
+            sim = sim[self.subset_indices]
+        return np.mean((sim - observed_data) ** 2)
+
+    def fit(self, data_subset, optimizer="BFGS"):
+        def objective(p):
+            return self.loss(p, data_subset)
+
+        res = minimize(
+            objective,
+            x0=self.params,
+            method=optimizer,
+            bounds=[(0, 5)] * len(self.params)
+        )
+        self.fitted_params = res.x
+        return res.x
