@@ -14,18 +14,22 @@ def get_subset(data, t, ratio, seed=42):
     np.random.seed(seed)
     n = int(len(data) * ratio)
     indices = np.sort(np.random.choice(len(data), n, replace=False))
-    return data[indices], t[indices]
+    return data[indices], t[indices], indices
 
-def loss_fn(params, model_name, initial_state, t, true_data, N, compartment_index=1):
+def loss_fn(params, model_name, initial_state, t_full, true_data, N, indices, fit_all=False, compartment_index=1):
     try:
-        model = EpidemicModel(model_name, params, initial_state, N, len(t))
+        model = EpidemicModel(model_name, params, initial_state, N, len(t_full))
         sim_data = model.simulate()
 
         if np.any(np.isnan(sim_data)) or np.any(np.isinf(sim_data)):
             return np.inf
 
-        pred = sim_data[:len(true_data), compartment_index]
-        return np.mean((pred - true_data) ** 2)
+        if fit_all:
+            pred = sim_data[indices, :]
+            return np.mean((pred - true_data) ** 2)
+        else:
+            pred = sim_data[indices, compartment_index]
+            return np.mean((pred - true_data) ** 2)
 
     except Exception as e:
         print(f"Loss function error: {e}")
@@ -71,7 +75,7 @@ def main():
     initial_params = param_dict["params"]
     y0 = param_dict["y0"]
 
-    # True data simulation
+    # True simulation
     model = EpidemicModel(MODEL, initial_params, y0, POPULATION, T)
     true_data = model.simulate()
 
@@ -80,9 +84,9 @@ def main():
 
     # Subset of noisy data
     t_full = model.t
-    noisy_subset, t_subset = get_subset(noisy_data, t_full, SUBSET_RATIO)
+    noisy_subset, t_subset, indices = get_subset(noisy_data, t_full, SUBSET_RATIO)
 
-    # Fit only the infected compartment (index 1)
+    # Fit only infected
     observed_infected = noisy_subset[:, 1]
     results = {}
     best_fit = None
@@ -93,7 +97,7 @@ def main():
         res = minimize(
             loss_fn,
             initial_params,
-            args=(MODEL, y0, t_subset, observed_infected, POPULATION, 1),  # only fit Infected
+            args=(MODEL, y0, t_full, observed_infected, POPULATION, indices),  # ✅ fixed here
             method=optimizer
         )
         results[optimizer] = res.fun
@@ -105,14 +109,14 @@ def main():
         print(f"Fitted parameters: {res.x}")
         print(f"Loss: {res.fun:.4f}")
 
-    # Simulate model with best-fit params
+    # Simulate best-fit
     fitted_model = EpidemicModel(MODEL, best_fit, y0, POPULATION, T)
     fitted_data = fitted_model.simulate()
 
-    # Plot and save outputs
+    # Plot
     plot_simulation(true_data, MODEL)
     plot_noisy(noisy_data, MODEL)
-    plot_comparison(true_data, noisy_subset, fitted_data, MODEL, t_full, t_subset)
+    plot_comparison(true_data, noisy_subset, fitted_data, MODEL, t_full, t_subset)  # ✅ pass indices
 
 if __name__ == "__main__":
     main()
