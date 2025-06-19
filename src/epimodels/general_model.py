@@ -97,7 +97,7 @@ def main():
         res = minimize(
             loss_fn,
             initial_params,
-            args=(MODEL, y0, t_full, observed_infected, POPULATION, indices),  # ✅ fixed here
+            args=(MODEL, y0, t_full, observed_infected, POPULATION, indices),  
             method=optimizer
         )
         results[optimizer] = res.fun
@@ -116,7 +116,7 @@ def main():
     # Plot
     plot_simulation(true_data, MODEL)
     plot_noisy(noisy_data, MODEL)
-    plot_comparison(true_data, noisy_subset, fitted_data, MODEL, t_full, t_subset)  # ✅ pass indices
+    plot_comparison(true_data, noisy_subset, fitted_data, MODEL, t_full, t_subset)  
 
 if __name__ == "__main__":
     main()
