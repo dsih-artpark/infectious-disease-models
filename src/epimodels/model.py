@@ -2,15 +2,14 @@ import numpy as np
 from scipy.integrate import odeint
 from scipy.optimize import minimize
 
-
 class EpidemicModel:
-    def __init__(self, model_name, initial_params, initial_state, population, t):
+    def __init__(self, model_name, initial_params, initial_state, population, T):
         self.model_name = model_name.upper()
-        self.params = initial_params
+        self.params = list(initial_params)  # Ensure it's a list
         self.initial_state = initial_state
         self.N = population
-        self.T = t
-        self.t = np.linspace(0, t, t)
+        self.T = T
+        self.t = np.arange(T)  # Ensures integer time steps
         self.subset_indices = None
         self.fitted_params = None
 
@@ -37,6 +36,8 @@ class EpidemicModel:
         if t is None:
             t = self.t
 
+        params = list(params)  # Ensure it's a list or tuple
+
         if self.model_name == "SIR":
             return odeint(self._sir, y0, t, args=tuple(params))
         elif self.model_name == "SEIR":
@@ -48,7 +49,8 @@ class EpidemicModel:
         noise = np.random.normal(0, std, size=data.shape)
         return np.clip(data + noise, 0, None)
 
-    def subset_data(self, data, ratio):
+    def subset_data(self, data, ratio, seed=42):
+        np.random.seed(seed)
         n = int(len(data) * ratio)
         indices = np.sort(np.random.choice(len(data), n, replace=False))
         self.subset_indices = indices
@@ -58,6 +60,8 @@ class EpidemicModel:
         sim = self.simulate(params)
         if self.subset_indices is not None:
             sim = sim[self.subset_indices]
+        if sim.shape != observed_data.shape:
+            return np.inf
         return np.mean((sim - observed_data) ** 2)
 
     def fit(self, data_subset, optimizer="BFGS"):
