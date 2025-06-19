@@ -36,7 +36,7 @@ class EpidemicModel:
         if t is None:
             t = self.t
 
-        params = list(params)  # Ensure it's a list or tuple
+        params = list(params)  
 
         if self.model_name == "SIR":
             return odeint(self._sir, y0, t, args=tuple(params))
