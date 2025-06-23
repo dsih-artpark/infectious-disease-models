@@ -35,28 +35,37 @@ def loss_fn(params, model_name, initial_state, t_full, true_data, N, indices, fi
         print(f"Loss function error: {e}")
         return np.inf
 
-def plot_simulation(true_data, model_name, save_path="outputs/plot_simulation.png"):
-    labels = ["S", "I", "R"] if true_data.shape[1] == 3 else ["S", "E", "I", "R"]
+def plot_simulation(true_data, model_name, compartment_names=None, save_path="outputs/plot_simulation.png"):
+    if compartment_names is None:
+        compartment_names = [f"C{i}" for i in range(true_data.shape[1])]
     plt.figure()
     for i in range(true_data.shape[1]):
-        plt.plot(true_data[:, i], label=f"{labels[i]}")
+        plt.plot(true_data[:, i], label=f"{compartment_names[i]}")
     plt.legend()
     plt.title(f"{model_name} Simulation")
+    plt.xlabel("Time")
+    plt.ylabel("Population")
     plt.savefig(save_path)
     plt.close()
 
-def plot_noisy(noisy_data, model_name, save_path="outputs/plot_noisy.png"):
-    labels = ["S", "I", "R"] if noisy_data.shape[1] == 3 else ["S", "E", "I", "R"]
+
+
+def plot_noisy(noisy_data, model_name, compartment_names=None, save_path="outputs/plot_noisy.png"):
+    if compartment_names is None:
+        compartment_names = [f"C{i}" for i in range(noisy_data.shape[1])]
     plt.figure()
     for i in range(noisy_data.shape[1]):
-        plt.plot(noisy_data[:, i], label=f"Noisy {labels[i]}")
+        plt.plot(noisy_data[:, i], label=f"Noisy {compartment_names[i]}")
     plt.legend()
     plt.title(f"{model_name} Noisy Data")
+    plt.xlabel("Time")
+    plt.ylabel("Population")
     plt.savefig(save_path)
     plt.close()
 
-def plot_comparison(true_data, noisy_subset, fitted_data, model_name, t_full, t_subset, save_path="outputs/plot_comparison.png"):
-    subset_indices = np.searchsorted(t_full, t_subset)  # assumes t_subset ⊆ t_full
+
+def plot_comparison(true_data, noisy_subset, fitted_data, model_name, t_full, t_subset, compartment_names=None, save_path="outputs/plot_comparison.png"):
+    subset_indices = np.searchsorted(t_full, t_subset)  
     plt.figure(figsize=(10, 6))
     plt.plot(t_subset, fitted_data[subset_indices, 1], '-', label="Fitted Infected")
     plt.plot(t_full, true_data[:, 1], '--', label="True Infected")
