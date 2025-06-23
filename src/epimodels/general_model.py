@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from model import EpidemicModel
-from config import MODEL, PARAMS, POPULATION, T, NOISE_STD, SUBSET_RATIO, OPTIMIZERS
+from config import MODEL, PARAMS, POPULATION, T, NOISE_STD, SUBSET_RATIO, OPTIMIZERS, COMPARTMENTS
 from scipy.optimize import minimize
 import os
 
@@ -38,16 +38,19 @@ def loss_fn(params, model_name, initial_state, t_full, true_data, N, indices, fi
 def plot_simulation(true_data, model_name, compartment_names=None, save_path="outputs/plot_simulation.png"):
     if compartment_names is None:
         compartment_names = [f"C{i}" for i in range(true_data.shape[1])]
+    
+    if len(compartment_names) != true_data.shape[1]:
+        raise ValueError(f"Mismatch: expected {true_data.shape[1]} compartment names, got {len(compartment_names)}")
+
     plt.figure()
     for i in range(true_data.shape[1]):
-        plt.plot(true_data[:, i], label=f"{compartment_names[i]}")
+        plt.plot(true_data[:, i], label=compartment_names[i])
     plt.legend()
     plt.title(f"{model_name} Simulation")
     plt.xlabel("Time")
     plt.ylabel("Population")
     plt.savefig(save_path)
     plt.close()
-
 
 
 def plot_noisy(noisy_data, model_name, compartment_names=None, save_path="outputs/plot_noisy.png"):
@@ -123,9 +126,9 @@ def main():
     fitted_data = fitted_model.simulate()
 
     # Plot
-    plot_simulation(true_data, MODEL)
-    plot_noisy(noisy_data, MODEL)
-    plot_comparison(true_data, noisy_subset, fitted_data, MODEL, t_full, t_subset)  
+    plot_simulation(true_data, MODEL, compartment_names=COMPARTMENTS)
+    plot_noisy(noisy_data, MODEL, compartment_names=COMPARTMENTS)
+    plot_comparison(true_data, noisy_subset, fitted_data, MODEL, t_full, t_subset, compartment_names=COMPARTMENTS)  
 
 if __name__ == "__main__":
     main()

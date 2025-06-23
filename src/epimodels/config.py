@@ -15,7 +15,7 @@ NOISE_STD = cfg["noise_std"]
 SUBSET_RATIO = cfg["subset_ratio"]
 OPTIMIZERS = cfg["optimizers"]
 PARAMS = cfg["models"]
-
+COMPARTMENTS = cfg["models"][MODEL]["compartments"]
 
 def setup_logging(log_file: str = None, level: int = logging.INFO) -> logging.Logger:
     """Set up basic logging configuration.
