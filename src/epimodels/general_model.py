@@ -1,152 +1,126 @@
 import numpy as np
-import matplotlib.pyplot as plt
-#from model import EpidemicModel
-#from config import MODEL, PARAMS, POPULATION, T, NOISE_STD, SUBSET_RATIO, OPTIMIZERS, COMPARTMENTS
-from scipy.optimize import minimize
 from scipy.integrate import odeint
+from scipy.optimize import minimize
+import matplotlib.pyplot as plt
 import os
-
 from config import (
-    COMPARTMENTS, PARAMS, TRANSITIONS, T, MODEL,
-    NUM_PATCHES, NETWORK_MATRIX,
-    get_initial_state_dict
+    MODEL, T, POPULATION, NOISE_STD, SUBSET_RATIO, OPTIMIZERS,
+    PARAMS, COMPARTMENTS, TRANSITIONS, INIT_CONDITIONS
 )
-from model import CompartmentalModel, NetworkModel
+from model import CompartmentalModel
 
-os.makedirs("outputs", exist_ok=True)
-base_model = CompartmentalModel(COMPARTMENTS, PARAMS, TRANSITIONS)
+PLOT_DIR = "plots"
+os.makedirs(PLOT_DIR, exist_ok=True)
 
-#Prepare initial state
-y0_dict = get_initial_state_dict()
-t_range = np.linspace(0, T, T + 1)
+def simulate(model, y0, t_range):
+    return odeint(model.ode_rhs, y0, t_range)
 
-# Create and simulate network model
-net_model = NetworkModel(base_model, NUM_PATCHES, NETWORK_MATRIX)
-_, history = net_model.simulate_discrete(y0_dict, t_range)
+def add_noise(data, std):
+    return data + np.random.normal(0, std, size=data.shape)
 
+def subsample(t, data, ratio):
+    n = int(ratio * len(t))
+    indices = sorted(np.random.choice(len(t), n, replace=False))
+    return t[indices], data[indices], indices
 
-def add_noise(data, std=5.0):
-    return data + np.random.normal(0, std, data.shape)
+def fit_model(model, t_sub, observed, initial_params, param_names, y0):
+    def loss(p):
+        for i, name in enumerate(param_names):
+            model.parameters[name] = p[i]
+        sim = simulate(model, y0, t_sub)
+        return np.sum((sim[:, 1] - observed)**2)  # I compartment
 
-def get_subset(data, t, ratio, seed=42):
-    np.random.seed(seed)
-    n = int(len(data) * ratio)
-    indices = np.sort(np.random.choice(len(data), n, replace=False))
-    return data[indices], t[indices], indices
+    results = {}
+    t_full = np.linspace(0, T, T)
+    for opt in OPTIMIZERS:
+        res = minimize(loss, initial_params, method=opt)
+        # Update parameters
+        for i, name in enumerate(param_names):
+            model.parameters[name] = res.x[i]
+        # Simulate using full time range for plotting
+        fitted_sim = simulate(model, y0, t_full)
+        results[opt] = {
+            "loss": res.fun,
+            "params": dict(zip(param_names, res.x)),
+            "simulated": fitted_sim,
+        }
+    return results
 
-def loss_fn(params, model_name, initial_state, t_full, true_data, N, indices, fit_all=False, compartment_index=1):
-    try:
-        model = EpidemicModel(model_name, params, initial_state, N, len(t_full))
-        sim_data = model.simulate()
-
-        if np.any(np.isnan(sim_data)) or np.any(np.isinf(sim_data)):
-            return np.inf
-
-        if fit_all:
-            pred = sim_data[indices, :]
-            return np.mean((pred - true_data) ** 2)
-        else:
-            pred = sim_data[indices, compartment_index]
-            return np.mean((pred - true_data) ** 2)
-
-    except Exception as e:
-        print(f"Loss function error: {e}")
-        return np.inf
-
-def plot_simulation(true_data, model_name, compartment_names=None, save_path="outputs/plot_simulation.png"):
-    if compartment_names is None:
-        compartment_names = [f"C{i}" for i in range(true_data.shape[1])]
-    
-    if len(compartment_names) != true_data.shape[1]:
-        raise ValueError(f"Mismatch: expected {true_data.shape[1]} compartment names, got {len(compartment_names)}")
-
-    plt.figure()
-    for i in range(true_data.shape[1]):
-        plt.plot(true_data[:, i], label=compartment_names[i])
-    plt.legend()
-    plt.title(f"{model_name} Simulation")
-    plt.xlabel("Time")
-    plt.ylabel("Population")
-    plt.savefig(save_path)
-    plt.close()
-
-
-def plot_noisy(noisy_data, model_name, compartment_names=None, save_path="outputs/plot_noisy.png"):
-    if compartment_names is None:
-        compartment_names = [f"C{i}" for i in range(noisy_data.shape[1])]
-    plt.figure()
-    for i in range(noisy_data.shape[1]):
-        plt.plot(noisy_data[:, i], label=f"Noisy {compartment_names[i]}")
-    plt.legend()
-    plt.title(f"{model_name} Noisy Data")
-    plt.xlabel("Time")
-    plt.ylabel("Population")
-    plt.savefig(save_path)
-    plt.close()
-
-
-def plot_comparison(true_data, noisy_subset, fitted_data, model_name, t_full, t_subset, compartment_names=None, save_path="outputs/plot_comparison.png"):
-    subset_indices = np.searchsorted(t_full, t_subset)  
+def plot_simulation(t, clean_data):
     plt.figure(figsize=(10, 6))
-    plt.plot(t_subset, fitted_data[subset_indices, 1], '-', label="Fitted Infected")
-    plt.plot(t_full, true_data[:, 1], '--', label="True Infected")
-    plt.plot(t_subset, noisy_subset[:, 1], 'o', label="Observed Infected", alpha=0.6)
-    #plt.plot(t_full, fitted_data[:, 1], '-', label="Fitted Infected")
-    plt.xlabel("Time")
-    plt.ylabel("Infected")
-    plt.title(f"{model_name}: Infected Curve Fit")
+    for i, comp in enumerate(COMPARTMENTS):
+        plt.plot(t, clean_data[:, i], label=f"{comp}")
+    plt.xlabel('Time')
+    plt.ylabel('Population')
+    plt.title("Simulated (True) Trajectories")
     plt.legend()
+    plt.grid(True)
     plt.tight_layout()
-    plt.savefig(save_path)
+    plt.savefig(os.path.join(PLOT_DIR, "plot_simulation.png"))
     plt.close()
+
+def plot_noisy(t, noisy_data):
+    plt.figure(figsize=(10, 6))
+    for i, comp in enumerate(COMPARTMENTS):
+        plt.plot(t, noisy_data[:, i], label=f"Noisy {comp}")
+    plt.xlabel('Time')
+    plt.ylabel('Population')
+    plt.title("Noisy Observations")
+    plt.legend()
+    plt.grid(True)
+    plt.tight_layout()
+    plt.savefig(os.path.join(PLOT_DIR, "plot_noisy.png"))
+    plt.close()
+    
+def plot_comparison(t_full, true_I, noisy_I, subsampled_t, subsampled_I, results):
+    plt.figure(figsize=(10, 6))
+    plt.plot(t_full, true_I, label='True I', lw=2)
+    plt.scatter(subsampled_t, subsampled_I, color='red', label='Observed I (Subset)', zorder=5)
+    for opt, res in results.items():
+        plt.plot(t_full, res['simulated'][:, 1], '--', label=f'Fitted I ({opt})')
+    plt.xlabel('Time')
+    plt.ylabel('Infected')
+    plt.legend()
+    plt.grid(True)
+    plt.title("Fitting Comparison (I Compartment)")
+    plt.tight_layout()
+    plt.savefig(os.path.join(PLOT_DIR, "plot_comparison.png"))
+    plt.close()
+
 
 def main():
-    param_dict = PARAMS[MODEL]
-    initial_params = param_dict["params"]
-    y0 = param_dict["y0"]
+    t = np.linspace(0, T, T)
+    model = CompartmentalModel(COMPARTMENTS, PARAMS, TRANSITIONS)
 
-    # True simulation
-    model = EpidemicModel(MODEL, initial_params, y0, POPULATION, T)
-    true_data = model.simulate()
+    # Use initial conditions from first patch
+    patch_key = list(INIT_CONDITIONS.keys())[0]
+    y0_dict = INIT_CONDITIONS[patch_key]
+    y0 = [y0_dict[c] for c in COMPARTMENTS]
 
-    # Add noise
-    noisy_data = add_noise(true_data, std=NOISE_STD)
+    clean_sol = simulate(model, y0, t)
+    noisy_data = add_noise(clean_sol, NOISE_STD)
+    noisy_I = noisy_data[:, 1]
 
-    # Subset of noisy data
-    t_full = model.t
-    noisy_subset, t_subset, indices = get_subset(noisy_data, t_full, SUBSET_RATIO)
+    # Subsample for fitting
+    t_sub, I_sub, idx = subsample(t, noisy_I, SUBSET_RATIO)
 
-    # Fit only infected
-    observed_infected = noisy_subset[:, 1]
-    results = {}
-    best_fit = None
-    best_loss = float("inf")
+    # Fit
+    initial_guess = [model.parameters[k] for k in model.parameters]
+    param_names = list(model.parameters.keys())
+    fit_results = fit_model(model, t_sub, I_sub, initial_guess, param_names, y0)
 
-    for optimizer in OPTIMIZERS:
-        print(f"Running optimizer: {optimizer}")
-        res = minimize(
-            loss_fn,
-            initial_params,
-            args=(MODEL, y0, t_full, observed_infected, POPULATION, indices),  
-            method=optimizer
-        )
-        results[optimizer] = res.fun
-        print(f"{optimizer} loss: {res.fun:.4f}")
-        if res.fun < best_loss:
-            best_loss = res.fun
-            best_fit = res.x
-        print(f"Optimizer: {optimizer}")
-        print(f"Fitted parameters: {res.x}")
-        print(f"Loss: {res.fun:.4f}")
+    # Print fitted info
+    for opt, res in fit_results.items():
+        print(f"\nOptimizer: {opt}")
+        print(f"Loss: {res['loss']:.4f}")
+        print("Estimated Parameters:")
+        for k, v in res["params"].items():
+            print(f"  {k}: {v:.4f}")
 
-    # Simulate best-fit
-    fitted_model = EpidemicModel(MODEL, best_fit, y0, POPULATION, T)
-    fitted_data = fitted_model.simulate()
-
-    # Plot
-    plot_simulation(true_data, MODEL, compartment_names=COMPARTMENTS)
-    plot_noisy(noisy_data, MODEL, compartment_names=COMPARTMENTS)
-    plot_comparison(true_data, noisy_subset, fitted_data, MODEL, t_full, t_subset, compartment_names=COMPARTMENTS)  
+    # Plotting
+    plot_simulation(t, clean_sol)
+    plot_noisy(t, noisy_data)
+    plot_comparison(t, clean_sol[:, 1], noisy_I, t_sub, I_sub, fit_results)
 
 if __name__ == "__main__":
     main()
