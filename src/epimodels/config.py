@@ -6,7 +6,7 @@ import os
 
 from config_loader import load_config
 
-cfg = load_config("../../config.yaml")
+cfg = load_config("config.yaml")
 
 MODEL = cfg["model"]
 T = cfg["days"]
@@ -14,8 +14,25 @@ POPULATION = cfg["population"]
 NOISE_STD = cfg["noise_std"]
 SUBSET_RATIO = cfg["subset_ratio"]
 OPTIMIZERS = cfg["optimizers"]
-PARAMS = cfg["models"]
-COMPARTMENTS = cfg["models"][MODEL]["compartments"]
+
+# Nested under 'models'
+MODEL_CONFIG = cfg["models"][MODEL]
+PARAMS = MODEL_CONFIG["parameters"]
+COMPARTMENTS = MODEL_CONFIG["compartments"]
+TRANSITIONS = MODEL_CONFIG["transitions"]
+INIT_CONDITIONS = MODEL_CONFIG["initial_conditions"]
+NUM_PATCHES = MODEL_CONFIG.get("num_patches", 1)
+POP_PER_PATCH = MODEL_CONFIG.get("population_per_patch", None)
+NETWORK_MATRIX = MODEL_CONFIG.get("network_matrix", None)
+
+def get_initial_state_dict():
+    state = {}
+    for i in range(NUM_PATCHES):
+        patch_key = f"patch_{i}"
+        for c in COMPARTMENTS:
+            state[f"{c}_{i}"] = INIT_CONDITIONS[patch_key][c]
+    return state
+
 
 def setup_logging(log_file: str = None, level: int = logging.INFO) -> logging.Logger:
     """Set up basic logging configuration.

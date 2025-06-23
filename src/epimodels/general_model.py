@@ -1,11 +1,29 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from model import EpidemicModel
-from config import MODEL, PARAMS, POPULATION, T, NOISE_STD, SUBSET_RATIO, OPTIMIZERS, COMPARTMENTS
+#from model import EpidemicModel
+#from config import MODEL, PARAMS, POPULATION, T, NOISE_STD, SUBSET_RATIO, OPTIMIZERS, COMPARTMENTS
 from scipy.optimize import minimize
+from scipy.integrate import odeint
 import os
 
+from config import (
+    COMPARTMENTS, PARAMS, TRANSITIONS, T, MODEL,
+    NUM_PATCHES, NETWORK_MATRIX,
+    get_initial_state_dict
+)
+from model import CompartmentalModel, NetworkModel
+
 os.makedirs("outputs", exist_ok=True)
+base_model = CompartmentalModel(COMPARTMENTS, PARAMS, TRANSITIONS)
+
+#Prepare initial state
+y0_dict = get_initial_state_dict()
+t_range = np.linspace(0, T, T + 1)
+
+# Create and simulate network model
+net_model = NetworkModel(base_model, NUM_PATCHES, NETWORK_MATRIX)
+_, history = net_model.simulate_discrete(y0_dict, t_range)
+
 
 def add_noise(data, std=5.0):
     return data + np.random.normal(0, std, data.shape)

@@ -1,78 +1,90 @@
 import numpy as np
-from scipy.integrate import odeint
-from scipy.optimize import minimize
 
-class EpidemicModel:
-    def __init__(self, model_name, initial_params, initial_state, population, T):
-        self.model_name = model_name.upper()
-        self.params = list(initial_params)  
-        self.initial_state = initial_state
-        self.N = population
-        self.T = T
-        self.t = np.arange(T)  
-        self.subset_indices = None
-        self.fitted_params = None
+class Population:
+    def __init__(self, patch_population, compartments, patch_id=None):
+        self.patch_population = patch_population
+        self.compartments = compartments
+        self.patch_id = patch_id
+        self._validate_population()
 
-    def _sir(self, y, t, beta, gamma):
-        S, I, R = y
-        dSdt = -beta * S * I / self.N
-        dIdt = beta * S * I / self.N - gamma * I
-        dRdt = gamma * I
-        return [dSdt, dIdt, dRdt]
+    def _validate_population(self):
+        total = sum(self.compartments.values())
+        if total != self.patch_population:
+            raise ValueError(f"Mismatch in population for patch {self.patch_id}: {total} != {self.patch_population}")
 
-    def _seir(self, y, t, beta, sigma, gamma):
-        S, E, I, R = y
-        dSdt = -beta * S * I / self.N
-        dEdt = beta * S * I / self.N - sigma * E
-        dIdt = sigma * E - gamma * I
-        dRdt = gamma * I
-        return [dSdt, dEdt, dIdt, dRdt]
+    def update_compartment(self, name, value):
+        if name not in self.compartments:
+            raise ValueError(f"{name} not in compartments")
+        self.compartments[name] = value
 
-    def simulate(self, params=None, y0=None, t=None):
-        if params is None:
-            params = self.params
-        if y0 is None:
-            y0 = self.initial_state
-        if t is None:
-            t = self.t
+    def get_compartment(self, name):
+        return self.compartments.get(name, 0)
 
-        params = list(params)  
 
-        if self.model_name == "SIR":
-            return odeint(self._sir, y0, t, args=tuple(params))
-        elif self.model_name == "SEIR":
-            return odeint(self._seir, y0, t, args=tuple(params))
-        else:
-            raise NotImplementedError(f"Model {self.model_name} not implemented.")
+class CompartmentalModel:
+    def __init__(self, compartments, parameters, transitions):
+        self.compartments = compartments
+        self.parameters = parameters
+        self.transitions = transitions
 
-    def add_noise(self, data, std=5.0):
-        noise = np.random.normal(0, std, size=data.shape)
-        return np.clip(data + noise, 0, None)
+    def compute_transition_rates(self, state, extras=None):
+        local_env = {**state, **self.parameters}
+        if extras:
+            local_env.update(extras)
+        local_env['N'] = sum(state.values())
+        deltas = {c: 0.0 for c in self.compartments}
+        for tr in self.transitions:
+            src = tr['from']
+            dst = tr['to']
+            rate = eval(tr['rate'], {}, local_env)
+            if src:
+                deltas[src] -= rate
+            if dst:
+                deltas[dst] += rate
+        return deltas
 
-    def subset_data(self, data, ratio, seed=42):
-        np.random.seed(seed)
-        n = int(len(data) * ratio)
-        indices = np.sort(np.random.choice(len(data), n, replace=False))
-        self.subset_indices = indices
-        return data[indices]
+    def ode_rhs(self, y, t, extras_fn=None):
+        state = {c: y[i] for i, c in enumerate(self.compartments)}
+        extras = extras_fn(t, y) if extras_fn else None
+        deltas = self.compute_transition_rates(state, extras)
+        return [deltas[c] for c in self.compartments]
 
-    def loss(self, params, observed_data):
-        sim = self.simulate(params)
-        if self.subset_indices is not None:
-            sim = sim[self.subset_indices]
-        if sim.shape != observed_data.shape:
-            return np.inf
-        return np.mean((sim - observed_data) ** 2)
 
-    def fit(self, data_subset, optimizer="BFGS"):
-        def objective(p):
-            return self.loss(p, data_subset)
+class NetworkModel:
+    def __init__(self, base_model, num_patches, network_matrix):
+        self.base_model = base_model
+        self.num_patches = num_patches
+        self.network = np.array(network_matrix)
+        self.all_compartments = [
+            f"{c}_{i}" for i in range(num_patches) for c in base_model.compartments
+        ]
 
-        res = minimize(
-            objective,
-            x0=self.params,
-            method=optimizer,
-            bounds=[(0, 5)] * len(self.params)
-        )
-        self.fitted_params = res.x
-        return res.x
+    def compute_force_of_infection(self, full_state):
+        lambdas = []
+        for i in range(self.num_patches):
+            force = 0
+            for j in range(self.num_patches):
+                I_j = full_state.get(f"I_{j}", 0)
+                N_j = sum(full_state.get(f"{c}_{j}", 0) for c in self.base_model.compartments)
+                if N_j > 0:
+                    force += self.network[i][j] * I_j / N_j
+            lambdas.append(force)
+        return lambdas
+
+    def simulate_discrete(self, y0_dict, t_range):
+        state = y0_dict.copy()
+        history = {k: [v] for k, v in state.items()}
+        for t in t_range[1:]:
+            new_state = state.copy()
+            lambdas = self.compute_force_of_infection(state)
+            for i in range(self.num_patches):
+                patch_state = {c: state[f"{c}_{i}"] for c in self.base_model.compartments}
+                extras = {"lambda_i": lambdas[i]}
+                deltas = self.base_model.compute_transition_rates(patch_state, extras)
+                for c, delta in deltas.items():
+                    key = f"{c}_{i}"
+                    new_state[key] += delta
+            state = {k: max(v, 0) for k, v in new_state.items()}
+            for k in state:
+                history[k].append(state[k])
+        return t_range, history
