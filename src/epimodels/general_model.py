@@ -11,6 +11,7 @@ from model import CompartmentalModel
 
 PLOT_DIR = "plots"
 os.makedirs(PLOT_DIR, exist_ok=True)
+np.random.seed(42)
 
 def simulate(model, y0, t_range):
     return odeint(model.ode_rhs, y0, t_range)
@@ -25,10 +26,12 @@ def subsample(t, data, ratio):
 
 def fit_model(model, t_sub, observed, initial_params, param_names, y0):
     def loss(p):
+        infected_idx = COMPARTMENTS.index("I")
+
         for i, name in enumerate(param_names):
             model.parameters[name] = p[i]
         sim = simulate(model, y0, t_sub)
-        return np.sum((sim[:, 1] - observed)**2)  # I compartment
+        return np.sum((sim[:, infected_idx] - observed)**2)  # I compartment
 
     results = {}
     t_full = np.linspace(0, T, T)
@@ -91,6 +94,8 @@ def plot_comparison(t_full, true_I, noisy_I, subsampled_t, subsampled_I, results
 def main():
     t = np.linspace(0, T, T)
     model = CompartmentalModel(COMPARTMENTS, PARAMS, TRANSITIONS)
+    infected_idx = COMPARTMENTS.index("I")
+
 
     # Use initial conditions from first patch
     patch_key = list(INIT_CONDITIONS.keys())[0]
@@ -99,8 +104,7 @@ def main():
 
     clean_sol = simulate(model, y0, t)
     noisy_data = add_noise(clean_sol, NOISE_STD)
-    noisy_I = noisy_data[:, 1]
-
+    noisy_I = noisy_data[:, infected_idx]
     # Subsample for fitting
     t_sub, I_sub, idx = subsample(t, noisy_I, SUBSET_RATIO)
 
