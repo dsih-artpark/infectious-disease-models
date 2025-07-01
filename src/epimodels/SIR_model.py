@@ -1,13 +1,17 @@
 import numpy as np
 from scipy.integrate import odeint
 from scipy.optimize import minimize
+import sys
 import matplotlib.pyplot as plt
 import random
 import os
 from model import CompartmentalModel, Population
 from config import cfg
 
-PLOT_DIR = "plots"
+MODEL_NAME = [k for k in cfg.keys() if k.endswith("_model")][0]
+MODEL_CFG = cfg[MODEL_NAME]
+
+PLOT_DIR = os.path.join("plots", MODEL_NAME)
 os.makedirs(PLOT_DIR, exist_ok=True)
 
 # MODEL = cfg["model_name"]
