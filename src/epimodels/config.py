@@ -13,11 +13,6 @@ CONFIG_PATH = os.path.join(os.path.dirname(__file__), "../../config.yaml")
 cfg = load_config(CONFIG_PATH)
 
 
-# def get_initial_state_dict(INI):
-#     """Flatten initial conditions for all patches into a dict."""
-#     return [INIT_CONDITIONS[c] for c in COMPARTMENTS]
-
-
 def setup_logging(log_file: str = None, level: int = logging.INFO) -> logging.Logger:
     """Set up basic logging configuration."""
     logger = logging.getLogger("epimodels")
