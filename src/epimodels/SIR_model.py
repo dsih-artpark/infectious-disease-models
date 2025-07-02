@@ -8,20 +8,23 @@ import os
 from model import CompartmentalModel, Population
 from config import cfg
 
-MODEL_NAME = [k for k in cfg.keys() if k.endswith("_model")][0]
+model_keys = [k for k in cfg.keys() if k.endswith("_model")]
+if len(model_keys) != 1:
+    raise ValueError(f"Expected exactly one model in config, found: {model_keys}")
+
+MODEL_NAME = model_keys[0]
 MODEL_CFG = cfg[MODEL_NAME]
 
 PLOT_DIR = os.path.join("plots", MODEL_NAME)
 os.makedirs(PLOT_DIR, exist_ok=True)
 
-# MODEL = cfg["model_name"]
 TIME = cfg["days"]
 NOISE_STD = cfg["noise_std"]
 SUBSET_RATIO = cfg["subset_ratio"]
 OPTIMIZERS = cfg["optimizers"]
 
-MODEL_CFG = cfg['SIR_model']
 PARAMS = MODEL_CFG["parameters"]
+param_names = list(PARAMS.keys())
 COMPARTMENTS = MODEL_CFG["compartments"]
 TRANSITIONS = []
 for k, expr in MODEL_CFG['transitions'].items():
@@ -77,24 +80,25 @@ subset_indices = np.sort(np.random.choice(range(TIME + 1), size=int((TIME + 1) *
 subset_t = time_points[subset_indices]
 subset_infected = noisy_data[subset_indices, COMPARTMENTS.index('I')]
 
-def loss_function(param_array, model, initial_conditions, target_t, target_data):
-    beta, gamma = param_array
-    model.parameters = {'beta': beta, 'gamma': gamma}
+def loss_function(param_array, model, initial_conditions, target_t, target_data, param_names):
+    model.parameters = dict(zip(param_names, param_array))
     sim = model.simulate(initial_conditions, target_t)
     sim_infected = np.array(sim)[:, COMPARTMENTS.index('I')]
     return np.mean((sim_infected - target_data) ** 2)
 
 # Fit using each optimizer 
 fitted_results = {}
+initial_guess = np.array([PARAMS[p] for p in param_names])
+
 for method in OPTIMIZERS:
     res = minimize(
         loss_function,
-        x0=np.array([0.2, 0.1]),
-        args=(model, INIT_CONDITIONS, subset_t, subset_infected),
+        x0=initial_guess,
+        args=(model, INIT_CONDITIONS, subset_t, subset_infected, param_names),
         method=method
     )
-    fitted_params = res.x
-    model.parameters = {'beta': fitted_params[0], 'gamma': fitted_params[1]}
+    fitted_params = dict(zip(param_names, res.x))
+    model.parameters = fitted_params
     fitted_sol = model.simulate(INIT_CONDITIONS, time_points)
     fitted_results[method] = {
         'params': fitted_params,
@@ -118,54 +122,15 @@ plt.grid()
 plt.tight_layout()
 plt.savefig(os.path.join(PLOT_DIR, "plot_comparison.png"))
 plt.show()
-
+plt.close()
 # Print final fitted parameters 
 print("\nFinal Fitted Parameters:")
 for method, result in fitted_results.items():
-    beta, gamma = result['params']
-    print(f"{method}: beta = {beta:.4f}, gamma = {gamma:.4f}")
+    param_str = ", ".join(f"{k} = {v:.4f}" for k, v in result['params'].items())
+    print(f"{method}: {param_str}")
 
 
 
-
-
-
-
-
-
-# def main():
-    # t = np.linspace(0, TIME, TIME)
-    # model = CompartmentalModel(COMPARTMENTS, PARAMS, TRANSITIONS)
-    # infected_idx = COMPARTMENTS.index("I")
-    
-    # y0 = [INIT_CONDITIONS[c] for c in COMPARTMENTS]
-
-    # clean_sol = simulate(model, y0, t)
-    # noisy_data = add_noise(clean_sol, NOISE_STD)
-    # noisy_I = noisy_data[:, infected_idx]
-    # # Subsample for fitting
-    # t_sub, I_sub, idx = subsample(t, noisy_I, SUBSET_RATIO)
-
-    # # Fit
-    # initial_guess = [model.parameters[k] for k in model.parameters]
-    # param_names = list(model.parameters.keys())
-    # fit_results = fit_model(model, t_sub, I_sub, initial_guess, param_names, y0)
-
-    # # Print fitted info
-    # for opt, res in fit_results.items():
-    #     print(f"\nOptimizer: {opt}")
-    #     print(f"Loss: {res['loss']:.4f}")
-    #     print("Estimated Parameters:")
-    #     for k, v in res["params"].items():
-    #         print(f"  {k}: {v:.4f}")
-
-    # # Plotting
-    # plot_simulation(t, clean_sol)
-    # plot_noisy(t, noisy_data)
-    # plot_comparison(t, clean_sol[:, 1], noisy_I, t_sub, I_sub, fit_results)
-
-# if __name__ == "__main__":
-#     main()
 
 
 
