@@ -60,7 +60,7 @@ plt.show()
 
 # Add noise 
 np.random.seed(42)
-noisy_data = true_data + np.random.normal(0, NOISE_STD, true_data.shape)
+noisy_data = model.add_noise(true_data, NOISE_STD)
 
 # Plot noisy data
 plt.figure(figsize=(10, 6))
@@ -123,6 +123,7 @@ plt.tight_layout()
 plt.savefig(os.path.join(PLOT_DIR, "plot_comparison.png"))
 plt.show()
 plt.close()
+
 # Print final fitted parameters 
 print("\nFinal Fitted Parameters:")
 for method, result in fitted_results.items():

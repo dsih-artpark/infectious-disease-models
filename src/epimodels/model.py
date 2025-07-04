@@ -1,4 +1,5 @@
 from scipy.integrate import odeint
+import numpy as np
 
 class Population:
     def __init__(self, total_population, compartments):
@@ -54,3 +55,7 @@ class CompartmentalModel:
         y0 = [initial_conditions[c] for c in self.compartments]
         sol = odeint(self.ode_rhs, y0, time_points, args=(extras_fn,))
         return sol
+
+    def add_noise(self, data, noise_std, seed=42):
+        np.random.seed(seed)
+        return data + np.random.normal(0, noise_std, data.shape)
