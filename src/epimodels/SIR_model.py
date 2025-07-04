@@ -1,12 +1,12 @@
 import numpy as np
 from scipy.integrate import odeint
 from scipy.optimize import minimize
-import sys
 import matplotlib.pyplot as plt
 import random
 import os
 from model import CompartmentalModel, Population
 from config import cfg
+from calibration import Calibrator
 
 model_keys = [k for k in cfg.keys() if k.endswith("_model")]
 if len(model_keys) != 1:
@@ -130,7 +130,10 @@ for method, result in fitted_results.items():
     param_str = ", ".join(f"{k} = {v:.4f}" for k, v in result['params'].items())
     print(f"{method}: {param_str}")
 
-os.makedirs("data", exist_ok=True)
+MODEL_NAME = model_keys[0]  
+DATA_DIR = os.path.join("data", MODEL_NAME)
+os.makedirs(DATA_DIR, exist_ok=True)
+
 np.savetxt("data/true_data.csv", true_data, delimiter=",")
 np.savetxt("data/noisy_data.csv", noisy_data, delimiter=",")
 np.savetxt("data/time_points.csv", time_points, delimiter=",")
