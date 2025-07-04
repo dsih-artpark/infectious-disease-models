@@ -130,8 +130,10 @@ for method, result in fitted_results.items():
     param_str = ", ".join(f"{k} = {v:.4f}" for k, v in result['params'].items())
     print(f"{method}: {param_str}")
 
-
-
+os.makedirs("data", exist_ok=True)
+np.savetxt("data/true_data.csv", true_data, delimiter=",")
+np.savetxt("data/noisy_data.csv", noisy_data, delimiter=",")
+np.savetxt("data/time_points.csv", time_points, delimiter=",")
 
 
 
