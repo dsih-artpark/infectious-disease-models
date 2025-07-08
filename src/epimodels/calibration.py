@@ -1,38 +1,42 @@
+# calibration.py
 import numpy as np
-import pandas as pd
 from scipy.optimize import minimize
 
 class Calibrator:
-    def __init__(self, model, compartments, time_points, true_data_path, noisy_data_path, subset_ratio):
+    def __init__(self, model, param_names, compartment='I'):
         self.model = model
-        self.compartments = compartments
-        self.t = time_points
-        self.true_data = pd.read_csv(true_data_path).values
-        self.noisy_data = pd.read_csv(noisy_data_path).values
-        self.subset_ratio = subset_ratio
-        self.results = {}
+        self.param_names = param_names
+        self.compartment = compartment
 
-        self.subset_indices = np.sort(
-            np.random.choice(range(len(self.t)), size=int(len(self.t) * self.subset_ratio), replace=False)
-        )
-        self.subset_t = self.t[self.subset_indices]
-        self.subset_I = self.noisy_data[self.subset_indices, self.compartments.index("I")]
+    def loss_function(self, param_array, initial_conditions, time_points, target_data, compartment_index):
+        self.model.parameters = dict(zip(self.param_names, param_array))
+        sim = self.model.simulate(initial_conditions, time_points)
+        sim_values = np.array(sim)[:, compartment_index]
+        return np.mean((sim_values - target_data) ** 2)
 
-    def loss_function(self, param_array):
-        param_names = list(self.model.parameters.keys())
-        self.model.parameters = dict(zip(param_names, param_array))
-        sim = self.model.simulate(self.model.initial_conditions, self.subset_t)
-        sim_I = np.array(sim)[:, self.compartments.index("I")]
-        return np.mean((sim_I - self.subset_I) ** 2)
+    def fit(
+        self, initial_conditions, full_time_points, subset_t, subset_data,
+        optimizers, compartments
+    ):
+        results = {}
+        initial_guess = np.array([self.model.parameters[p] for p in self.param_names])
+        bounds = [(0.0001, 1.0)] * len(self.param_names)
+        comp_index = compartments.index(self.compartment)
 
-    def fit(self, methods, x0):
-        for method in methods:
-            res = minimize(self.loss_function, x0=x0, method=method)
-            fitted_params = res.x
-            self.model.parameters = dict(zip(self.model.parameters.keys(), fitted_params))
-            fitted_traj = self.model.simulate(self.model.initial_conditions, self.t)
-            self.results[method] = {
+        for method in optimizers:
+            res = minimize(
+                self.loss_function,
+                x0=initial_guess,
+                args=(initial_conditions, subset_t, subset_data, comp_index),
+                method=method,
+                bounds=bounds if method in ['L-BFGS-B', 'TNC'] else None
+            )
+            fitted_params = dict(zip(self.param_names, res.x))
+            self.model.parameters = fitted_params
+            full_trajectory = np.array(self.model.simulate(initial_conditions, full_time_points))
+            results[method] = {
                 'params': fitted_params,
-                'trajectory': np.array(fitted_traj)
+                'trajectory': full_trajectory
             }
-        return self.results
+
+        return results

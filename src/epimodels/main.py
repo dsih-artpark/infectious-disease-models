@@ -49,30 +49,15 @@ subset_indices = np.sort(np.random.choice(range(TIME + 1), size=int((TIME + 1) *
 subset_t = time_points[subset_indices]
 subset_infected = noisy_data[subset_indices, COMPARTMENTS.index('I')]
 
-def loss_function(param_array, model, initial_conditions, target_t, target_data, param_names):
-    model.parameters = dict(zip(param_names, param_array))
-    sim = model.simulate(initial_conditions, target_t)
-    sim_infected = np.array(sim)[:, COMPARTMENTS.index('I')]
-    return np.mean((sim_infected - target_data) ** 2)
-
-# Fit using each optimizer 
-fitted_results = {}
-initial_guess = np.array([PARAMS[p] for p in param_names])
-
-for method in OPTIMIZERS:
-    res = minimize(
-        loss_function,
-        x0=initial_guess,
-        args=(model, INIT_CONDITIONS, subset_t, subset_infected, param_names),
-        method=method
-    )
-    fitted_params = dict(zip(param_names, res.x))
-    model.parameters = fitted_params
-    fitted_sol = model.simulate(INIT_CONDITIONS, time_points)
-    fitted_results[method] = {
-        'params': fitted_params,
-        'trajectory': np.array(fitted_sol)
-    }
+calibrator = Calibrator(model, param_names, compartment='I')
+fitted_results = calibrator.fit(
+    initial_conditions=INIT_CONDITIONS,
+    full_time_points=time_points,
+    subset_t=subset_t,
+    subset_data=subset_infected,
+    optimizers=OPTIMIZERS,
+    compartments=COMPARTMENTS
+)
 
 np.savetxt("data/true_data.csv", true_data, delimiter=",")
 np.savetxt("data/noisy_data.csv", noisy_data, delimiter=",")
