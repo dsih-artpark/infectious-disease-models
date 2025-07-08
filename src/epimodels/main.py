@@ -1,11 +1,11 @@
 import argparse
 import numpy as np
-from scipy.optimize import minimize
-import matplotlib.pyplot as plt
 import os
+from scipy.optimize import minimize
 from model import CompartmentalModel, Population
 from config import cfg
 from calibration import Calibrator
+from plotting import plot_results
 
 parser = argparse.ArgumentParser(description="Run simulation and calibration for a compartmental model.")
 parser.add_argument("--model", type=str, required=True, help="Model name as defined in config (e.g., SIR_model)")
@@ -13,10 +13,6 @@ args = parser.parse_args()
 MODEL_NAME = args.model
 
 MODEL_CFG = cfg[MODEL_NAME]
-
-PLOT_DIR = os.path.join("plots", MODEL_NAME)
-os.makedirs(PLOT_DIR, exist_ok=True)
-
 TIME = cfg["days"]
 NOISE_STD = cfg["noise_std"]
 SUBSET_RATIO = cfg["subset_ratio"]
@@ -34,46 +30,20 @@ for k, expr in MODEL_CFG['transitions'].items():
 INIT_CONDITIONS = MODEL_CFG["initial_conditions"]
 POPULATION = MODEL_CFG["population"]
 
+PLOT_DIR = os.path.join("plots", MODEL_NAME)
+DATA_DIR = os.path.join("data", MODEL_NAME)
+os.makedirs(PLOT_DIR, exist_ok=True)
+os.makedirs(DATA_DIR, exist_ok=True)
+
 time_points = np.linspace(0, TIME, TIME + 1)
 
-# Initialize model
 pop = Population(POPULATION, INIT_CONDITIONS)
 model = CompartmentalModel(COMPARTMENTS, PARAMS, TRANSITIONS, population=POPULATION)
 
-# Simulate model
-true_sol = model.simulate(INIT_CONDITIONS, time_points)
-true_data = np.array(true_sol)
+true_data = np.array(model.simulate(INIT_CONDITIONS, time_points))
 
-# Plot true trajectory
-plt.figure(figsize=(10, 6))
-for i, comp in enumerate(COMPARTMENTS):
-    plt.plot(time_points, true_data[:, i], label=f"{comp} (true)")
-plt.title("True Simulation of Compartments")
-plt.xlabel("Days")
-plt.ylabel("Population")
-plt.legend()
-plt.grid()
-plt.tight_layout()
-plt.savefig(os.path.join(PLOT_DIR, "plot_simulation.png"))
-plt.show()
-
-# Add noise 
 np.random.seed(42)
 noisy_data = model.add_noise(true_data, NOISE_STD)
-
-# Plot noisy data
-plt.figure(figsize=(10, 6))
-for i, comp in enumerate(COMPARTMENTS):
-    plt.plot(time_points, noisy_data[:, i], label=f"{comp} (noisy)", linestyle="--")
-plt.title("Noisy Data for All Compartments")
-plt.xlabel("Days")
-plt.ylabel("Population")
-plt.legend()
-plt.grid()
-plt.tight_layout()
-plt.savefig(os.path.join(PLOT_DIR, "plot_noisy.png"))
-plt.show()
-
 
 subset_indices = np.sort(np.random.choice(range(TIME + 1), size=int((TIME + 1) * SUBSET_RATIO), replace=False))
 subset_t = time_points[subset_indices]
@@ -104,40 +74,25 @@ for method in OPTIMIZERS:
         'trajectory': np.array(fitted_sol)
     }
 
-# Plot Infected: True vs Noisy Subset vs Fitted 
-plt.figure(figsize=(10, 6))
-plt.plot(time_points, true_data[:, COMPARTMENTS.index('I')], label="True Infected", linewidth=2)
-plt.scatter(subset_t, subset_infected, label="Noisy Subset", color="black", zorder=5)
-
-for method, result in fitted_results.items():
-    plt.plot(time_points, result['trajectory'][:, COMPARTMENTS.index('I')],
-             label=f"Fitted ({method})")
-
-plt.title("Infected Compartment: True vs Noisy Subset vs Fitted")
-plt.xlabel("Days")
-plt.ylabel("Population")
-plt.legend()
-plt.grid()
-plt.tight_layout()
-plt.savefig(os.path.join(PLOT_DIR, "plot_comparison.png"))
-plt.show()
-plt.close()
-
-# Print final fitted parameters 
-print("\nFinal Fitted Parameters:")
-for method, result in fitted_results.items():
-    param_str = ", ".join(f"{k} = {v:.4f}" for k, v in result['params'].items())
-    print(f"{method}: {param_str}")
-
-MODEL_NAME = args.model
-DATA_DIR = os.path.join("data", MODEL_NAME)
-os.makedirs(DATA_DIR, exist_ok=True)
-
 np.savetxt("data/true_data.csv", true_data, delimiter=",")
 np.savetxt("data/noisy_data.csv", noisy_data, delimiter=",")
 np.savetxt("data/time_points.csv", time_points, delimiter=",")
 
+plot_results(
+    time_points=time_points,
+    compartments=COMPARTMENTS,
+    true_data=true_data,
+    noisy_data=noisy_data,
+    subset_t=subset_t,
+    subset_infected=subset_infected,
+    fitted_results=fitted_results,
+    model_name=MODEL_NAME,
+    plot_dir=PLOT_DIR
+)
 
-
+print("\nFinal Fitted Parameters:")
+for method, result in fitted_results.items():
+    param_str = ", ".join(f"{k} = {v:.4f}" for k, v in result['params'].items())
+    print(f"{method}: {param_str}")
 
 
