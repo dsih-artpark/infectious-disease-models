@@ -32,7 +32,6 @@ class CompartmentalModel:
         local_env = {**state, **self.parameters, "N": self.population if self.population else max(sum(state.values()), 1e-8)}
         if extras:
             local_env.update(extras)
-        #local_env['N'] = max(sum(state.values()), 1e-8)
         local_env['N'] = self.population if self.population else max(sum(state.values()), 1e-8)
         deltas = {c: 0.0 for c in self.compartments}
         for tr in self.transitions:

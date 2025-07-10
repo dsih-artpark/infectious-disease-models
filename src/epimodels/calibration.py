@@ -1,4 +1,4 @@
-# calibration.py
+import emcee
 import numpy as np
 from scipy.optimize import minimize
 
@@ -13,7 +13,45 @@ class Calibrator:
         sim = self.model.simulate(initial_conditions, time_points)
         sim_values = np.array(sim)[:, compartment_index]
         return np.mean((sim_values - target_data) ** 2)
+    
+    @staticmethod
+    def log_prior(theta, param_names):
+        param_dict = dict(zip(param_names, theta))
+        for key, val in param_dict.items():
+            if val <= 0 or val > 5:  # uniform prior bounds
+                return -np.inf
+        return 0.0  
+    
+    @staticmethod
+    def log_likelihood(theta, param_names, model, I_obs, t_obs, extras_fn):
+        param_dict = dict(zip(param_names, theta))
+        model.set_parameters(param_dict)
+        try:
+            sim_data = model.simulate(t_obs, extras_fn)
+            I_sim = sim_data['I']
+            if np.any(np.isnan(I_sim)) or np.any(I_sim < 0):
+                return -np.inf
+            sigma = 5.0  # fixed noise level
+            return -0.5 * np.sum((I_obs - I_sim)**2 / sigma**2)
+        except:
+            return -np.inf
+    
+    def log_posterior(theta, param_names, model, I_obs, t_obs, extras_fn):
+        lp = log_prior(theta, param_names)
+        if not np.isfinite(lp):
+            return -np.inf
+        return lp + log_likelihood(theta, param_names, model, I_obs, t_obs, extras_fn)
 
+    def run_mcmc(model, param_names, I_obs, t_obs, extras_fn, n_walkers=32, n_steps=5000):
+        ndim = len(param_names)
+        initial = np.array([model.params[k] for k in param_names])
+        pos = initial + 1e-2 * np.random.randn(n_walkers, ndim)
+
+        sampler = emcee.EnsembleSampler(n_walkers, ndim, log_posterior, 
+                                    args=(param_names, model, I_obs, t_obs, extras_fn))
+        sampler.run_mcmc(pos, n_steps, progress=True)
+        return sampler
+    
     def fit(
         self, initial_conditions, full_time_points, subset_t, subset_data,
         optimizers, compartments
