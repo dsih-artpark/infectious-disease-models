@@ -36,11 +36,12 @@ class Calibrator:
         except:
             return -np.inf
     
-    def log_posterior(theta, param_names, model, I_obs, t_obs, extras_fn):
-        lp = log_prior(theta, param_names)
+    @classmethod
+    def log_posterior(cls, theta, param_names, model, I_obs, t_obs, extras_fn):
+        lp = cls.log_prior(theta, param_names)
         if not np.isfinite(lp):
             return -np.inf
-        return lp + log_likelihood(theta, param_names, model, I_obs, t_obs, extras_fn)
+        return lp + cls.log_likelihood(theta, param_names, model, I_obs, t_obs, extras_fn)
 
     def run_mcmc(model, param_names, I_obs, t_obs, extras_fn, n_walkers=32, n_steps=5000):
         ndim = len(param_names)
