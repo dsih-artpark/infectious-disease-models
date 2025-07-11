@@ -43,12 +43,13 @@ class Calibrator:
             return -np.inf
         return lp + cls.log_likelihood(theta, param_names, model, I_obs, t_obs, extras_fn)
 
-    def run_mcmc(model, param_names, I_obs, t_obs, extras_fn, n_walkers=32, n_steps=5000):
+    @classmethod
+    def run_mcmc(cls, model, param_names, I_obs, t_obs, extras_fn, n_walkers=32, n_steps=5000):
         ndim = len(param_names)
         initial = np.array([model.params[k] for k in param_names])
         pos = initial + 1e-2 * np.random.randn(n_walkers, ndim)
 
-        sampler = emcee.EnsembleSampler(n_walkers, ndim, log_posterior, 
+        sampler = emcee.EnsembleSampler(n_walkers, ndim, cls.log_posterior, 
                                     args=(param_names, model, I_obs, t_obs, extras_fn))
         sampler.run_mcmc(pos, n_steps, progress=True)
         return sampler
