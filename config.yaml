@@ -1,58 +1,40 @@
 created: '2025-06-05'
-data:
-  sources:
-  - description: Synthetic binary classification dataset generated using sklearn.
-    format: generated
-    id: synthetic_data
-    path: N/A - synthetic data generated within script
 metadata:
   author: Shreya Mukherjee
   description: A modular and reproducible framework for simulating, fitting and analyzing
     compartmental epidemic models
-  package_name: epimodels
+  package_name: epimodels 
   project_name: Epidemic Modeling Framework
   project_slug: modeling-framework
   python_version: '3.11'
-  tags:
-  - example
-  - logistic_regression
-  - synthetic_data
   version: v0.1.0
-models:
-- description: Example Logistic regression on synthetic dataset.
-  id: logistic-regression-example-v0.1.0
-  parameters:
-    max_iter: 100
-    n_samples: 1000
-    random_seed: 42
-    solver: lbfgs
-    test_size: 0.2
-  script: src/epimodels/models/logistic_regression.py
-notes:
-  changes_from_previous_version: 'Summarise key differences or parameter updates compared
-    to previous versions.
 
-    '
-  known_issues: 'List any known limitations, bugs, or data quality concerns.
+days: 160
+noise_std: 5.0
+subset_ratio: 0.7
+optimizers: [Nelder-Mead, BFGS, L-BFGS-B]
 
-    '
-  next_steps: 'Outline possible follow-up experiments, analyses, or improvements.
+SIR_model:
+  compartments: [S, I, R]
+  parameters: {beta: 0.3, gamma: 0.1, mu: 0.01}
+  transitions: {"S -> I": "beta * S * I / N", "I -> R": "gamma * I", "-> S": "mu * N", "S ->": "mu * S", "I ->": "mu * I", "R ->": "mu * R"}
+  population: 1000
+  initial_conditions: {S: 990, I: 10, R: 0}
+  assunptions: The population is closed (no births or deaths). The disease is transmitted through direct contact. Immunity is permanent after recovery.'
+ 
+SEIR_model:
+ compartments: [S, E, I, R] 
+ parameters: {beta: 0.3, sigma: 0.1, gamma: 0.1, mu: 0.01}
+ transitions: {"S -> E": "beta * S * I / N", "E -> I": "sigma * E", "I -> R": "gamma * I", "-> S": "mu * N", "S ->": "mu * S", "E ->": "mu * E", "I ->": "mu * I", "R ->": "mu * R"}
+ population: 1000
+ initial_conditions: {S: 990, E: 0, I: 10, R: 0}
+ assumptions: The population is closed (no births or deaths). The disease has an exposed stage before becoming infectious. Immunity is permanent after recovery.
 
-    '
-  purpose: 'Briefly state the main goal or hypothesis behind this run or experiment.
+SIS_model:
+  compartments: [S, I]
+  parameters: {beta: 0.3, gamma: 0.1, mu: 0.01}
+  transitions: {"S -> I": "beta * S * I / N", "I -> S": "gamma * I", "-> S": "mu * N", "S ->": "mu * S", "I ->": "mu * I"}
+  population: 1000
+  initial_conditions: {S: 990, I: 10}
+  assumptions: The population is closed (no births or deaths). The disease does not confer permanent immunity. After recovery, individuals return to the susceptible class (no immunity).
 
-    '
-outputs:
-  base_dir: outputs
-  models:
-  - files:
-    - description: Logistic regression model coefficients.
-      format: csv
-      id: model_coefficients
-      path: outputs/logistic-regression-example-v0.1.0/model_coefficients.csv
-    - description: Metadata and parameters for this model run.
-      format: yaml
-      id: run_metadata
-      path: outputs/logistic-regression-example-v0.1.0/run_metadata.yaml
-    id: logistic-regression-example-v0.1.0
-random_seed: 42
