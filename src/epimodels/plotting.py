@@ -51,3 +51,31 @@ def plot_results(time_points, compartments, true_data, noisy_data, subset_t, sub
     plt.savefig(os.path.join(plot_dir, "plot_comparison.png"))
     plt.show()
     plt.close()
+
+    # Plot 4: Visualize Estimated vs True Parameters
+    def plot_parameter_estimates(true_params, fitted_results, mcmc_sampler=None, param_names=None):
+        methods = list(fitted_results.keys())
+        n_params = len(param_names)
+        fig, axes = plt.subplots(nrows=1, ncols=n_params, figsize=(5 * n_params, 5))
+
+        for i, pname in enumerate(param_names):
+            ax = axes[i]
+            true_val = true_params[pname]
+
+            # Plot point estimates from optimization
+            estimates = [fitted_results[m]['params'][pname] for m in methods]
+            ax.bar(methods, estimates, alpha=0.6, label='Estimated')
+
+            # MCMC posterior mean
+            if mcmc_sampler is not None:
+                mcmc_estimates = mcmc_sampler.get_chain(discard=1000, flat=True)
+                mcmc_mean = np.mean(mcmc_estimates[:, i])
+                ax.bar('MCMC', mcmc_mean, color='orange', label='MCMC Mean')
+
+            ax.axhline(true_val, color='red', linestyle='--', label='True')
+            ax.set_title(f"Parameter: {pname}")
+            ax.set_ylabel('Value')
+            ax.legend()
+
+        plt.tight_layout()
+        plt.show()
