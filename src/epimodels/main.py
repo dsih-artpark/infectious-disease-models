@@ -72,7 +72,9 @@ plot_results(
     subset_infected=subset_infected,
     fitted_results=fitted_results,
     model_name=MODEL_NAME,
-    plot_dir=PLOT_DIR
+    plot_dir=PLOT_DIR,
+    true_params=PARAMS,
+    param_names=param_names
 )
 
 print("\nFinal Fitted Parameters:")

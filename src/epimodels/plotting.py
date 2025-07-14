@@ -2,7 +2,7 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 
-def plot_results(time_points, compartments, true_data, noisy_data, subset_t, subset_infected, fitted_results, model_name, plot_dir):
+def plot_results(time_points, compartments, true_data, noisy_data, subset_t, subset_infected, fitted_results, model_name, plot_dir, true_params, param_names):
     os.makedirs(plot_dir, exist_ok=True)
 
     # Plot 1: True simulation
@@ -78,4 +78,7 @@ def plot_results(time_points, compartments, true_data, noisy_data, subset_t, sub
             ax.legend()
 
         plt.tight_layout()
+        plt.savefig(os.path.join(plot_dir, "parameter_estimation.png"))
         plt.show()
+        plt.close()
+    plot_parameter_estimates(true_params, fitted_results, param_names=param_names)
