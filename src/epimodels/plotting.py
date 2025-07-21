@@ -1,5 +1,6 @@
 import os
 import matplotlib.pyplot as plt
+import corner 
 import numpy as np
 
 def plot_results(time_points, compartments, true_data, noisy_data, subset_t, subset_infected, fitted_results, model_name, plot_dir, true_params, param_names, mcmc_sampler=None):
@@ -82,3 +83,12 @@ def plot_results(time_points, compartments, true_data, noisy_data, subset_t, sub
         plt.show()
         plt.close()
     
+    # Plot 5: Corner plot from MCMC samples
+    if mcmc_sampler is not None:
+        samples = mcmc_sampler.get_chain(discard=100, flat=True)
+        if samples.shape[0] > samples.shape[1]:  # Check: more samples than dimensions
+            fig = corner.corner(samples, labels=param_names)
+            save_path = os.path.join(plot_dir, "mcmc_corner_plot.png")
+            fig.savefig(save_path, dpi=300)
+            plt.show()
+            plt.close(fig)

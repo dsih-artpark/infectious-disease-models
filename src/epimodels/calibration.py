@@ -29,11 +29,12 @@ class Calibrator:
         try:
             sim_data = model.simulate(extras_fn['initial_conditions'], t_obs)
             I_sim = sim_data[:, extras_fn['compartment_index']]
-            if np.any(np.isnan(I_sim)) or np.any(I_sim < 0):
+            if np.any(np.isnan(I_sim)) or np.any(I_sim < 0) or np.any(I_sim > 1e6):
                 return -np.inf
             sigma = extras_fn.get('sigma', 5.0)
             return -0.5 * np.sum((I_obs - I_sim)**2 / sigma**2)
-        except:
+        except Exception as e:
+            print(f"[log_likelihood error] Params: {param_dict} -> {e}")
             return -np.inf
     
     @classmethod
@@ -44,7 +45,7 @@ class Calibrator:
         return lp + cls.log_likelihood(theta, param_names, model, I_obs, t_obs, extras_fn)
 
     @classmethod
-    def run_mcmc(cls, model, param_names, I_obs, t_obs, extras_fn, n_walkers=32, n_steps=5000):
+    def run_mcmc(cls, model, param_names, I_obs, t_obs, extras_fn, n_walkers=32, n_steps=500):
         ndim = len(param_names)
         initial = np.array([model.parameters[k] for k in param_names])
         pos = initial + 1e-2 * np.random.randn(n_walkers, ndim)

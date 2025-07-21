@@ -1,8 +1,8 @@
 import argparse
-import corner
-import matplotlib.pyplot as plt
-import numpy as np
 import os
+import numpy as np
+import matplotlib.pyplot as plt
+import corner
 from scipy.optimize import minimize
 from model import CompartmentalModel, Population
 from config import cfg
@@ -80,13 +80,6 @@ sampler = Calibrator.run_mcmc(
     extras_fn=extras_fn
 )
 
-
-
-
-samples = sampler.get_chain(discard=1000, flat=True)
-fig = corner.corner(samples, labels=param_names)
-fig.savefig("mcmc_corner_plot.png", dpi=300)
-plt.show()
 
 
 plot_results(
