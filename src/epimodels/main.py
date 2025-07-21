@@ -1,4 +1,6 @@
 import argparse
+import corner
+import matplotlib.pyplot as plt
 import numpy as np
 import os
 from scipy.optimize import minimize
@@ -63,6 +65,30 @@ np.savetxt("data/true_data.csv", true_data, delimiter=",")
 np.savetxt("data/noisy_data.csv", noisy_data, delimiter=",")
 np.savetxt("data/time_points.csv", time_points, delimiter=",")
 
+
+extras_fn = {
+    'initial_conditions': INIT_CONDITIONS,
+    'compartment_index': COMPARTMENTS.index('I'),
+    'sigma': 5.0
+}
+
+sampler = Calibrator.run_mcmc(
+    model=model,
+    param_names=param_names,
+    I_obs=subset_infected,
+    t_obs=subset_t,
+    extras_fn=extras_fn
+)
+
+
+
+
+samples = sampler.get_chain(discard=1000, flat=True)
+fig = corner.corner(samples, labels=param_names)
+fig.savefig("mcmc_corner_plot.png", dpi=300)
+plt.show()
+
+
 plot_results(
     time_points=time_points,
     compartments=COMPARTMENTS,
@@ -74,7 +100,8 @@ plot_results(
     model_name=MODEL_NAME,
     plot_dir=PLOT_DIR,
     true_params=PARAMS,
-    param_names=param_names
+    param_names=param_names,
+    mcmc_sampler=sampler
 )
 
 print("\nFinal Fitted Parameters:")

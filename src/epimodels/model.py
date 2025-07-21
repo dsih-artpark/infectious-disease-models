@@ -27,7 +27,10 @@ class CompartmentalModel:
         self.parameters = parameters
         self.transitions = transitions
         self.population = population
-        
+    
+    def set_parameters(self, new_params):
+        self.parameters.update(new_params)
+                               
     def compute_transition_rates(self, state, extras=None):
         local_env = {**state, **self.parameters, "N": self.population if self.population else max(sum(state.values()), 1e-8)}
         if extras:

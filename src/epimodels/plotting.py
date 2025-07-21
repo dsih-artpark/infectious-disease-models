@@ -2,7 +2,7 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 
-def plot_results(time_points, compartments, true_data, noisy_data, subset_t, subset_infected, fitted_results, model_name, plot_dir, true_params, param_names):
+def plot_results(time_points, compartments, true_data, noisy_data, subset_t, subset_infected, fitted_results, model_name, plot_dir, true_params, param_names, mcmc_sampler=None):
     os.makedirs(plot_dir, exist_ok=True)
 
     # Plot 1: True simulation
@@ -53,13 +53,13 @@ def plot_results(time_points, compartments, true_data, noisy_data, subset_t, sub
     plt.close()
 
     # Plot 4: Visualize Estimated vs True Parameters
-    def plot_parameter_estimates(true_params, fitted_results, mcmc_sampler=None, param_names=None):
+    if true_params is not None and param_names is not None:
         methods = list(fitted_results.keys())
         n_params = len(param_names)
-        fig, axes = plt.subplots(nrows=1, ncols=n_params, figsize=(5 * n_params, 5))
+        fig, axes = plt.subplots(nrows=1, ncols=n_params, figsize=(5 * n_params, 5), squeeze=False)
 
-        for i, pname in enumerate(param_names):
-            ax = axes[i]
+        for idx, pname in enumerate(param_names):
+            ax = axes[0][idx]
             true_val = true_params[pname]
 
             # Plot point estimates from optimization
@@ -68,9 +68,9 @@ def plot_results(time_points, compartments, true_data, noisy_data, subset_t, sub
 
             # MCMC posterior mean
             if mcmc_sampler is not None:
-                mcmc_estimates = mcmc_sampler.get_chain(discard=1000, flat=True)
-                mcmc_mean = np.mean(mcmc_estimates[:, i])
-                ax.bar('MCMC', mcmc_mean, color='orange', label='MCMC Mean')
+                chain = mcmc_sampler.get_chain(discard=1000, flat=True)
+                mcmc_mean = np.mean(chain[:, idx])
+                ax.bar("MCMC Mean", mcmc_mean, color='orange', label='MCMC Mean')
 
             ax.axhline(true_val, color='red', linestyle='--', label='True')
             ax.set_title(f"Parameter: {pname}")
@@ -81,4 +81,4 @@ def plot_results(time_points, compartments, true_data, noisy_data, subset_t, sub
         plt.savefig(os.path.join(plot_dir, "parameter_estimation.png"))
         plt.show()
         plt.close()
-    plot_parameter_estimates(true_params, fitted_results, param_names=param_names)
+    

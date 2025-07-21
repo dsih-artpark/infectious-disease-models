@@ -27,11 +27,11 @@ class Calibrator:
         param_dict = dict(zip(param_names, theta))
         model.set_parameters(param_dict)
         try:
-            sim_data = model.simulate(t_obs, extras_fn)
-            I_sim = sim_data['I']
+            sim_data = model.simulate(extras_fn['initial_conditions'], t_obs)
+            I_sim = sim_data[:, extras_fn['compartment_index']]
             if np.any(np.isnan(I_sim)) or np.any(I_sim < 0):
                 return -np.inf
-            sigma = 5.0  # fixed noise level
+            sigma = extras_fn.get('sigma', 5.0)
             return -0.5 * np.sum((I_obs - I_sim)**2 / sigma**2)
         except:
             return -np.inf
@@ -46,7 +46,7 @@ class Calibrator:
     @classmethod
     def run_mcmc(cls, model, param_names, I_obs, t_obs, extras_fn, n_walkers=32, n_steps=5000):
         ndim = len(param_names)
-        initial = np.array([model.params[k] for k in param_names])
+        initial = np.array([model.parameters[k] for k in param_names])
         pos = initial + 1e-2 * np.random.randn(n_walkers, ndim)
 
         sampler = emcee.EnsembleSampler(n_walkers, ndim, cls.log_posterior, 
@@ -80,3 +80,5 @@ class Calibrator:
             }
 
         return results
+
+
