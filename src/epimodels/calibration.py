@@ -24,7 +24,7 @@ class Calibrator:
     def log_prior(theta, param_names):
         param_dict = dict(zip(param_names, theta))
         for key, val in param_dict.items():
-            if val <= 0 or val > 5:  # uniform prior bounds
+            if val < 1e-5 or val > 5:  # uniform prior bounds
                 return -np.inf
         return 0.0  
     
