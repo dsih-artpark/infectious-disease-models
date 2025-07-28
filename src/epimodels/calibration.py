@@ -10,9 +10,15 @@ class Calibrator:
 
     def loss_function(self, param_array, initial_conditions, time_points, target_data, compartment_index):
         self.model.parameters = dict(zip(self.param_names, param_array))
-        sim = self.model.simulate(initial_conditions, time_points)
-        sim_values = np.array(sim)[:, compartment_index]
-        return np.mean((sim_values - target_data) ** 2)
+        try:
+            sim = self.model.simulate(initial_conditions, time_points)
+            sim_values = np.array(sim)[:, compartment_index]
+            if np.any(np.isnan(sim_values)) or np.any(sim_values > 1e6):
+                return 1e10
+            return np.mean((sim_values - target_data) ** 2)
+        except Exception as e:
+            print(f"[Loss Function Error] {e}")
+            return 1e10
     
     @staticmethod
     def log_prior(theta, param_names):
@@ -30,6 +36,7 @@ class Calibrator:
             sim_data = model.simulate(extras_fn['initial_conditions'], t_obs)
             I_sim = sim_data[:, extras_fn['compartment_index']]
             if np.any(np.isnan(I_sim)) or np.any(I_sim < 0) or np.any(I_sim > 1e6):
+                print(f"[Sim failure] I_sim range: {I_sim.min()} - {I_sim.max()}")
                 return -np.inf
             sigma = extras_fn.get('sigma', 5.0)
             return -0.5 * np.sum((I_obs - I_sim)**2 / sigma**2)
@@ -48,7 +55,7 @@ class Calibrator:
     def run_mcmc(cls, model, param_names, I_obs, t_obs, extras_fn, n_walkers=32, n_steps=500):
         ndim = len(param_names)
         initial = np.array([model.parameters[k] for k in param_names])
-        pos = initial + 1e-2 * np.random.randn(n_walkers, ndim)
+        pos = np.abs(initial + 1e-2 * np.random.randn(n_walkers, ndim))
 
         sampler = emcee.EnsembleSampler(n_walkers, ndim, cls.log_posterior, 
                                     args=(param_names, model, I_obs, t_obs, extras_fn))

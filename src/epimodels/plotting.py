@@ -85,10 +85,21 @@ def plot_results(time_points, compartments, true_data, noisy_data, subset_t, sub
     
     # Plot 5: Corner plot from MCMC samples
     if mcmc_sampler is not None:
-        samples = mcmc_sampler.get_chain(discard=100, flat=True)
-        if samples.shape[0] > samples.shape[1]:  # Check: more samples than dimensions
-            fig = corner.corner(samples, labels=param_names)
-            save_path = os.path.join(plot_dir, "mcmc_corner_plot.png")
-            fig.savefig(save_path, dpi=300)
-            plt.show()
-            plt.close(fig)
+        try:
+            samples = mcmc_sampler.get_chain(discard=100, flat=True)
+            print("MCMC samples shape:", samples.shape)
+            if samples.size == 0:
+                print("[Warning] MCMC samples are empty after discarding burn-in. Skipping corner plot.")
+            elif np.any(np.isnan(samples)) or np.any(~np.isfinite(samples)):
+                print("[Warning] MCMC samples contain NaN or inf. Skipping corner plot.")
+            elif samples.shape[0] <= samples.shape[1]:
+                print("[Warning] Not enough MCMC samples to make a corner plot.")
+            else:
+                # if samples.shape[0] > samples.shape[1]:  # Check: more samples than dimensions
+                fig = corner.corner(samples, labels=param_names)
+                save_path = os.path.join(plot_dir, "mcmc_corner_plot.png")
+                fig.savefig(save_path, dpi=300)
+                plt.show()
+                plt.close(fig)
+        except Exception as e:
+            print(f"[Error] Failed to generate MCMC plot: {e}")
