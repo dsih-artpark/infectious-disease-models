@@ -69,7 +69,7 @@ def plot_results(time_points, compartments, true_data, noisy_data, subset_t, sub
 
             # MCMC posterior mean
             if mcmc_sampler is not None:
-                chain = mcmc_sampler.get_chain(discard=1000, flat=True)
+                chain = mcmc_sampler.get_chain(discard=100, flat=True)
                 valid_values = chain[:, idx][np.isfinite(chain[:, idx])]
                 if valid_values.size == 0:
                     print(f"Warning: No valid MCMC samples for parameter {param_names[idx]}")
