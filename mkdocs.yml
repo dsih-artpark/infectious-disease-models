@@ -1,0 +1,23 @@
+site_name: Epidemic Modeling Framework
+theme:
+  name: material
+
+nav:
+  - Home: index.md
+  - Getting Started:
+      - Installation: install.md
+      - Usage: usage.md
+  - Architecture: architecture.md
+  - Configuration: config.md
+  - Simulation: simulation.md
+  - Noise Injection: noise.md
+  - Parameter Fitting: fitting.md
+  - MCMC Calibration: mcmc.md
+  - Plotting & Results: results.md
+  - Future Work: future.md
+
+markdown_extensions:
+  - codehilite
+  - admonition
+  - toc:
+      permalink: true
