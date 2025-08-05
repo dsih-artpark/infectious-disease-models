@@ -21,3 +21,7 @@ markdown_extensions:
   - admonition
   - toc:
       permalink: true
+
+plugins:
+  - search
+  - mkdocs-material
