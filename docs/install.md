@@ -1,6 +1,16 @@
 # Installation
 
-1. Clone the repository:
-   ```bash
-   git clone <repo_url>
-   cd <repo_folder>
+### Requirements
+
+- Python 3.8+
+- pip
+- Virtual environment tool (optional but recommended)
+
+### Setup Instructions
+
+```bash
+# Clone the repository
+git clone https://github.com/dsih-artpark/infectious-disease-models.git
+cd modeling-framework
+
+# Create and activate virtual environment
