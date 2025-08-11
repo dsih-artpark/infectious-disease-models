@@ -700,9 +700,27 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#recommended-directory-layout-for-results" class="md-nav__link">
+  <a href="#data-files-csv" class="md-nav__link">
     <span class="md-ellipsis">
-      Recommended directory layout for results
+      Data files (CSV)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#plots-png" class="md-nav__link">
+    <span class="md-ellipsis">
+      Plots (PNG)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recommended-directory-layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      Recommended directory layout
     </span>
   </a>
   
@@ -867,9 +885,27 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#recommended-directory-layout-for-results" class="md-nav__link">
+  <a href="#data-files-csv" class="md-nav__link">
     <span class="md-ellipsis">
-      Recommended directory layout for results
+      Data files (CSV)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#plots-png" class="md-nav__link">
+    <span class="md-ellipsis">
+      Plots (PNG)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recommended-directory-layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      Recommended directory layout
     </span>
   </a>
   
@@ -892,23 +928,37 @@
 
 
 <h1 id="outputs">Outputs<a class="headerlink" href="#outputs" title="Permanent link">&para;</a></h1>
-<p>The framework produces:
-- Clean simulation trajectories (<code>clean_{model}.csv</code>)
-- Noisy observed trajectories (<code>noisy_{model}.csv</code>)
-- Sampled observation points used for fitting (<code>sampled_obs_{model}.csv</code>)
-- Report with fitted parameter estimates for each optimizer (<code>fit_results.json</code>)
-- Plot images: trajectories, loss landscape, posterior corner plots.</p>
-<h2 id="recommended-directory-layout-for-results">Recommended directory layout for results<a class="headerlink" href="#recommended-directory-layout-for-results" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>results/
-  ├─ SIR_model/
-  │   ├─ clean_SIR.csv
-  │   ├─ noisy_SIR.csv
-  │   ├─ sampled_obs_SIR.csv
-  │   ├─ fit_results.json
-  │   ├─ plots/
-  │   │   ├─ trajectories.png
-  │   │   ├─ loss_landscape.png
-  │   │   └─ corner.png
+<p>The framework produces:</p>
+<h2 id="data-files-csv">Data files (CSV)<a class="headerlink" href="#data-files-csv" title="Permanent link">&para;</a></h2>
+<p>Located in <code>data/&lt;model_name&gt;/</code>:</p>
+<ul>
+<li><code>true_data.csv</code> — clean simulation trajectories</li>
+<li><code>noisy_data.csv</code> — noisy observed trajectories</li>
+<li><code>time_points.csv</code> — sampled observation points used for fitting</li>
+</ul>
+<h2 id="plots-png">Plots (PNG)<a class="headerlink" href="#plots-png" title="Permanent link">&para;</a></h2>
+<p>Located in <code>plots/&lt;model_name&gt;/</code>:</p>
+<ul>
+<li><code>plot_simulation.png</code> — clean trajectories of all compartments</li>
+<li><code>plot_noisy.png</code> — noisy simulated data</li>
+<li><code>plot_comparison.png</code> — fitted vs. true trajectories</li>
+<li><code>parameter_estimation.png</code> — fitted parameter summary</li>
+<li><code>mcmc_corner_plot.png</code> — posterior distributions (if MCMC is run)</li>
+</ul>
+<h2 id="recommended-directory-layout">Recommended directory layout<a class="headerlink" href="#recommended-directory-layout" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>plots/
+  └─ SIR_model/
+      ├─ plot_simulation.png
+      ├─ plot_noisy.png
+      ├─ plot_comparison.png
+      ├─ parameter_estimation.png
+      └─ mcmc_corner_plot.png
+
+data/
+  └─ SIR_model/
+      ├─ true_data.csv
+      ├─ noisy_data.csv
+      └─ time_points.csv
 </code></pre></div>
 
 
