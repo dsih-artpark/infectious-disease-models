@@ -18,10 +18,11 @@ Define YAML → Generate ODEs → Simulate → Add Noise → Subset → Fit Para
 
 ## CLI / Script Example
 
-Run a script that loads the YAML and executes the pipeline (pseudocode):
+Run a specific model (defined in your YAML configuration) by name:
 
 ```bash
-python run_model.py --config my_model.yml --out results/
+python main.py --model SIR_model
 ```
 
-The generated `results/` will contain fitted parameters, plots, and logs.
+After running, you’ll find all outputs in the `plots/<model_name>/` folder.
+
