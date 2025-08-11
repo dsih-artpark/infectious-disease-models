@@ -9,18 +9,22 @@
       
       
       
+        <link rel="prev" href="../noise_injection/">
       
       
-      <link rel="icon" href="/assets/images/favicon.png">
+        <link rel="next" href="../../features/extensibility/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.16">
     
     
       
-        <title>Generalized Compartmental Modeling Framework</title>
+        <title>Parameter Fitting - Generalized Compartmental Modeling Framework</title>
       
     
     
-      <link rel="stylesheet" href="/assets/stylesheets/main.7e37652d.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.7e37652d.min.css">
       
       
 
@@ -39,7 +43,7 @@
       
     
     
-    <script>__md_scope=new URL("/",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -57,6 +61,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#parameter-fitting" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -67,7 +76,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="/." title="Generalized Compartmental Modeling Framework" class="md-header__button md-logo" aria-label="Generalized Compartmental Modeling Framework" data-md-component="logo">
+    <a href="../.." title="Generalized Compartmental Modeling Framework" class="md-header__button md-logo" aria-label="Generalized Compartmental Modeling Framework" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -87,7 +96,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              
+              Parameter Fitting
             
           </span>
         </div>
@@ -162,7 +171,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="/." class="md-tabs__link">
+      <a href="../.." class="md-tabs__link">
         
   
   
@@ -183,7 +192,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="/configuration/yaml_config.md" class="md-tabs__link">
+        <a href="../../configuration/yaml_config.md" class="md-tabs__link">
           
   
   
@@ -199,11 +208,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="/usage/workflow/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../workflow/" class="md-tabs__link">
           
   
   
@@ -223,7 +234,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="/features/extensibility/" class="md-tabs__link">
+        <a href="../../features/extensibility/" class="md-tabs__link">
           
   
   
@@ -243,7 +254,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="/debugging/issues_encountered/" class="md-tabs__link">
+        <a href="../../debugging/issues_encountered/" class="md-tabs__link">
           
   
   
@@ -261,7 +272,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="/references/" class="md-tabs__link">
+      <a href="../../references/" class="md-tabs__link">
         
   
   
@@ -296,7 +307,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="/." title="Generalized Compartmental Modeling Framework" class="md-nav__button md-logo" aria-label="Generalized Compartmental Modeling Framework" data-md-component="logo">
+    <a href="../.." title="Generalized Compartmental Modeling Framework" class="md-nav__button md-logo" aria-label="Generalized Compartmental Modeling Framework" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -314,7 +325,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/." class="md-nav__link">
+      <a href="../.." class="md-nav__link">
         
   
   
@@ -377,7 +388,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/configuration/yaml_config.md" class="md-nav__link">
+      <a href="../../configuration/yaml_config.md" class="md-nav__link">
         
   
   
@@ -404,24 +415,29 @@
       
   
   
+    
   
   
+  
     
     
     
     
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
             
   
   
@@ -434,7 +450,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             Usage
@@ -448,7 +464,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/usage/workflow/" class="md-nav__link">
+      <a href="../workflow/" class="md-nav__link">
         
   
   
@@ -471,7 +487,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/usage/simulation/" class="md-nav__link">
+      <a href="../simulation/" class="md-nav__link">
         
   
   
@@ -494,7 +510,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/usage/noise_injection/" class="md-nav__link">
+      <a href="../noise_injection/" class="md-nav__link">
         
   
   
@@ -514,10 +530,32 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="/usage/parameter_fitting/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Parameter Fitting
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -528,6 +566,62 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#loss-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      Loss function
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deterministic-optimizers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Deterministic optimizers
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#basin-hopping" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basin-hopping
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mcmc-emcee" class="md-nav__link">
+    <span class="md-ellipsis">
+      MCMC (emcee)
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -588,7 +682,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/features/extensibility/" class="md-nav__link">
+      <a href="../../features/extensibility/" class="md-nav__link">
         
   
   
@@ -611,7 +705,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/features/advanced_features/" class="md-nav__link">
+      <a href="../../features/advanced_features/" class="md-nav__link">
         
   
   
@@ -634,7 +728,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/features/outputs/" class="md-nav__link">
+      <a href="../../features/outputs/" class="md-nav__link">
         
   
   
@@ -705,7 +799,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/debugging/issues_encountered/" class="md-nav__link">
+      <a href="../../debugging/issues_encountered/" class="md-nav__link">
         
   
   
@@ -728,7 +822,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/debugging/improvements/" class="md-nav__link">
+      <a href="../../debugging/improvements/" class="md-nav__link">
         
   
   
@@ -758,7 +852,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/references/" class="md-nav__link">
+      <a href="../../references/" class="md-nav__link">
         
   
   
@@ -790,6 +884,52 @@
   
   
   
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#loss-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      Loss function
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deterministic-optimizers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Deterministic optimizers
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#basin-hopping" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basin-hopping
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mcmc-emcee" class="md-nav__link">
+    <span class="md-ellipsis">
+      MCMC (emcee)
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -801,8 +941,75 @@
             <div class="md-content" data-md-component="content">
               <article class="md-content__inner md-typeset">
                 
-  <h1>404 - Not found</h1>
+                  
 
+
+
+<h1 id="parameter-fitting">Parameter Fitting<a class="headerlink" href="#parameter-fitting" title="Permanent link">&para;</a></h1>
+<p>The framework supports deterministic optimizers and MCMC.</p>
+<h2 id="loss-function">Loss function<a class="headerlink" href="#loss-function" title="Permanent link">&para;</a></h2>
+<p>Default: mean squared error across chosen compartments and sampled time points.</p>
+<div class="arithmatex">\[
+L(\theta) = \frac{1}{n}\sum_{i=1}^n \sum_{c\in C_{\text{fit}}} \big( y^{\text{sim}}_c(t_i;\theta) - y^{\text{obs}}_c(t_i) \big)^2
+\]</div>
+<p><code>C_fit</code> defaults to <code>['I']</code> but can be set via <code>fit_compartments</code> in YAML.</p>
+<h2 id="deterministic-optimizers">Deterministic optimizers<a class="headerlink" href="#deterministic-optimizers" title="Permanent link">&para;</a></h2>
+<p>Uses <code>scipy.optimize.minimize</code> with method:
+- <code>"Nelder-Mead"</code> (derivative-free)
+- <code>"BFGS"</code> (quasi-Newton)
+- <code>"L-BFGS-B"</code> (bounded, limited-memory)</p>
+<p>Example usage:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">scipy.optimize</span><span class="w"> </span><span class="kn">import</span> <span class="n">minimize</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">loss_fn</span><span class="p">(</span><span class="n">theta_vec</span><span class="p">):</span>
+    <span class="c1"># map theta_vec to parameters, simulate, compute MSE on sampled times</span>
+    <span class="k">return</span> <span class="n">mse</span>
+
+<span class="n">res</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">loss_fn</span><span class="p">,</span> <span class="n">x0</span><span class="o">=</span><span class="p">[</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.1</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;L-BFGS-B&#39;</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="p">[(</span><span class="mf">1e-6</span><span class="p">,</span><span class="mi">5</span><span class="p">),(</span><span class="mf">1e-6</span><span class="p">,</span><span class="mi">5</span><span class="p">)])</span>
+</code></pre></div>
+<h2 id="basin-hopping">Basin-hopping<a class="headerlink" href="#basin-hopping" title="Permanent link">&para;</a></h2>
+<p>Use <code>scipy.optimize.basinhopping</code> to escape local minima; internally runs a local optimizer.</p>
+<h2 id="mcmc-emcee">MCMC (emcee)<a class="headerlink" href="#mcmc-emcee" title="Permanent link">&para;</a></h2>
+<p>Set uniform priors (or others) and Gaussian likelihood assuming known noise std:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">emcee</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">log_prior</span><span class="p">(</span><span class="n">theta</span><span class="p">):</span>
+    <span class="n">beta</span><span class="p">,</span> <span class="n">gamma</span> <span class="o">=</span> <span class="n">theta</span>
+    <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">beta</span> <span class="o">&lt;</span> <span class="mi">5</span> <span class="ow">and</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">gamma</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">log_likelihood</span><span class="p">(</span><span class="n">theta</span><span class="p">):</span>
+    <span class="c1"># simulate, compute gaussian log-likelihood with known sigma</span>
+    <span class="k">return</span> <span class="n">ll</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">log_posterior</span><span class="p">(</span><span class="n">theta</span><span class="p">):</span>
+    <span class="n">lp</span> <span class="o">=</span> <span class="n">log_prior</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">lp</span><span class="p">):</span>
+        <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+    <span class="k">return</span> <span class="n">lp</span> <span class="o">+</span> <span class="n">log_likelihood</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+
+<span class="n">ndim</span><span class="p">,</span> <span class="n">nwalkers</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">32</span>
+<span class="n">p0</span> <span class="o">=</span> <span class="mf">1e-3</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">nwalkers</span><span class="p">,</span> <span class="n">ndim</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span>
+<span class="n">sampler</span> <span class="o">=</span> <span class="n">emcee</span><span class="o">.</span><span class="n">EnsembleSampler</span><span class="p">(</span><span class="n">nwalkers</span><span class="p">,</span> <span class="n">ndim</span><span class="p">,</span> <span class="n">log_posterior</span><span class="p">)</span>
+<span class="n">sampler</span><span class="o">.</span><span class="n">run_mcmc</span><span class="p">(</span><span class="n">p0</span><span class="p">,</span> <span class="mi">5000</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Tips:</strong>
+- Ensure walkers are initialized inside prior bounds.
+- Filter out samples where simulation failed (NaN solutions).
+- Relax overly narrow priors during debugging.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
               </article>
             </div>
           
@@ -840,10 +1047,10 @@
     
     
       
-      <script id="__config" type="application/json">{"base": "/", "features": ["navigation.tabs", "content.code.copy", "content.tabs.link", "search.suggest", "search.highlight"], "search": "/assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "content.code.copy", "content.tabs.link", "search.suggest", "search.highlight"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="/assets/javascripts/bundle.50899def.min.js"></script>
+      <script src="../../assets/javascripts/bundle.50899def.min.js"></script>
       
         <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       
