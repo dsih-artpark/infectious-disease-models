@@ -1,12 +1,16 @@
-# Generalized Compartmental Epidemiological Modeling Framework
+# Generalized Compartmental Modeling Framework
 
-Welcome to the documentation for a flexible framework to simulate, analyze, and fit a wide variety of compartmental epidemiological models (e.g., SIR, SEIR, SIS, etc.).
+This documentation describes a **modular, configurable framework** for defining, simulating,
+and calibrating compartmental epidemiological models (SIR, SEIR, SIS, SIRS, SEIRS, and more).
 
-This project supports:
+The framework is driven by a YAML configuration file and supports:
+- Arbitrary compartment structures and transition expressions
+- Dynamic ODE generation from transition rules
+- Simulation with `scipy.integrate.odeint`
+- Noise injection and sub-sampling for realistic observations
+- Parameter estimation using classical optimizers (Nelder–Mead, BFGS, L-BFGS-B, Basin-Hopping)
+- Bayesian calibration via MCMC (emcee)
+- Diagnostics, loss landscapes, and posterior analysis
 
-- Simulation of compartmental models using ODEs
-- Injection of synthetic noise into generated data
-- Parameter estimation using optimization techniques and MCMC
-- Visualization of simulations, fittings, and posteriors
-
-This documentation will guide you through installation, usage, configuration, methodology, and implementation details.
+Use the left navigation to explore the YAML specification, usage examples, extensibility notes,
+and debugging tips.

@@ -1,27 +1,37 @@
-site_name: Epidemic Modeling Framework
+site_name: Generalized Compartmental Modeling Framework
 theme:
   name: material
-
-nav:
-  - Home: index.md
-  - Getting Started:
-      - Installation: install.md
-      - Usage: usage.md
-  - Architecture: architecture.md
-  - Configuration: config.md
-  - Simulation: simulation.md
-  - Noise Injection: noise.md
-  - Parameter Fitting: fitting.md
-  - MCMC Calibration: mcmc.md
-  - Plotting & Results: results.md
-  - Future Work: future.md
-
+  features:
+    - navigation.tabs
+    - content.code.copy
+    - content.tabs.link
+    - search.suggest
+    - search.highlight
 markdown_extensions:
-  - codehilite
   - admonition
   - toc:
       permalink: true
-
-plugins:
-  - search
-  
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.details
+nav:
+  - Home: index.md
+  - Configuration:
+      - YAML Format: configuration/yaml_config.md
+  - Usage:
+      - Workflow: usage/workflow.md
+      - Simulation: usage/simulation.md
+      - Noise Injection: usage/noise_injection.md
+      - Parameter Fitting: usage/parameter_fitting.md
+  - Features:
+      - Extensibility: features/extensibility.md
+      - Advanced Features: features/advanced_features.md
+      - Outputs: features/outputs.md
+  - Debugging:
+      - Issues Encountered: debugging/issues_encountered.md
+      - Improvements: debugging/improvements.md
+  - References: references.md
+extra_javascript:
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
