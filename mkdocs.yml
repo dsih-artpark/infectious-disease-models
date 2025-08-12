@@ -18,6 +18,8 @@ markdown_extensions:
   - pymdownx.details
 nav:
   - Home: index.md
+  - Presentations:
+      - "Generalized Framework (2025-08-12)": presentations/generalized_framework_2025-08-12.pptx
   - Configuration:
       - YAML Format: configuration/yaml_config.md
   - Usage:
