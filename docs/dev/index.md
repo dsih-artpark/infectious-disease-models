@@ -46,4 +46,4 @@ The framework follows a modular design:
 4. **Enhance visualization** in `plotting.py` for additional plots or formats  
 5. Test your changes with:
 ```bash
-   python main.py --model <model_name>
+python main.py --model <model_name>
