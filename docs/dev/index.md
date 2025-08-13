@@ -45,5 +45,5 @@ The framework follows a modular design:
 3. **Extend calibration methods** in `calibration.py` for new fitting techniques  
 4. **Enhance visualization** in `plotting.py` for additional plots or formats  
 5. Test your changes with:
-   ```bash
+```bash
    python main.py --model <model_name>
