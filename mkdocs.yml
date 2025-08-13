@@ -35,6 +35,7 @@ nav:
       - Issues Encountered: debugging/issues_encountered.md
       - Improvements: debugging/improvements.md
   - Developer Guide:
+      - Overview: dev/index.md
       - model.py: dev/model.md
       - calibration.py: dev/calibration.md
       - plotting.py: dev/plotting.md
