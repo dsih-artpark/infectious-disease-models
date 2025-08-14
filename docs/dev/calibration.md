@@ -40,3 +40,4 @@ Uses the **emcee** sampler to estimate parameter posterior distributions.
 from calibration import fit_with_optimizers
 
 results = fit_with_optimizers(model, ["BFGS", "Nelder-Mead"], ...)
+```
