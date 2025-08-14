@@ -1,6 +1,6 @@
 # Generalized Compartmental Modeling Framework
 
-[![Python](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/Python-3.11%2B-blue)](https://www.python.org/)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 [![Docs](https://img.shields.io/badge/Docs-MkDocs%20Material-blueviolet)](https://dsih-artpark.github.io/infectious-disease-models/)
 
@@ -28,6 +28,9 @@ A flexible Python framework for simulating, fitting, and visualizing epidemiolog
 ---
 
 ## Installation
+
+The source code is available on GitHub at:  
+https://github.com/dsih-artpark/infectious-disease-models
 
 ```bash
 git clone https://github.com/dsih-artpark/infectious-disease-models.git
