@@ -1,3 +1,35 @@
-# Modeling Infectious Diseases
+# Generalized Compartmental Modeling Framework
 
-This repository is meant for documenting models and parameter estimation methods.
+[![Python](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/)
+[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+[![Docs](https://img.shields.io/badge/Docs-MkDocs%20Material-blueviolet)](https://dsih-artpark.github.io/infectious-disease-models/)
+
+A flexible Python framework for simulating, fitting, and visualizing epidemiological compartmental models such as **SIR**, **SEIR**, **SIS**, and custom user-defined models.
+
+---
+
+## Features
+
+- Define models entirely via a **YAML configuration file**
+- Supports **ODE-based** simulations for arbitrary compartment structures
+- Built-in **noise injection** and **subset sampling** for fitting
+- Parameter estimation with:
+  - **Nelder-Mead**
+  - **BFGS**
+  - **L-BFGS-B**
+  - **MCMC** (via `emcee`)
+- Automatic plot generation for:
+  - Clean simulations
+  - Noisy data
+  - Model fit comparisons
+  - Parameter estimation results
+  - MCMC posterior distributions
+
+---
+
+## Installation
+
+```bash
+git clone https://github.com/dsih-artpark/infectious-disease-models.git
+cd modeling-framework
+pip install -r requirements.txt
