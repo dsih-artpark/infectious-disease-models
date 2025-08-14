@@ -1355,17 +1355,21 @@
 </ul>
 <hr />
 <h3 id="example-usage">Example Usage<a class="headerlink" href="#example-usage" title="Permanent link">&para;</a></h3>
-<p>```python
-from model import Population, CompartmentalModel</p>
-<p>pop = Population(N=1000)
+<div class="highlight"><pre><span></span><code>```python
+from model import Population, CompartmentalModel
+
+pop = Population(N=1000)
 sir_model = CompartmentalModel(
-    compartments=["S", "I", "R"],
-    parameters={"beta": 0.3, "gamma": 0.1},
-    transitions={"S-&gt;I": "beta * S * I / N", "I-&gt;R": "gamma * I"},
+    compartments=[&quot;S&quot;, &quot;I&quot;, &quot;R&quot;],
+    parameters={&quot;beta&quot;: 0.3, &quot;gamma&quot;: 0.1},
+    transitions={&quot;S-&gt;I&quot;: &quot;beta * S * I / N&quot;, &quot;I-&gt;R&quot;: &quot;gamma * I&quot;},
     population=pop,
-    initial_conditions={"S": 990, "I": 10, "R": 0}
-)</p>
-<p>t, y = sir_model.simulate()</p>
+    initial_conditions={&quot;S&quot;: 990, &quot;I&quot;: 10, &quot;R&quot;: 0}
+)
+
+t, y = sir_model.simulate()
+```
+</code></pre></div>
 
 
 
