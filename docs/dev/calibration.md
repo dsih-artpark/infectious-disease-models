@@ -36,8 +36,8 @@ Uses the **emcee** sampler to estimate parameter posterior distributions.
 ---
 
 ### Example Usage
-```python
-from calibration import fit_with_optimizers
+    ```python
+    from calibration import fit_with_optimizers
 
-results = fit_with_optimizers(model, ["BFGS", "Nelder-Mead"], ...)
-```
+    results = fit_with_optimizers(model, ["BFGS", "Nelder-Mead"], ...)
+    ```
