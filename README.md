@@ -31,5 +31,5 @@ A flexible Python framework for simulating, fitting, and visualizing epidemiolog
 
 ```bash
 git clone https://github.com/dsih-artpark/infectious-disease-models.git
-cd modeling-framework
-pip install -r requirements.txt
+cd infectious-disease-models
+uv pip install -r requirements.txt
