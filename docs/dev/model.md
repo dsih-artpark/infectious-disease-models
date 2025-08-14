@@ -48,7 +48,7 @@ Encapsulates all model logic: ODE simulation, noise injection, and timepoint sam
 ---
 
 ### Example Usage
-    ```python
+```python
     from model import Population, CompartmentalModel
 
     pop = Population(N=1000)
@@ -61,4 +61,4 @@ Encapsulates all model logic: ODE simulation, noise injection, and timepoint sam
     )
 
     t, y = sir_model.simulate()
-    ```
+```

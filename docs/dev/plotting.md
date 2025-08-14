@@ -17,6 +17,7 @@ This module generates plots for simulation results, noisy data, parameter fits, 
 
 ## Example Usage
 ```python
-from plotting import plot_simulation
+    from plotting import plot_simulation
 
-plot_simulation(traj, t, "plots/SIR_model/plot_simulation.png")
+    plot_simulation(traj, t, "plots/SIR_model/plot_simulation.png")
+```
