@@ -1251,9 +1251,11 @@
 4. Save and plot posterior samples.</p>
 <hr />
 <h3 id="example-usage">Example Usage<a class="headerlink" href="#example-usage" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">calibration</span><span class="w"> </span><span class="kn">import</span> <span class="n">fit_with_optimizers</span>
+<div class="highlight"><pre><span></span><code>```python
+from calibration import fit_with_optimizers
 
-<span class="n">results</span> <span class="o">=</span> <span class="n">fit_with_optimizers</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;BFGS&quot;</span><span class="p">,</span> <span class="s2">&quot;Nelder-Mead&quot;</span><span class="p">],</span> <span class="o">...</span><span class="p">)</span>
+results = fit_with_optimizers(model, [&quot;BFGS&quot;, &quot;Nelder-Mead&quot;], ...)
+```
 </code></pre></div>
 
 
