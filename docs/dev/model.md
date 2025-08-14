@@ -48,16 +48,17 @@ Encapsulates all model logic: ODE simulation, noise injection, and timepoint sam
 ---
 
 ### Example Usage
-```python
-from model import Population, CompartmentalModel
+    ```python
+    from model import Population, CompartmentalModel
 
-pop = Population(N=1000)
-sir_model = CompartmentalModel(
-    compartments=["S", "I", "R"],
-    parameters={"beta": 0.3, "gamma": 0.1},
-    transitions={"S->I": "beta * S * I / N", "I->R": "gamma * I"},
-    population=pop,
-    initial_conditions={"S": 990, "I": 10, "R": 0}
-)
+    pop = Population(N=1000)
+    sir_model = CompartmentalModel(
+        compartments=["S", "I", "R"],
+        parameters={"beta": 0.3, "gamma": 0.1},
+        transitions={"S->I": "beta * S * I / N", "I->R": "gamma * I"},
+        population=pop,
+        initial_conditions={"S": 990, "I": 10, "R": 0}
+    )
 
-t, y = sir_model.simulate()
+    t, y = sir_model.simulate()
+    ```
