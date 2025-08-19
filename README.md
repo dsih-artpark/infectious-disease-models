@@ -35,4 +35,5 @@ https://github.com/dsih-artpark/infectious-disease-models
 ```bash
 git clone https://github.com/dsih-artpark/infectious-disease-models.git
 cd infectious-disease-models
-uv pip install -r requirements.txt
+uv sync
+source .venv/bin/activate
