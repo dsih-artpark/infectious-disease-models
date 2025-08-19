@@ -17,24 +17,24 @@ The Developer Guide will help you:
 
 ## High-Level Architecture
 
-The framework follows a modular design: and
+The framework follows a modular design:
 
 1. **Main Controller (`main.py`)**  
-   - Parses CLI arguments (`--model <model_name>`)  
-   - Loads the YAML configuration  
-   - Orchestrates the workflow: simulation → noise injection → sampling → calibration → plotting → saving outputs  
+    - Parses CLI arguments (`--model <model_name>`)  
+    - Loads the YAML configuration  
+    - Orchestrates the workflow: simulation → noise injection → sampling → calibration → plotting → saving outputs  
 
 1. **Core Model Logic (`model.py`)**  
-   - `Population` — Population size & assumptions  
-   - `CompartmentalModel` — Builds and simulates the ODE system  
+    - `Population` — Population size & assumptions  
+    - `CompartmentalModel` — Builds and simulates the ODE system  
 
-3. **Calibration Layer (`calibration.py`)**  
-   - Optimization (Nelder-Mead, BFGS, L-BFGS-B, etc.)  
-   - MCMC for Bayesian inference  
-   - Loss calculation functions  
+1. **Calibration Layer (`calibration.py`)**  
+    - Optimization (Nelder-Mead, BFGS, L-BFGS-B, etc.)  
+    - MCMC for Bayesian inference  
+    - Loss calculation functions  
 
-4. **Plotting Layer (`plotting.py`)**  
-   - Generates simulation plots, noisy data plots, comparisons, parameter estimation graphs, and MCMC corner plots  
+1. **Plotting Layer (`plotting.py`)**  
+    - Generates simulation plots, noisy data plots, comparisons, parameter estimation graphs, and MCMC corner plots  
 
 ---
 
