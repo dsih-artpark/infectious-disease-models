@@ -37,3 +37,10 @@ git clone https://github.com/dsih-artpark/infectious-disease-models.git
 cd infectious-disease-models
 uv sync
 source .venv/bin/activate
+```
+---
+
+## Documentation
+
+Full documentation is available here:
+[Generalized Compartmental Modeling Framework Docs](https://dsih-artpark.github.io/infectious-disease-models/)
