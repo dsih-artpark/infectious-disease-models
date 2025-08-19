@@ -17,14 +17,14 @@ The Developer Guide will help you:
 
 ## High-Level Architecture
 
-The framework follows a modular design:
+The framework follows a modular design: and
 
 1. **Main Controller (`main.py`)**  
    - Parses CLI arguments (`--model <model_name>`)  
    - Loads the YAML configuration  
    - Orchestrates the workflow: simulation → noise injection → sampling → calibration → plotting → saving outputs  
 
-2. **Core Model Logic (`model.py`)**  
+1. **Core Model Logic (`model.py`)**  
    - `Population` — Population size & assumptions  
    - `CompartmentalModel` — Builds and simulates the ODE system  
 
