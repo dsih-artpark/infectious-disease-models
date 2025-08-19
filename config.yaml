@@ -38,3 +38,10 @@ SIS_model:
   initial_conditions: {S: 990, I: 10}
   assumptions: The population is closed (no births or deaths). The disease does not confer permanent immunity. After recovery, individuals return to the susceptible class (no immunity).
 
+SIS_model_test:
+  compartments: [S, I]
+  parameters: {beta: 0.35, gamma: 0.15, mu: 0.015}
+  transitions: {"S -> I": "beta * S * I / N", "I -> S": "gamma * I", "-> S": "mu * N", "S ->": "mu * S", "I ->": "mu * I"}
+  population: 1000
+  initial_conditions: {S: 990, I: 10}
+  assumptions: The population is closed (no births or deaths). The disease does not confer permanent immunity. After recovery, individuals return to the susceptible class (no immunity).
