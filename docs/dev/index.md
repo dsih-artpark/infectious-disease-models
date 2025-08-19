@@ -24,16 +24,16 @@ The framework follows a modular design:
     - Loads the YAML configuration  
     - Orchestrates the workflow: simulation → noise injection → sampling → calibration → plotting → saving outputs  
 
-1. **Core Model Logic (`model.py`)**  
+2. **Core Model Logic (`model.py`)**  
     - `Population` — Population size & assumptions  
     - `CompartmentalModel` — Builds and simulates the ODE system  
 
-1. **Calibration Layer (`calibration.py`)**  
+3. **Calibration Layer (`calibration.py`)**  
     - Optimization (Nelder-Mead, BFGS, L-BFGS-B, etc.)  
     - MCMC for Bayesian inference  
     - Loss calculation functions  
 
-1. **Plotting Layer (`plotting.py`)**  
+4. **Plotting Layer (`plotting.py`)**  
     - Generates simulation plots, noisy data plots, comparisons, parameter estimation graphs, and MCMC corner plots  
 
 ---
