@@ -15,4 +15,7 @@ The framework is driven by a YAML configuration file and supports:
 Use the left navigation to explore the YAML specification, usage examples, extensibility notes,
 and debugging tips.
 
-View the source code on [GitHub](https://github.com/dsih-artpark/infectious-disease-models.git)
+---
+## Source code
+
+View the source code on [GitHub](https://github.com/dsih-artpark/infectious-disease-models)
