@@ -1189,33 +1189,37 @@
 - Maintain and debug existing functionality</p>
 <hr />
 <h2 id="high-level-architecture">High-Level Architecture<a class="headerlink" href="#high-level-architecture" title="Permanent link">&para;</a></h2>
-<p>The framework follows a modular design: and</p>
+<p>The framework follows a modular design:</p>
 <ol>
-<li><strong>Main Controller (<code>main.py</code>)</strong>  </li>
+<li>
+<p><strong>Main Controller (<code>main.py</code>)</strong>  </p>
+<ul>
 <li>Parses CLI arguments (<code>--model &lt;model_name&gt;</code>)  </li>
 <li>Loads the YAML configuration  </li>
-<li>
-<p>Orchestrates the workflow: simulation → noise injection → sampling → calibration → plotting → saving outputs  </p>
+<li>Orchestrates the workflow: simulation → noise injection → sampling → calibration → plotting → saving outputs  </li>
+</ul>
 </li>
 <li>
 <p><strong>Core Model Logic (<code>model.py</code>)</strong>  </p>
-</li>
+<ul>
 <li><code>Population</code> — Population size &amp; assumptions  </li>
-<li>
-<p><code>CompartmentalModel</code> — Builds and simulates the ODE system  </p>
+<li><code>CompartmentalModel</code> — Builds and simulates the ODE system  </li>
+</ul>
 </li>
 <li>
 <p><strong>Calibration Layer (<code>calibration.py</code>)</strong>  </p>
-</li>
+<ul>
 <li>Optimization (Nelder-Mead, BFGS, L-BFGS-B, etc.)  </li>
 <li>MCMC for Bayesian inference  </li>
-<li>
-<p>Loss calculation functions  </p>
+<li>Loss calculation functions  </li>
+</ul>
 </li>
 <li>
 <p><strong>Plotting Layer (<code>plotting.py</code>)</strong>  </p>
-</li>
+<ul>
 <li>Generates simulation plots, noisy data plots, comparisons, parameter estimation graphs, and MCMC corner plots  </li>
+</ul>
+</li>
 </ol>
 <hr />
 <h2 id="workflow-for-developers">Workflow for Developers<a class="headerlink" href="#workflow-for-developers" title="Permanent link">&para;</a></h2>
