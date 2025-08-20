@@ -17,7 +17,7 @@ def plot_results(time_points, compartments, true_data, noisy_data, subset_t, sub
     plt.grid()
     plt.tight_layout()
     plt.savefig(os.path.join(plot_dir, "plot_simulation.png"))
-    plt.show()
+    # plt.show()
     plt.close()
 
     # Plot 2: Noisy data
@@ -31,7 +31,7 @@ def plot_results(time_points, compartments, true_data, noisy_data, subset_t, sub
     plt.grid()
     plt.tight_layout()
     plt.savefig(os.path.join(plot_dir, "plot_noisy.png"))
-    plt.show()
+    # plt.show()
     plt.close()
 
     # Plot 3: Infected - true vs noisy subset vs fitted
@@ -50,7 +50,7 @@ def plot_results(time_points, compartments, true_data, noisy_data, subset_t, sub
     plt.grid()
     plt.tight_layout()
     plt.savefig(os.path.join(plot_dir, "plot_comparison.png"))
-    plt.show()
+    # plt.show()
     plt.close()
 
     # Plot 4: Visualize Estimated vs True Parameters
@@ -86,7 +86,7 @@ def plot_results(time_points, compartments, true_data, noisy_data, subset_t, sub
 
         plt.tight_layout()
         plt.savefig(os.path.join(plot_dir, "parameter_estimation.png"))
-        plt.show()
+        # plt.show()
         plt.close()
     
     # Plot 5: Corner plot from MCMC samples
@@ -105,7 +105,7 @@ def plot_results(time_points, compartments, true_data, noisy_data, subset_t, sub
                 fig = corner.corner(samples, labels=param_names)
                 save_path = os.path.join(plot_dir, "mcmc_corner_plot.png")
                 fig.savefig(save_path, dpi=300)
-                plt.show()
+                # plt.show()
                 plt.close(fig)
         except Exception as e:
             print(f"[Error] Failed to generate MCMC plot: {e}")
