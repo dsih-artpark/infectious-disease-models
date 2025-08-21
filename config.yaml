@@ -9,7 +9,7 @@ metadata:
   python_version: '3.11'
   version: v0.1.0
 
-days: 160
+days: 5475
 noise_std: 5.0
 subset_ratio: 0.7
 optimizers: [Nelder-Mead, BFGS, L-BFGS-B]
@@ -45,3 +45,20 @@ SIS_model_test:
   population: 1000
   initial_conditions: {S: 990, I: 10}
   assumptions: The population is closed (no births or deaths). The disease does not confer permanent immunity. After recovery, individuals return to the susceptible class (no immunity).
+
+TB_model:
+  compartments: [S, Ls, Is, Lr, Ir, R]
+  parameters: {mu: 0.0143, beta_s: 1.57e-8, beta_r: 6.25e-9, alpha_s: 0.129, alpha_r: 0.129, omega_s: 0.287, omega_r: 0.12, rho: 0.07, phi_s: 0.37, phi_r: 0.37, tau_s: 0.94, tau_r: 0.78, gamma: 0.1, }
+  transitions: {"S -> I": "beta * S * I / N", "I -> R": "gamma * I", "-> S": "mu * N", "S ->": "mu * S", "I ->": "mu * I", "R ->": "mu * R"}
+  population: 100000
+  initial_conditions: {Ls: 400, Is: 300, Lr: 10, Ir: 400, R: 5, S: 98885}
+  assumptions: The population is closed (no births or deaths). The disease is transmitted through direct contact. Immunity is permanent after recovery.
+
+
+TB_model:
+  compartments: [S, Ls, Is, Lr, Ir, R]
+  parameters: {mu: 0.0143, beta_s: 1.57e-8, beta_r: 6.25e-9, alpha_s: 0.129, alpha_r: 0.129, omega_s: 0.287, omega_r: 0.12, rho: 0.07, phi_s: 0.37, phi_r: 0.37, tau_s: 0.94, tau_r: 0.78, gamma: 0.1, }
+  transitions: {"S -> I": "beta * S * I / N", "I -> R": "gamma * I", "-> S": "mu * N", "S ->": "mu * S", "I ->": "mu * I", "R ->": "mu * R"}
+  population: 100000
+  initial_conditions: {Ls: 400, Is: 300, Lr: 10, Ir: 400, R: 5, S: 98885}
+  assumptions: The population is closed (no births or deaths). The disease is transmitted through direct contact. Immunity is permanent after recovery.
