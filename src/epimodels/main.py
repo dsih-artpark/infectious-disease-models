@@ -34,6 +34,7 @@ for k, expr in MODEL_CFG['transitions'].items():
 INIT_CONDITIONS = MODEL_CFG["initial_conditions"]
 POPULATION = MODEL_CFG["population"]
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) 
 PLOT_DIR = os.path.join("plots", MODEL_NAME)
 DATA_DIR = os.path.join("data", MODEL_NAME)
 os.makedirs(PLOT_DIR, exist_ok=True)
@@ -49,9 +50,9 @@ true_data = np.array(model.simulate(INIT_CONDITIONS, time_points))
 np.random.seed(42)
 noisy_data = model.add_noise(true_data, NOISE_STD)
 
-np.savetxt("data/true_data.csv", true_data, delimiter=",")
-np.savetxt("data/noisy_data.csv", noisy_data, delimiter=",")
-np.savetxt("data/time_points.csv", time_points, delimiter=",")
+np.savetxt(os.path.join(DATA_DIR, "true_data.csv"), true_data, delimiter=",")
+np.savetxt(os.path.join(DATA_DIR, "noisy_data.csv"), noisy_data, delimiter=",")
+np.savetxt(os.path.join(DATA_DIR, "time_points.csv"), time_points, delimiter=",")
 
 # --- Step 2: calibration (optional) ---
 fitted_results = None
