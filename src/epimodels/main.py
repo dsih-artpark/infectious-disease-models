@@ -105,7 +105,10 @@ if args.calibrate:
         print("Updating config dictionary with estimated parameters...")
         best_params = fitted_results.get("best", {}).get("params", {})
         MODEL_CFG["parameters"].update(best_params)
-        print("Config updated in memory (not written to file).")
+        config_path = os.path.join(BASE_DIR, "config.yml")
+        with open(config_path, "w") as f:
+            yaml.safe_dump(cfg, f)
+        print(f"Config file updated at {config_path}")
 
 # --- Plot results ---
 plot_simulation_only(
