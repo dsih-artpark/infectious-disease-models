@@ -1,19 +1,20 @@
 import argparse
 import os
 import numpy as np
-import matplotlib.pyplot as plt
-import corner
-from scipy.optimize import minimize
 from model import CompartmentalModel, Population
 from config import cfg
 from calibration import Calibrator
-from plotting import plot_results
+from plotting import plot_simulation_only, plot_calibration_results
 
 parser = argparse.ArgumentParser(description="Run simulation and calibration for a compartmental model.")
 parser.add_argument("--model", type=str, required=True, help="Model name as defined in config (e.g., SIR_model)")
+parser.add_argument("--calibrate", action="store_true", help="Run parameter calibration")
+parser.add_argument("--update_config", action="store_true", help="Update config file with fitted parameters")
+parser.add_argument("--compartment", type=str, default="I", help="Compartment to calibrate on (default: 'I')")
+# parser.add_argument("--config", type=str, default="config.yml", help="Path to YAML config file")
 args = parser.parse_args()
-MODEL_NAME = args.model
 
+MODEL_NAME = args.model
 MODEL_CFG = cfg[MODEL_NAME]
 TIME = cfg["days"]
 NOISE_STD = cfg["noise_std"]
@@ -29,6 +30,7 @@ for k, expr in MODEL_CFG['transitions'].items():
     src = src.strip() if src else None
     dst = dst.strip()
     TRANSITIONS.append({'from': src, 'to': dst, 'rate': expr})
+
 INIT_CONDITIONS = MODEL_CFG["initial_conditions"]
 POPULATION = MODEL_CFG["population"]
 
@@ -47,59 +49,83 @@ true_data = np.array(model.simulate(INIT_CONDITIONS, time_points))
 np.random.seed(42)
 noisy_data = model.add_noise(true_data, NOISE_STD)
 
-subset_indices = np.sort(np.random.choice(range(TIME + 1), size=int((TIME + 1) * SUBSET_RATIO), replace=False))
-subset_t = time_points[subset_indices]
-subset_infected = noisy_data[subset_indices, COMPARTMENTS.index('I')]
-
-calibrator = Calibrator(model, param_names, compartment='I')
-fitted_results = calibrator.fit(
-    initial_conditions=INIT_CONDITIONS,
-    full_time_points=time_points,
-    subset_t=subset_t,
-    subset_data=subset_infected,
-    optimizers=OPTIMIZERS,
-    compartments=COMPARTMENTS
-)
-
 np.savetxt("data/true_data.csv", true_data, delimiter=",")
 np.savetxt("data/noisy_data.csv", noisy_data, delimiter=",")
 np.savetxt("data/time_points.csv", time_points, delimiter=",")
 
+# --- Step 2: calibration (optional) ---
+fitted_results = None
+sampler = None
+subset_t = None
+subset_infected = None
+if args.calibrate:
+    if args.compartment not in COMPARTMENTS:
+        raise ValueError(
+            f"Compartment '{args.compartment}' not found in model. Available: {COMPARTMENTS}"
+        )
+    comp_idx = COMPARTMENTS.index(args.compartment)
 
-extras_fn = {
-    'initial_conditions': INIT_CONDITIONS,
-    'compartment_index': COMPARTMENTS.index('I'),
-    'sigma': 5.0
-}
+    subset_indices = np.sort(
+        np.random.choice(range(TIME + 1), size=int((TIME + 1) * SUBSET_RATIO), replace=False)
+    )
+    subset_t = time_points[subset_indices]
+    subset_infected = noisy_data[subset_indices, comp_idx]
 
-sampler = Calibrator.run_mcmc(
-    model=model,
-    param_names=param_names,
-    I_obs=subset_infected,
-    t_obs=subset_t,
-    extras_fn=extras_fn
-)
+    calibrator = Calibrator(model, param_names, compartment=args.compartment)
+    fitted_results = calibrator.fit(
+        initial_conditions=INIT_CONDITIONS,
+        full_time_points=time_points,
+        subset_t=subset_t,
+        subset_data=subset_infected,
+        optimizers=OPTIMIZERS,
+        compartments=COMPARTMENTS,
+    )
 
+    extras_fn = {
+        "initial_conditions": INIT_CONDITIONS,
+        "compartment_index": comp_idx,
+        "sigma": 5.0,
+    }
+    sampler = Calibrator.run_mcmc(
+        model=model,
+        param_names=param_names,
+        I_obs=subset_infected,
+        t_obs=subset_t,
+        extras_fn=extras_fn,
+    )
 
+    print("\nFinal Fitted Parameters:")
+    for method, result in fitted_results.items():
+        param_str = ", ".join(f"{k} = {v:.4f}" for k, v in result["params"].items())
+        print(f"{method}: {param_str}")
 
-plot_results(
+    if args.update_config:
+        print("Updating config dictionary with estimated parameters...")
+        best_params = fitted_results.get("best", {}).get("params", {})
+        MODEL_CFG["parameters"].update(best_params)
+        print("Config updated in memory (not written to file).")
+
+# --- Plot results ---
+plot_simulation_only(
     time_points=time_points,
     compartments=COMPARTMENTS,
     true_data=true_data,
-    noisy_data=noisy_data,
-    subset_t=subset_t,
-    subset_infected=subset_infected,
-    fitted_results=fitted_results,
-    model_name=MODEL_NAME,
-    plot_dir=PLOT_DIR,
-    true_params=PARAMS,
-    param_names=param_names,
-    mcmc_sampler=sampler
+    plot_dir=PLOT_DIR
 )
 
-print("\nFinal Fitted Parameters:")
-for method, result in fitted_results.items():
-    param_str = ", ".join(f"{k} = {v:.4f}" for k, v in result['params'].items())
-    print(f"{method}: {param_str}")
-
-
+# Only: plot calibration/fitting results if calibration is run
+if args.calibrate and fitted_results is not None:
+    plot_calibration_results(
+        time_points=time_points,
+        compartments=COMPARTMENTS,
+        true_data=true_data,
+        noisy_data=noisy_data,
+        subset_t=subset_t,
+        subset_infected=subset_infected,
+        fitted_results=fitted_results,
+        model_name=MODEL_NAME,
+        plot_dir=PLOT_DIR,
+        true_params=PARAMS,
+        param_names=param_names,
+        mcmc_sampler=sampler
+    )
