@@ -5,6 +5,7 @@ from model import CompartmentalModel, Population
 from config import cfg
 from calibration import Calibrator
 from plotting import plot_simulation_only, plot_calibration_results
+import yaml
 
 parser = argparse.ArgumentParser(description="Run simulation and calibration for a compartmental model.")
 parser.add_argument("--model", type=str, required=True, help="Model name as defined in config (e.g., SIR_model)")

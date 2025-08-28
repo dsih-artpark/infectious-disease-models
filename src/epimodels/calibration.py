@@ -86,7 +86,12 @@ class Calibrator:
                 'params': fitted_params,
                 'trajectory': full_trajectory
             }
-
+        best_method = min(results, key=lambda m: self.loss_function(
+            list(results[m]['params'].values()),
+            initial_conditions, subset_t, subset_data, comp_index
+        ))
+        results["best"] = results[best_method]
+        
         return results
 
 
