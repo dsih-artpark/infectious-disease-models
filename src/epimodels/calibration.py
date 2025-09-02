@@ -3,23 +3,31 @@ import numpy as np
 from scipy.optimize import minimize
 
 class Calibrator:
-    def __init__(self, model, param_names, compartment='I'):
+    def __init__(self, model, param_names, compartment):
+        """
+        compartment: list of indices for the compartments of interest
+        """
         self.model = model
         self.param_names = param_names
-        self.compartment = compartment
+        self.compartment = compartment  # always list of indices
 
-    def loss_function(self, param_array, initial_conditions, time_points, target_data, compartment_index):
+    def loss_function(self, param_array, initial_conditions, time_points, target_data, comp_indices):
         self.model.parameters = dict(zip(self.param_names, param_array))
         try:
             sim = self.model.simulate(initial_conditions, time_points)
-            sim_values = np.array(sim)[:, compartment_index]
+            # Handle multiple compartments (sum them)
+            if len(comp_indices) > 1:
+                sim_values = np.array(sim)[:, comp_indices].sum(axis=1)
+            else:
+                sim_values = np.array(sim)[:, comp_indices[0]]
+
             if np.any(np.isnan(sim_values)) or np.any(sim_values > 1e6):
                 return 1e10
             return np.mean((sim_values - target_data) ** 2)
         except Exception as e:
             print(f"[Loss Function Error] {e}")
             return 1e10
-    
+
     @staticmethod
     def log_prior(theta, param_names):
         param_dict = dict(zip(param_names, theta))
@@ -27,14 +35,19 @@ class Calibrator:
             if val < 1e-5 or val > 5:  # uniform prior bounds
                 return -np.inf
         return 0.0  
-    
+
     @staticmethod
     def log_likelihood(theta, param_names, model, I_obs, t_obs, extras_fn):
         param_dict = dict(zip(param_names, theta))
         model.set_parameters(param_dict)
         try:
             sim_data = model.simulate(extras_fn['initial_conditions'], t_obs)
-            I_sim = sim_data[:, extras_fn['compartment_index']]
+            comp_indices = extras_fn['compartment_indices']
+            if len(comp_indices) > 1:
+                I_sim = sim_data[:, comp_indices].sum(axis=1)
+            else:
+                I_sim = sim_data[:, comp_indices[0]]
+
             if np.any(np.isnan(I_sim)) or np.any(I_sim < 0) or np.any(I_sim > 1e6):
                 print(f"[Sim failure] I_sim range: {I_sim.min()} - {I_sim.max()}")
                 return -np.inf
@@ -43,7 +56,7 @@ class Calibrator:
         except Exception as e:
             print(f"[log_likelihood error] Params: {param_dict} -> {e}")
             return -np.inf
-    
+
     @classmethod
     def log_posterior(cls, theta, param_names, model, I_obs, t_obs, extras_fn):
         lp = cls.log_prior(theta, param_names)
@@ -57,25 +70,26 @@ class Calibrator:
         initial = np.array([model.parameters[k] for k in param_names])
         pos = np.abs(initial + 1e-2 * np.random.randn(n_walkers, ndim))
 
-        sampler = emcee.EnsembleSampler(n_walkers, ndim, cls.log_posterior, 
-                                    args=(param_names, model, I_obs, t_obs, extras_fn))
+        sampler = emcee.EnsembleSampler(
+            n_walkers, ndim, cls.log_posterior, 
+            args=(param_names, model, I_obs, t_obs, extras_fn)
+        )
         sampler.run_mcmc(pos, n_steps, progress=True)
         return sampler
-    
-    def fit(
-        self, initial_conditions, full_time_points, subset_t, subset_data,
-        optimizers, compartments
-    ):
+
+    def fit(self, initial_conditions, full_time_points, subset_t, subset_data,
+            optimizers, compartments):
         results = {}
         initial_guess = np.array([self.model.parameters[p] for p in self.param_names])
         bounds = [(0.0001, 1.0)] * len(self.param_names)
-        comp_index = compartments.index(self.compartment)
+
+        comp_indices = self.compartment  # already a list of indices
 
         for method in optimizers:
             res = minimize(
                 self.loss_function,
                 x0=initial_guess,
-                args=(initial_conditions, subset_t, subset_data, comp_index),
+                args=(initial_conditions, subset_t, subset_data, comp_indices),
                 method=method,
                 bounds=bounds if method in ['L-BFGS-B', 'TNC'] else None
             )
@@ -86,12 +100,5 @@ class Calibrator:
                 'params': fitted_params,
                 'trajectory': full_trajectory
             }
-        best_method = min(results, key=lambda m: self.loss_function(
-            list(results[m]['params'].values()),
-            initial_conditions, subset_t, subset_data, comp_index
-        ))
-        results["best"] = results[best_method]
-        
+
         return results
-
-

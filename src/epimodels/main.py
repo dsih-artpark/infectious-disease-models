@@ -61,19 +61,34 @@ sampler = None
 subset_t = None
 subset_infected = None
 if args.calibrate:
-    if args.compartment not in COMPARTMENTS:
-        raise ValueError(
-            f"Compartment '{args.compartment}' not found in model. Available: {COMPARTMENTS}"
-        )
-    comp_idx = COMPARTMENTS.index(args.compartment)
+    # Support compound compartments like "Is+Ir"
+    if "+" in args.compartment:
+        comp_parts = [c.strip() for c in args.compartment.split("+")]
+        for c in comp_parts:
+            if c not in COMPARTMENTS:
+                raise ValueError(f"Compartment '{c}' not found. Available: {COMPARTMENTS}")
+        comp_indices = [COMPARTMENTS.index(c) for c in comp_parts]
+    else:
+        if args.compartment not in COMPARTMENTS:
+            raise ValueError(
+                f"Compartment '{args.compartment}' not found in model. Available: {COMPARTMENTS}"
+            )
+        comp_indices = [COMPARTMENTS.index(args.compartment)]
 
+    # Subset time points
     subset_indices = np.sort(
         np.random.choice(range(TIME + 1), size=int((TIME + 1) * SUBSET_RATIO), replace=False)
     )
     subset_t = time_points[subset_indices]
-    subset_infected = noisy_data[subset_indices, comp_idx]
 
-    calibrator = Calibrator(model, param_names, compartment=args.compartment)
+    # If compound: sum across multiple compartments
+    if len(comp_indices) > 1:
+        subset_infected = noisy_data[subset_indices][:, comp_indices].sum(axis=1)
+    else:
+        subset_infected = noisy_data[subset_indices, comp_indices[0]]
+
+    # Pass indices instead of a single name
+    calibrator = Calibrator(model, param_names, compartment=comp_indices)
     fitted_results = calibrator.fit(
         initial_conditions=INIT_CONDITIONS,
         full_time_points=time_points,
@@ -85,7 +100,7 @@ if args.calibrate:
 
     extras_fn = {
         "initial_conditions": INIT_CONDITIONS,
-        "compartment_index": comp_idx,
+        "compartment_index": comp_indices,
         "sigma": 5.0,
     }
     sampler = Calibrator.run_mcmc(
