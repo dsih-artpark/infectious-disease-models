@@ -6,7 +6,7 @@ import numpy as np
 
 def plot_simulation_only(time_points, compartments, true_data, plot_dir,
                          model_cfg=None, population=None, compartment_choice=None):
-    """Always plot the baseline true simulation."""
+    """Always plot the baseline true simulation, excluding 'S' and compound compartments."""
     os.makedirs(plot_dir, exist_ok=True)
 
     # Defaults
@@ -23,29 +23,27 @@ def plot_simulation_only(time_points, compartments, true_data, plot_dir,
             xlabel = "Time (years)"
         if settings.get("scale_by_population", False) and population:
             per_unit = settings.get("per_unit", 100000)
-            scale = population / per_unit
+            scale = per_unit / population
             ylabel = f"Cases per {per_unit}"
 
-    scaled_data = true_data / scale
+    scaled_data = true_data * scale
 
-    # Plot all compartments
+    # Plot all compartments except 'S'
     plt.figure(figsize=(10, 6))
     for i, comp in enumerate(compartments):
+        if comp == "S":
+            continue
         plt.plot(time_for_plot, scaled_data[:, i], label=f"{comp} (true)")
 
-    # Highlight chosen compartment if provided
-    if compartment_choice:
-        if "+" in compartment_choice:
-            comp_parts = [c.strip() for c in compartment_choice.split("+")]
-            comp_indices = [compartments.index(c) for c in comp_parts if c in compartments]
-            highlight_series = scaled_data[:, comp_indices].sum(axis=1)
-        else:
+    # Highlight chosen compartment if valid (and not compound)
+    if compartment_choice and "+" not in compartment_choice:
+        if compartment_choice in compartments and compartment_choice != "S":
             comp_index = compartments.index(compartment_choice)
             highlight_series = scaled_data[:, comp_index]
+            plt.plot(time_for_plot, highlight_series,
+                     label=f"{compartment_choice} (highlight)", linewidth=2.5)
 
-        plt.plot(time_for_plot, highlight_series, label=f"{compartment_choice} (highlight)", linewidth=2.5)
-
-    plt.title("True Simulation of Compartments")
+    plt.title("True Simulation of Compartments (excluding S)")
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     plt.legend()
@@ -53,6 +51,8 @@ def plot_simulation_only(time_points, compartments, true_data, plot_dir,
     plt.tight_layout()
     plt.savefig(os.path.join(plot_dir, "plot_simulation.png"))
     plt.close()
+
+
 
 
 def plot_calibration_results(time_points, compartments, true_data, noisy_data,
