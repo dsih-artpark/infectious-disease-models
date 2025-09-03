@@ -78,13 +78,13 @@ def plot_calibration_results(time_points, compartments, true_data, noisy_data,
             xlabel = "Time (years)"
         if settings.get("scale_by_population", False) and population:
             per_unit = settings.get("per_unit", 100000)
-            scale = population / per_unit
+            scale = per_unit / population 
             ylabel = f"Cases per {per_unit}"
 
     # scaled arrays
-    true_data_scaled = true_data / scale
-    noisy_data_scaled = noisy_data / scale
-    subset_infected_scaled = subset_infected / scale
+    true_data_scaled = true_data * scale
+    noisy_data_scaled = noisy_data * scale
+    subset_infected_scaled = subset_infected * scale
 
     # --- Plot noisy data (all compartments) ---
     plt.figure(figsize=(10, 6))
