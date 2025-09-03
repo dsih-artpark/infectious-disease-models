@@ -30,6 +30,11 @@ for k, expr in MODEL_CFG['transitions'].items():
     src, dst = k.split('->') if '->' in k else (None, k)
     src = src.strip() if src else None
     dst = dst.strip()
+
+    # Normalize destination (remove suffix like _extra, _1, _2, etc.)
+    if dst and "_" in dst:
+        dst = dst.split("_")[0]
+
     TRANSITIONS.append({'from': src, 'to': dst, 'rate': expr})
 
 INIT_CONDITIONS = MODEL_CFG["initial_conditions"]
@@ -130,7 +135,10 @@ plot_simulation_only(
     time_points=time_points,
     compartments=COMPARTMENTS,
     true_data=true_data,
-    plot_dir=PLOT_DIR
+    plot_dir=PLOT_DIR,
+    model_cfg=MODEL_CFG,
+    population=POPULATION,
+    compartment_choice=args.compartment,
 )
 
 # Only: plot calibration/fitting results if calibration is run
@@ -147,5 +155,8 @@ if args.calibrate and fitted_results is not None:
         plot_dir=PLOT_DIR,
         true_params=PARAMS,
         param_names=param_names,
-        mcmc_sampler=sampler
+        mcmc_sampler=sampler,
+        model_cfg=MODEL_CFG,
+        population=POPULATION,
+        compartment_choice=args.compartment,
     )

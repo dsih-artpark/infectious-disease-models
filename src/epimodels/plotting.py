@@ -4,16 +4,50 @@ import corner
 import numpy as np
 
 
-def plot_simulation_only(time_points, compartments, true_data, plot_dir):
+def plot_simulation_only(time_points, compartments, true_data, plot_dir,
+                         model_cfg=None, population=None, compartment_choice=None):
     """Always plot the baseline true simulation."""
     os.makedirs(plot_dir, exist_ok=True)
 
+    # Defaults
+    scale = 1.0
+    time_for_plot = time_points
+    xlabel = "Days"
+    ylabel = "Population"
+
+    # Apply scaling/time axis settings if available
+    if model_cfg and "plot_settings" in model_cfg:
+        settings = model_cfg["plot_settings"]
+        if settings.get("time_unit") == "years":
+            time_for_plot = time_points / 365
+            xlabel = "Time (years)"
+        if settings.get("scale_by_population", False) and population:
+            per_unit = settings.get("per_unit", 100000)
+            scale = population / per_unit
+            ylabel = f"Cases per {per_unit}"
+
+    scaled_data = true_data / scale
+
+    # Plot all compartments
     plt.figure(figsize=(10, 6))
     for i, comp in enumerate(compartments):
-        plt.plot(time_points, true_data[:, i], label=f"{comp} (true)")
+        plt.plot(time_for_plot, scaled_data[:, i], label=f"{comp} (true)")
+
+    # Highlight chosen compartment if provided
+    if compartment_choice:
+        if "+" in compartment_choice:
+            comp_parts = [c.strip() for c in compartment_choice.split("+")]
+            comp_indices = [compartments.index(c) for c in comp_parts if c in compartments]
+            highlight_series = scaled_data[:, comp_indices].sum(axis=1)
+        else:
+            comp_index = compartments.index(compartment_choice)
+            highlight_series = scaled_data[:, comp_index]
+
+        plt.plot(time_for_plot, highlight_series, label=f"{compartment_choice} (highlight)", linewidth=2.5)
+
     plt.title("True Simulation of Compartments")
-    plt.xlabel("Days")
-    plt.ylabel("Population")
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
     plt.legend()
     plt.grid()
     plt.tight_layout()
@@ -24,41 +58,85 @@ def plot_simulation_only(time_points, compartments, true_data, plot_dir):
 def plot_calibration_results(time_points, compartments, true_data, noisy_data,
                              subset_t, subset_infected, fitted_results,
                              model_name, plot_dir, true_params, param_names,
-                             mcmc_sampler=None):
+                             mcmc_sampler=None, model_cfg=None, population=None,
+                             compartment_choice="I"):
     """Plot calibration-related outputs, only if calibration is run."""
-    # Plot noisy data
+    os.makedirs(plot_dir, exist_ok=True)
+
+    # --- scaling + time axis ---
+    scale = 1.0
+    time_for_plot = time_points
+    subset_time_for_plot = subset_t
+    xlabel = "Days"
+    ylabel = "Population"
+
+    if model_cfg and "plot_settings" in model_cfg:
+        settings = model_cfg["plot_settings"]
+        if settings.get("time_unit") == "years":
+            time_for_plot = time_points / 365
+            subset_time_for_plot = subset_t / 365
+            xlabel = "Time (years)"
+        if settings.get("scale_by_population", False) and population:
+            per_unit = settings.get("per_unit", 100000)
+            scale = population / per_unit
+            ylabel = f"Cases per {per_unit}"
+
+    # scaled arrays
+    true_data_scaled = true_data / scale
+    noisy_data_scaled = noisy_data / scale
+    subset_infected_scaled = subset_infected / scale
+
+    # --- Plot noisy data (all compartments) ---
     plt.figure(figsize=(10, 6))
     for i, comp in enumerate(compartments):
-        plt.plot(time_points, noisy_data[:, i], linestyle="--", label=f"{comp} (noisy)")
+        plt.plot(time_for_plot, noisy_data_scaled[:, i], linestyle="--", label=f"{comp} (noisy)")
     plt.title("Noisy Data for All Compartments")
-    plt.xlabel("Days")
-    plt.ylabel("Population")
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
     plt.legend()
     plt.grid()
     plt.tight_layout()
     plt.savefig(os.path.join(plot_dir, "plot_noisy.png"))
     plt.close()
 
-    # Plot comparison for chosen compartment (default: I)
-    if "I" in compartments:
-        plt.figure(figsize=(10, 6))
-        i_index = compartments.index("I")
-        plt.plot(time_points, true_data[:, i_index], label="True Infected", linewidth=2)
-        plt.scatter(subset_t, subset_infected, label="Noisy Subset", color="black", zorder=5)
+    # --- Plot comparison for calibration compartment(s) ---
+    plt.figure(figsize=(10, 6))
 
-        for method, result in fitted_results.items():
-            plt.plot(time_points, result['trajectory'][:, i_index], label=f"Fitted ({method})")
+    # Determine target compartment(s)
+    if "+" in compartment_choice:
+        comp_parts = [c.strip() for c in compartment_choice.split("+")]
+        comp_indices = [compartments.index(c) for c in comp_parts if c in compartments]
+        true_series = true_data_scaled[:, comp_indices].sum(axis=1)
+        noisy_series = noisy_data_scaled[:, comp_indices].sum(axis=1)
+    else:
+        comp_index = compartments.index(compartment_choice)
+        comp_indices = [comp_index]  # always store as list for consistency
+        true_series = true_data_scaled[:, comp_index]
+        noisy_series = noisy_data_scaled[:, comp_index]
 
-        plt.title("Infected Compartment: True vs Noisy Subset vs Fitted")
-        plt.xlabel("Days")
-        plt.ylabel("Population")
-        plt.legend()
-        plt.grid()
-        plt.tight_layout()
-        plt.savefig(os.path.join(plot_dir, "plot_comparison.png"))
-        plt.close()
+    # Plot baseline + subset
+    plt.plot(time_for_plot, true_series, label=f"True {compartment_choice}", linewidth=2)
+    plt.scatter(subset_time_for_plot, subset_infected_scaled, label="Noisy Subset", color="black", zorder=5)
 
-    # Plot parameter estimation bars
+    # Add fitted curves
+    for method, result in fitted_results.items():
+        fitted_scaled = result['trajectory'] / scale
+        if len(comp_indices) > 1:
+            fitted_series = fitted_scaled[:, comp_indices].sum(axis=1)
+        else:
+            fitted_series = fitted_scaled[:, comp_indices[0]]
+        plt.plot(time_for_plot, fitted_series, label=f"Fitted ({method})")
+
+    plt.title(f"{compartment_choice}: True vs Noisy Subset vs Fitted")
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.legend()
+    plt.grid()
+    plt.tight_layout()
+    plt.savefig(os.path.join(plot_dir, "plot_comparison.png"))
+    plt.close()
+
+    # --- Parameter estimation ---
     if true_params is not None and param_names is not None:
         methods = list(fitted_results.keys())
         n_params = len(param_names)
@@ -87,7 +165,7 @@ def plot_calibration_results(time_points, compartments, true_data, noisy_data,
         plt.savefig(os.path.join(plot_dir, "parameter_estimation.png"))
         plt.close()
 
-    # Corner plot
+    # --- Corner plot ---
     if mcmc_sampler is not None:
         try:
             samples = mcmc_sampler.get_chain(discard=100, flat=True)
