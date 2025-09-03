@@ -81,7 +81,7 @@ class Calibrator:
             optimizers, compartments):
         results = {}
         initial_guess = np.array([self.model.parameters[p] for p in self.param_names])
-        bounds = [(0.0001, 1.0)] * len(self.param_names)
+        bounds = [(1e-8, 10.0)] * len(self.param_names)
 
         comp_indices = self.compartment  # already a list of indices
 
@@ -98,7 +98,8 @@ class Calibrator:
             full_trajectory = np.array(self.model.simulate(initial_conditions, full_time_points))
             results[method] = {
                 'params': fitted_params,
-                'trajectory': full_trajectory
+                'trajectory': full_trajectory,
+                'loss':res.fun
             }
 
         return results

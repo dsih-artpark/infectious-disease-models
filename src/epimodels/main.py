@@ -105,7 +105,7 @@ if args.calibrate:
 
     extras_fn = {
         "initial_conditions": INIT_CONDITIONS,
-        "compartment_index": comp_indices,
+        "compartment_indices": comp_indices,
         "sigma": 5.0,
     }
     sampler = Calibrator.run_mcmc(
