@@ -19,7 +19,7 @@ def plot_simulation_only(time_points, compartments, true_data, plot_dir,
     if model_cfg and "plot_settings" in model_cfg:
         settings = model_cfg["plot_settings"]
         if settings.get("time_unit") == "years":
-            time_for_plot = time_points / 365
+            time_for_plot = time_points 
             xlabel = "Time (years)"
         if settings.get("scale_by_population", False) and population:
             per_unit = settings.get("per_unit", 100000)
@@ -49,6 +49,7 @@ def plot_simulation_only(time_points, compartments, true_data, plot_dir,
     plt.legend()
     plt.grid()
     plt.tight_layout()
+    # plt.xlim(0,0.25)
     plt.savefig(os.path.join(plot_dir, "plot_simulation.png"))
     plt.close()
 

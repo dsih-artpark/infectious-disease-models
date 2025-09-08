@@ -17,7 +17,7 @@ args = parser.parse_args()
 
 MODEL_NAME = args.model
 MODEL_CFG = cfg[MODEL_NAME]
-TIME = cfg["days"]
+TIME = cfg["timescale"]
 NOISE_STD = cfg["noise_std"]
 SUBSET_RATIO = cfg["subset_ratio"]
 OPTIMIZERS = cfg["optimizers"]

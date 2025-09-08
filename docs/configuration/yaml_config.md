@@ -4,7 +4,7 @@ The framework is configured entirely via a YAML file. Below are the supported fi
 
 ## Global Settings
 
-- `days` (int): number of days to simulate.
+- `timescale` (int): number of days or years to simulate.
 - `noise_std` (float): standard deviation of Gaussian noise added to trajectories.
 - `subset_ratio` (float): fraction of time points to randomly sample for fitting (0.0 - 1.0).
 - `optimizers` (list[str]): which optimizers to run (e.g., Nelder-Mead, BFGS, L-BFGS-B).
@@ -23,7 +23,7 @@ Each model block has:
 ### Example: SIR model
 
 ```yaml
-days: 160
+timescale: 160
 noise_std: 2.0
 subset_ratio: 0.4
 optimizers:

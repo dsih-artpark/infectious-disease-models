@@ -32,7 +32,7 @@ def rhs(y, t, params):
     dRdt = gamma * I
     return [dSdt, dIdt, dRdt]
 
-t = np.linspace(0, days, days+1)
+t = np.linspace(0, time, time+1)
 y0 = [990, 10, 0]
 sol = odeint(rhs, y0, t, args=( {'beta':0.3,'gamma':0.1,'N':1000}, ))
 ```
