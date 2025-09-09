@@ -2,20 +2,44 @@ site_name: Generalized Compartmental Modeling Framework
 theme:
   name: material
   features:
-    - navigation.tabs
+    - content.code.annotate
     - content.code.copy
+    - content.tooltips
     - content.tabs.link
+    - content.code.select
+    - navigation.tabs
     - search.suggest
     - search.highlight
 markdown_extensions:
+  - pymdownx.superfences
+  - pymdownx.details
+  - pymdownx.tabbed
+  - pymdownx.mark
+  - pymdownx.tasklist
+  - pymdownx.critic
+  - pymdownx.inlinehilite
+  - pymdownx.highlight
+  - pymdownx.snippets
+  - pymdownx.keys
+  - pymdownx.magiclink
+  - pymdownx.smartsymbols
+  - pymdownx.tilde
+  - pymdownx.emoji
+  - pymdownx.arithmatex
+  - pymdownx.betterem
+  - pymdownx.caret
+  - pymdownx.escapeall
+  - pymdownx.progressbar
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
   - admonition
   - toc:
       permalink: true
   - pymdownx.arithmatex:
       generic: true
-  - pymdownx.highlight
-  - pymdownx.superfences
-  - pymdownx.details
 nav:
   - Home: index.md
   - Github Repo: https://github.com/dsih-artpark/infectious-disease-models.git
