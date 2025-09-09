@@ -74,8 +74,8 @@ def plot_calibration_results(time_points, compartments, true_data, noisy_data,
     if model_cfg and "plot_settings" in model_cfg:
         settings = model_cfg["plot_settings"]
         if settings.get("time_unit") == "years":
-            time_for_plot = time_points / 365
-            subset_time_for_plot = subset_t / 365
+            time_for_plot = time_points 
+            subset_time_for_plot = subset_t 
             xlabel = "Time (years)"
         if settings.get("scale_by_population", False) and population:
             per_unit = settings.get("per_unit", 100000)
