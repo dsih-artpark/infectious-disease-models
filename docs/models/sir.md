@@ -1,9 +1,11 @@
 # SIR Model
 
-The **SIR model** is a standard epidemiological model with three compartments:
-- **S**: Susceptible
-- **I**: Infected
-- **R**: Recovered
+The **SIR model** is one of the simplest compartmental models in epidemiology.  
+It divides the population into three compartments:  
+
+- **S (Susceptible):** Individuals who are healthy but can contract the disease.  
+- **I (Infected):** Individuals currently infected and able to spread the disease.  
+- **R (Recovered):** Individuals who have recovered and gained immunity.  
 
 ---
 
@@ -11,5 +13,9 @@ The **SIR model** is a standard epidemiological model with three compartments:
 
 ```mermaid
 flowchart LR
-    S -->|β S I / N| I
-    I -->|γ I| R
+    S -- "β * S * I / N" --> I
+    I -- "γ * I" --> R
+    N -- "μ * N" --> S
+    S -- "μ * S" --> ∅
+    I -- "μ * I" --> ∅
+    R -- "μ * R" --> ∅
