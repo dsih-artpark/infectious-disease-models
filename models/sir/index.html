@@ -1410,16 +1410,23 @@
 
 
 <h1 id="sir-model">SIR Model<a class="headerlink" href="#sir-model" title="Permanent link">&para;</a></h1>
-<p>The <strong>SIR model</strong> is a standard epidemiological model with three compartments:
-- <strong>S</strong>: Susceptible
-- <strong>I</strong>: Infected
-- <strong>R</strong>: Recovered</p>
+<p>The <strong>SIR model</strong> is one of the simplest compartmental models in epidemiology.<br />
+It divides the population into three compartments:  </p>
+<ul>
+<li><strong>S (Susceptible):</strong> Individuals who are healthy but can contract the disease.  </li>
+<li><strong>I (Infected):</strong> Individuals currently infected and able to spread the disease.  </li>
+<li><strong>R (Recovered):</strong> Individuals who have recovered and gained immunity.  </li>
+</ul>
 <hr />
 <h2 id="transition-diagram">Transition Diagram<a class="headerlink" href="#transition-diagram" title="Permanent link">&para;</a></h2>
 <p>```mermaid
 flowchart LR
-    S --&gt;|β S I / N| I
-    I --&gt;|γ I| R</p>
+    S -- "β * S * I / N" --&gt; I
+    I -- "γ * I" --&gt; R
+    N -- "μ * N" --&gt; S
+    S -- "μ * S" --&gt; ∅
+    I -- "μ * I" --&gt; ∅
+    R -- "μ * R" --&gt; ∅</p>
 
 
 
