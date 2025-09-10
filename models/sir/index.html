@@ -1415,18 +1415,17 @@ It divides the population into three compartments:  </p>
 <ul>
 <li><strong>S (Susceptible):</strong> Individuals who are healthy but can contract the disease.  </li>
 <li><strong>I (Infected):</strong> Individuals currently infected and able to spread the disease.  </li>
-<li><strong>R (Recovered):</strong> Individuals who have recovered and gained immunity.  </li>
+<li><strong>R (Recovered):</strong> Individuals who have recovered and gained immunity. </li>
 </ul>
 <hr />
 <h2 id="transition-diagram">Transition Diagram<a class="headerlink" href="#transition-diagram" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
-    S -- "β * S * I / N" --&gt; I
-    I -- "γ * I" --&gt; R
-    N -- "μ * N" --&gt; S
-    S -- "μ * S" --&gt; ∅
-    I -- "μ * I" --&gt; ∅
-    R -- "μ * R" --&gt; ∅
-</code></pre>
+    S --&gt;|"β * S * I / N"| I
+    I --&gt;|"γ * I"| R
+    N --&gt;|"μ * N"| S
+    S --&gt;|"μ * S"| X1[∅]
+    I --&gt;|"μ * I"| X2[∅]
+    R --&gt;|"μ * R"| X3[∅]</code></pre>
 
 
 
