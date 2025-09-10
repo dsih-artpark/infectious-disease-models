@@ -61,6 +61,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#tb-model" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -1255,6 +1260,21 @@
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    TB Model
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
         
@@ -1267,6 +1287,34 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#transition-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      Transition Diagram
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -1327,6 +1375,25 @@
   
   
   
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#transition-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      Transition Diagram
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -1342,9 +1409,82 @@
 
 
 
-  <h1>TB Model</h1>
-
-
+<h1 id="tb-model">TB Model<a class="headerlink" href="#tb-model" title="Permanent link">&para;</a></h1>
+<h2 id="transition-diagram">Transition Diagram<a class="headerlink" href="#transition-diagram" title="Permanent link">&para;</a></h2>
+<p>```mermaid
+flowchart LR
+    S -- "βs * Is * S / N" &rarr; Ls
+    S -- "βr * Ir * S / N" &rarr; Lr
+    Ls -- "αs * Ls" &rarr; Is
+    Lr -- "αr * Lr" &rarr; Ir
+    Is -- "ωs * Is" &rarr; R
+    Is -- "(1 - ρ) * τs * Is" &rarr; R
+    Is -- "ρ * τs * Is" &rarr; Ir
+    Ir -- "ωr * Ir" &rarr; R
+    Ir -- "τr * Ir" &rarr; R
+    Ir -- "φr * Ir" &rarr; S
+    Is -- "φs * Is" &rarr; S
+    R -- "γ * R" &rarr; S
+    %% Natural mortality and births
+    N -- "μ * N" &rarr; S
+    S -- "μ * S" &rarr; ∅
+    Ls -- "μ * Ls" &rarr; ∅
+    Lr -- "μ * Lr" &rarr; ∅
+    Is -- "μ * Is" &rarr; ∅
+    Ir -- "μ * Ir" &rarr; ∅
+    R -- "μ * R" &rarr; ∅</p>
+<p>TB_model:
+  plot_settings:
+    scale_by_population: true <br />
+    per_unit: 100000         <br />
+    time_unit: years   </p>
+<p>compartments: [S, Ls, Is, Lr, Ir, R]</p>
+<p>parameters: 
+    mu: 0.0142857
+    beta_s: 1.57e-8
+    beta_r: 6.25e-9
+    alpha_s: 0.129
+    alpha_r: 0.129
+    omega_s: 0.287
+    omega_r: 0.12
+    rho: 0.07
+    phi_s: 0.37
+    phi_r: 0.37
+    tau_s: 0.94
+    tau_r: 0.78
+    gamma: 0.1</p>
+<p>transitions: 
+    "R -&gt; S": "gamma * R"
+    "Is -&gt; S": "phi_s * Is"
+    "Ir -&gt; S": "phi_r * Ir"
+    "S -&gt; Ls": "beta_s * Is * S / N"
+    "S -&gt; Lr": "beta_r * Ir * S / N"
+    "S -&gt;": "mu * S"
+    "-&gt; S": "mu * N"
+    "Ls -&gt; Is": "alpha_s * Ls"
+    "Ls -&gt;": "mu * Ls"
+    "Is -&gt; R": "omega_s * Is"
+    "Is -&gt; R_extra": "(1 - rho) * tau_s * Is"
+    "Is -&gt;": "mu * Is"
+    "Is -&gt; Ir": "rho * tau_s * Is"
+    "Lr -&gt; Ir": "alpha_r * Lr"
+    "Lr -&gt;": "mu * Lr"
+    "Ir -&gt; R": "omega_r * Ir"
+    "Ir -&gt; R_extra": "tau_r * Ir"
+    "Ir -&gt;": "mu * Ir"
+    "Ir -&gt; S": "phi_r * Ir"
+    "R -&gt;": "mu * R"</p>
+<p>population: 159000000</p>
+<p>initial_conditions: 
+    Ls: 636000
+    Is: 477000
+    Lr: 15900
+    Ir: 636000
+    R: 7950
+    S: 157242150</p>
+<p>assumptions: |
+    TB transmission with drug-sensitive (DS) and drug-resistant (DR) strains,
+    based on Kuddus (2022).</p>
 
 
 
@@ -1395,7 +1535,7 @@
     
     
       
-      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "content.code.copy", "content.tabs.link", "search.suggest", "search.highlight"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.annotate", "content.code.copy", "content.tooltips", "content.tabs.link", "content.code.select", "navigation.tabs", "search.suggest", "search.highlight"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
       <script src="../../assets/javascripts/bundle.50899def.min.js"></script>
