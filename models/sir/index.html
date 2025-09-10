@@ -1240,6 +1240,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#sir-model-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      SIR Model Configuration
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1393,6 +1402,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#sir-model-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      SIR Model Configuration
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1426,22 +1444,23 @@ It divides the population into three compartments:  </p>
     S --&gt;|"μ * S"| X1[∅]
     I --&gt;|"μ * I"| X2[∅]
     R --&gt;|"μ * R"| X3[∅]</code></pre>
-<h1 id="sir-model-configuration">SIR Model Configuration<a class="headerlink" href="#sir-model-configuration" title="Permanent link">&para;</a></h1>
+<hr />
+<h2 id="sir-model-configuration">SIR Model Configuration<a class="headerlink" href="#sir-model-configuration" title="Permanent link">&para;</a></h2>
 <p>Below is an example configuration for the <strong>SIR model</strong> in YAML format.</p>
-<p>```yaml
-SIR_model:
-  compartments: [S, I, R]
-  parameters: {beta: 0.25, gamma: 0.15, mu: 0.015}
-  transitions:
-    "S -&gt; I": "beta * S * I / N"
-    "I -&gt; R": "gamma * I"
-    "-&gt; S": "mu * N"
-    "S -&gt;": "mu * S"
-    "I -&gt;": "mu * I"
-    "R -&gt;": "mu * R"
-  population: 1000
-  initial_conditions: {S: 990, I: 10, R: 0}
-  assumptions: The population is closed (no births or deaths). The disease is transmitted through direct contact. Immunity is permanent after recovery.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">SIR_model</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">compartments</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">S</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">I</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">R</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">parameters</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">beta</span><span class="p">:</span><span class="w"> </span><span class="nv">0.25</span><span class="p p-Indicator">,</span><span class="nt"> gamma</span><span class="p">:</span><span class="w"> </span><span class="nv">0.15</span><span class="p p-Indicator">,</span><span class="nt"> mu</span><span class="p">:</span><span class="w"> </span><span class="nv">0.015</span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="nt">transitions</span><span class="p">:</span>
+<span class="w">    </span><span class="s">&quot;S</span><span class="nv"> </span><span class="s">-&gt;</span><span class="nv"> </span><span class="s">I&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;beta</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">S</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">I</span><span class="nv"> </span><span class="s">/</span><span class="nv"> </span><span class="s">N&quot;</span>
+<span class="w">    </span><span class="s">&quot;I</span><span class="nv"> </span><span class="s">-&gt;</span><span class="nv"> </span><span class="s">R&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;gamma</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">I&quot;</span>
+<span class="w">    </span><span class="s">&quot;-&gt;</span><span class="nv"> </span><span class="s">S&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;mu</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">N&quot;</span>
+<span class="w">    </span><span class="s">&quot;S</span><span class="nv"> </span><span class="s">-&gt;&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;mu</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">S&quot;</span>
+<span class="w">    </span><span class="s">&quot;I</span><span class="nv"> </span><span class="s">-&gt;&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;mu</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">I&quot;</span>
+<span class="w">    </span><span class="s">&quot;R</span><span class="nv"> </span><span class="s">-&gt;&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;mu</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">R&quot;</span>
+<span class="w">  </span><span class="nt">population</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+<span class="w">  </span><span class="nt">initial_conditions</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">S</span><span class="p">:</span><span class="w"> </span><span class="nv">990</span><span class="p p-Indicator">,</span><span class="nt"> I</span><span class="p">:</span><span class="w"> </span><span class="nv">10</span><span class="p p-Indicator">,</span><span class="nt"> R</span><span class="p">:</span><span class="w"> </span><span class="nv">0</span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="nt">assumptions</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The population is closed (no births or deaths). The disease is transmitted through direct contact. Immunity is permanent after recovery.</span>
+</code></pre></div>
 
 
 

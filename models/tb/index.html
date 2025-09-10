@@ -1304,9 +1304,27 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#transition-diagram" class="md-nav__link">
     <span class="md-ellipsis">
       Transition Diagram
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tb-model-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      TB Model Configuration
     </span>
   </a>
   
@@ -1385,9 +1403,27 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#transition-diagram" class="md-nav__link">
     <span class="md-ellipsis">
       Transition Diagram
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tb-model-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      TB Model Configuration
     </span>
   </a>
   
@@ -1410,81 +1446,94 @@
 
 
 <h1 id="tb-model">TB Model<a class="headerlink" href="#tb-model" title="Permanent link">&para;</a></h1>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
+<p>Kuddus et al. (2022) proposed a <strong>two-strain tuberculosis (TB) model</strong> to study <strong>drug-susceptible (DS)</strong> and <strong>drug-resistant (DR)</strong> TB dynamics in Bangladesh.  </p>
+<p>In this model, the total population <code>N</code> is divided into <strong>six mutually exclusive compartments</strong>:  </p>
+<ul>
+<li><code>S</code>: Susceptible  </li>
+<li><code>Ls</code>: Latently infected with drug-susceptible TB  </li>
+<li><code>Is</code>: Infectious with drug-susceptible TB  </li>
+<li><code>Lr</code>: Latently infected with drug-resistant TB  </li>
+<li><code>Ir</code>: Infectious with drug-resistant TB  </li>
+<li><code>R</code>: Recovered  </li>
+</ul>
+<hr />
 <h2 id="transition-diagram">Transition Diagram<a class="headerlink" href="#transition-diagram" title="Permanent link">&para;</a></h2>
-<p>```mermaid
-flowchart LR
-    S -- "βs * Is * S / N" &rarr; Ls
-    S -- "βr * Ir * S / N" &rarr; Lr
-    Ls -- "αs * Ls" &rarr; Is
-    Lr -- "αr * Lr" &rarr; Ir
-    Is -- "ωs * Is" &rarr; R
-    Is -- "(1 - ρ) * τs * Is" &rarr; R
-    Is -- "ρ * τs * Is" &rarr; Ir
-    Ir -- "ωr * Ir" &rarr; R
-    Ir -- "τr * Ir" &rarr; R
-    Ir -- "φr * Ir" &rarr; S
-    Is -- "φs * Is" &rarr; S
-    R -- "γ * R" &rarr; S
-    %% Natural mortality and births
-    N -- "μ * N" &rarr; S
-    S -- "μ * S" &rarr; ∅
-    Ls -- "μ * Ls" &rarr; ∅
-    Lr -- "μ * Lr" &rarr; ∅
-    Is -- "μ * Is" &rarr; ∅
-    Ir -- "μ * Ir" &rarr; ∅
-    R -- "μ * R" &rarr; ∅</p>
-<p>TB_model:
-  plot_settings:
-    scale_by_population: true <br />
-    per_unit: 100000         <br />
-    time_unit: years   </p>
-<p>compartments: [S, Ls, Is, Lr, Ir, R]</p>
-<p>parameters: 
-    mu: 0.0142857
-    beta_s: 1.57e-8
-    beta_r: 6.25e-9
-    alpha_s: 0.129
-    alpha_r: 0.129
-    omega_s: 0.287
-    omega_r: 0.12
-    rho: 0.07
-    phi_s: 0.37
-    phi_r: 0.37
-    tau_s: 0.94
-    tau_r: 0.78
-    gamma: 0.1</p>
-<p>transitions: 
-    "R -&gt; S": "gamma * R"
-    "Is -&gt; S": "phi_s * Is"
-    "Ir -&gt; S": "phi_r * Ir"
-    "S -&gt; Ls": "beta_s * Is * S / N"
-    "S -&gt; Lr": "beta_r * Ir * S / N"
-    "S -&gt;": "mu * S"
-    "-&gt; S": "mu * N"
-    "Ls -&gt; Is": "alpha_s * Ls"
-    "Ls -&gt;": "mu * Ls"
-    "Is -&gt; R": "omega_s * Is"
-    "Is -&gt; R_extra": "(1 - rho) * tau_s * Is"
-    "Is -&gt;": "mu * Is"
-    "Is -&gt; Ir": "rho * tau_s * Is"
-    "Lr -&gt; Ir": "alpha_r * Lr"
-    "Lr -&gt;": "mu * Lr"
-    "Ir -&gt; R": "omega_r * Ir"
-    "Ir -&gt; R_extra": "tau_r * Ir"
-    "Ir -&gt;": "mu * Ir"
-    "Ir -&gt; S": "phi_r * Ir"
-    "R -&gt;": "mu * R"</p>
-<p>population: 159000000</p>
-<p>initial_conditions: 
-    Ls: 636000
-    Is: 477000
-    Lr: 15900
-    Ir: 636000
-    R: 7950
-    S: 157242150</p>
-<p>assumptions: |
-    TB transmission with drug-sensitive (DS) and drug-resistant (DR) strains,
-    based on Kuddus (2022).</p>
+<pre class="mermaid"><code>flowchart LR
+    S --&gt;|"βs * Is * S / N"| Ls
+    S --&gt;|"βr * Ir * S / N"| Lr
+    Ls --&gt;|"αs * Ls"| Is
+    Lr --&gt;|"αr * Lr"| Ir
+    Is --&gt;|"ωs * Is"| R
+    Ir --&gt;|"ωr * Ir"| R
+    Is --&gt;|"ρ * τs * Is"| Ir
+    Is --&gt;|"φs * Is"| S
+    Ir --&gt;|"φr * Ir"| S
+    R --&gt;|"γ * R"| S
+    N --&gt;|"μ * N"| S
+    S --&gt;|"μ * S"| X1[∅]
+    Ls --&gt;|"μ * Ls"| X2[∅]
+    Is --&gt;|"μ * Is"| X3[∅]
+    Lr --&gt;|"μ * Lr"| X4[∅]
+    Ir --&gt;|"μ * Ir"| X5[∅]
+    R --&gt;|"μ * R"| X6[∅]</code></pre>
+<hr />
+<h2 id="tb-model-configuration">TB Model Configuration<a class="headerlink" href="#tb-model-configuration" title="Permanent link">&para;</a></h2>
+<p>Below is an example configuration for the <strong>TB model</strong> in YAML format.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">TB_model</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">plot_settings</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">scale_by_population</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w">   </span>
+<span class="w">    </span><span class="nt">per_unit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100000</span><span class="w">           </span>
+<span class="w">    </span><span class="nt">time_unit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">years</span><span class="w">   </span>
+<span class="w">  </span><span class="nt">compartments</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">S</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Ls</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Is</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Lr</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Ir</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">R</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">parameters</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">mu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0142857</span>
+<span class="w">    </span><span class="nt">beta_s</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.57e-8</span>
+<span class="w">    </span><span class="nt">beta_r</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">6.25e-9</span>
+<span class="w">    </span><span class="nt">alpha_s</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.129</span>
+<span class="w">    </span><span class="nt">alpha_r</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.129</span>
+<span class="w">    </span><span class="nt">omega_s</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.287</span>
+<span class="w">    </span><span class="nt">omega_r</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.12</span>
+<span class="w">    </span><span class="nt">rho</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.07</span>
+<span class="w">    </span><span class="nt">phi_s</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.37</span>
+<span class="w">    </span><span class="nt">phi_r</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.37</span>
+<span class="w">    </span><span class="nt">tau_s</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.94</span>
+<span class="w">    </span><span class="nt">tau_r</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.78</span>
+<span class="w">    </span><span class="nt">gamma</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.1</span>
+<span class="w">  </span><span class="nt">transitions</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="s">&quot;R</span><span class="nv"> </span><span class="s">-&gt;</span><span class="nv"> </span><span class="s">S&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;gamma</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">R&quot;</span>
+<span class="w">    </span><span class="s">&quot;Is</span><span class="nv"> </span><span class="s">-&gt;</span><span class="nv"> </span><span class="s">S&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;phi_s</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">Is&quot;</span>
+<span class="w">    </span><span class="s">&quot;Ir</span><span class="nv"> </span><span class="s">-&gt;</span><span class="nv"> </span><span class="s">S&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;phi_r</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">Ir&quot;</span>
+<span class="w">    </span><span class="s">&quot;S</span><span class="nv"> </span><span class="s">-&gt;</span><span class="nv"> </span><span class="s">Ls&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;beta_s</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">Is</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">S</span><span class="nv"> </span><span class="s">/</span><span class="nv"> </span><span class="s">N&quot;</span>
+<span class="w">    </span><span class="s">&quot;S</span><span class="nv"> </span><span class="s">-&gt;</span><span class="nv"> </span><span class="s">Lr&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;beta_r</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">Ir</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">S</span><span class="nv"> </span><span class="s">/</span><span class="nv"> </span><span class="s">N&quot;</span>
+<span class="w">    </span><span class="s">&quot;S</span><span class="nv"> </span><span class="s">-&gt;&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;mu</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">S&quot;</span>
+<span class="w">    </span><span class="s">&quot;-&gt;</span><span class="nv"> </span><span class="s">S&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;mu</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">N&quot;</span>
+<span class="w">    </span><span class="s">&quot;Ls</span><span class="nv"> </span><span class="s">-&gt;</span><span class="nv"> </span><span class="s">Is&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;alpha_s</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">Ls&quot;</span>
+<span class="w">    </span><span class="s">&quot;Ls</span><span class="nv"> </span><span class="s">-&gt;&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;mu</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">Ls&quot;</span>
+<span class="w">    </span><span class="s">&quot;Is</span><span class="nv"> </span><span class="s">-&gt;</span><span class="nv"> </span><span class="s">R&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;omega_s</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">Is&quot;</span>
+<span class="w">    </span><span class="s">&quot;Is</span><span class="nv"> </span><span class="s">-&gt;</span><span class="nv"> </span><span class="s">R_extra&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;(1</span><span class="nv"> </span><span class="s">-</span><span class="nv"> </span><span class="s">rho)</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">tau_s</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">Is&quot;</span>
+<span class="w">    </span><span class="s">&quot;Is</span><span class="nv"> </span><span class="s">-&gt;&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;mu</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">Is&quot;</span>
+<span class="w">    </span><span class="s">&quot;Is</span><span class="nv"> </span><span class="s">-&gt;</span><span class="nv"> </span><span class="s">Ir&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;rho</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">tau_s</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">Is&quot;</span>
+<span class="w">    </span><span class="s">&quot;Lr</span><span class="nv"> </span><span class="s">-&gt;</span><span class="nv"> </span><span class="s">Ir&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;alpha_r</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">Lr&quot;</span>
+<span class="w">    </span><span class="s">&quot;Lr</span><span class="nv"> </span><span class="s">-&gt;&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;mu</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">Lr&quot;</span>
+<span class="w">    </span><span class="s">&quot;Ir</span><span class="nv"> </span><span class="s">-&gt;</span><span class="nv"> </span><span class="s">R&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;omega_r</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">Ir&quot;</span>
+<span class="w">    </span><span class="s">&quot;Ir</span><span class="nv"> </span><span class="s">-&gt;</span><span class="nv"> </span><span class="s">R_extra&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;tau_r</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">Ir&quot;</span>
+<span class="w">    </span><span class="s">&quot;Ir</span><span class="nv"> </span><span class="s">-&gt;&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;mu</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">Ir&quot;</span>
+<span class="w">    </span><span class="s">&quot;Ir</span><span class="nv"> </span><span class="s">-&gt;</span><span class="nv"> </span><span class="s">S&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;phi_r</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">Ir&quot;</span>
+<span class="w">    </span><span class="s">&quot;R</span><span class="nv"> </span><span class="s">-&gt;&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;mu</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">R&quot;</span>
+
+<span class="w">  </span><span class="nt">population</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">159000000</span>
+<span class="w">  </span><span class="nt">initial_conditions</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">Ls</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">636000</span>
+<span class="w">    </span><span class="nt">Is</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">477000</span>
+<span class="w">    </span><span class="nt">Lr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">15900</span>
+<span class="w">    </span><span class="nt">Ir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">636000</span>
+<span class="w">    </span><span class="nt">R</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7950</span>
+<span class="w">    </span><span class="nt">S</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">157242150</span>
+<span class="w">  </span><span class="nt">assumptions</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">    </span><span class="no">TB transmission with drug-sensitive (DS) and drug-resistant (DR) strains,</span>
+<span class="w">    </span><span class="no">based on Kuddus (2022).</span>
+</code></pre></div>
 
 
 
