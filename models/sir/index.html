@@ -1419,14 +1419,13 @@ It divides the population into three compartments:  </p>
 </ul>
 <hr />
 <h2 id="transition-diagram">Transition Diagram<a class="headerlink" href="#transition-diagram" title="Permanent link">&para;</a></h2>
-<p>```mermaid
-flowchart LR
-    S -- "β * S * I / N" &rarr; I
-    I -- "γ * I" &rarr; R
-    N -- "μ * N" &rarr; S
-    S -- "μ * S" &rarr; ∅
-    I -- "μ * I" &rarr; ∅
-    R -- "μ * R" &rarr; ∅</p>
+<pre class="mermaid"><code>flowchart LR
+    S -- "β * S * I / N" --&gt; I
+    I -- "γ * I" --&gt; R
+    N -- "μ * N" --&gt; S
+    S -- "μ * S" --&gt; ∅
+    I -- "μ * I" --&gt; ∅
+    R -- "μ * R" --&gt; ∅</code></pre>
 
 
 
