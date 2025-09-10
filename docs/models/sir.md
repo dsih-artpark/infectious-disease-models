@@ -21,7 +21,9 @@ flowchart LR
     R -->|"μ * R"| X3[∅]
 ```
 
-# SIR Model Configuration
+---
+
+## SIR Model Configuration
 
 Below is an example configuration for the **SIR model** in YAML format.
 
@@ -39,3 +41,4 @@ SIR_model:
   population: 1000
   initial_conditions: {S: 990, I: 10, R: 0}
   assumptions: The population is closed (no births or deaths). The disease is transmitted through direct contact. Immunity is permanent after recovery.
+```

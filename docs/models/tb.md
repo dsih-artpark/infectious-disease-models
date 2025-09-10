@@ -1,40 +1,56 @@
 # TB Model
 
+## Overview  
+
+Kuddus et al. (2022) proposed a **two-strain tuberculosis (TB) model** to study **drug-susceptible (DS)** and **drug-resistant (DR)** TB dynamics in Bangladesh.  
+
+In this model, the total population `N` is divided into **six mutually exclusive compartments**:  
+
+- `S`: Susceptible  
+- `Ls`: Latently infected with drug-susceptible TB  
+- `Is`: Infectious with drug-susceptible TB  
+- `Lr`: Latently infected with drug-resistant TB  
+- `Ir`: Infectious with drug-resistant TB  
+- `R`: Recovered  
+
+---
 ## Transition Diagram
 
 ```mermaid
 flowchart LR
-    S -- "βs * Is * S / N" --> Ls
-    S -- "βr * Ir * S / N" --> Lr
-    Ls -- "αs * Ls" --> Is
-    Lr -- "αr * Lr" --> Ir
-    Is -- "ωs * Is" --> R
-    Is -- "(1 - ρ) * τs * Is" --> R
-    Is -- "ρ * τs * Is" --> Ir
-    Ir -- "ωr * Ir" --> R
-    Ir -- "τr * Ir" --> R
-    Ir -- "φr * Ir" --> S
-    Is -- "φs * Is" --> S
-    R -- "γ * R" --> S
-    %% Natural mortality and births
-    N -- "μ * N" --> S
-    S -- "μ * S" --> ∅
-    Ls -- "μ * Ls" --> ∅
-    Lr -- "μ * Lr" --> ∅
-    Is -- "μ * Is" --> ∅
-    Ir -- "μ * Ir" --> ∅
-    R -- "μ * R" --> ∅
+    S -->|"βs * Is * S / N"| Ls
+    S -->|"βr * Ir * S / N"| Lr
+    Ls -->|"αs * Ls"| Is
+    Lr -->|"αr * Lr"| Ir
+    Is -->|"ωs * Is"| R
+    Ir -->|"ωr * Ir"| R
+    Is -->|"ρ * τs * Is"| Ir
+    Is -->|"φs * Is"| S
+    Ir -->|"φr * Ir"| S
+    R -->|"γ * R"| S
+    N -->|"μ * N"| S
+    S -->|"μ * S"| X1[∅]
+    Ls -->|"μ * Ls"| X2[∅]
+    Is -->|"μ * Is"| X3[∅]
+    Lr -->|"μ * Lr"| X4[∅]
+    Ir -->|"μ * Ir"| X5[∅]
+    R -->|"μ * R"| X6[∅]
+```
 
+---
 
+## TB Model Configuration
+
+Below is an example configuration for the **TB model** in YAML format.
+
+```yaml
 TB_model:
   plot_settings:
     scale_by_population: true   
     per_unit: 100000           
     time_unit: years   
-
   compartments: [S, Ls, Is, Lr, Ir, R]
-
-  parameters: 
+  parameters:
     mu: 0.0142857
     beta_s: 1.57e-8
     beta_r: 6.25e-9
@@ -48,7 +64,6 @@ TB_model:
     tau_s: 0.94
     tau_r: 0.78
     gamma: 0.1
-
   transitions: 
     "R -> S": "gamma * R"
     "Is -> S": "phi_s * Is"
@@ -72,7 +87,6 @@ TB_model:
     "R ->": "mu * R"
 
   population: 159000000
-
   initial_conditions: 
     Ls: 636000
     Is: 477000
@@ -80,7 +94,7 @@ TB_model:
     Ir: 636000
     R: 7950
     S: 157242150
-
   assumptions: |
     TB transmission with drug-sensitive (DS) and drug-resistant (DR) strains,
     based on Kuddus (2022).
+```
