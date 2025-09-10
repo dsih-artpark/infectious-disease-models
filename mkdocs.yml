@@ -25,7 +25,6 @@ markdown_extensions:
   - pymdownx.smartsymbols
   - pymdownx.tilde
   - pymdownx.emoji
-  - pymdownx.arithmatex
   - pymdownx.betterem
   - pymdownx.caret
   - pymdownx.escapeall
