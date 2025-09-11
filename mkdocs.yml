@@ -66,6 +66,8 @@ nav:
   - Example Models:
       - Standard Models:
         - SIR Model: models/sir.md
+        - SEIR Model: models/seir.md
+        - SIS Model: models/sis.md
       - Published Models:
         - TB Model: models/tb.md
   - References: references.md
