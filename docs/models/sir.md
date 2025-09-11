@@ -13,13 +13,9 @@ It divides the population into three compartments:
 
 ```mermaid
 flowchart LR
-    ["S"] -->|"β · S · I / N"| I["I"]
+    S["S"] -->|"β · S · I / N"| I["I"]
     I -->|"γ · I"| R["R"]
-
-    %% Natural births (into S)
     -->|"μ · N"| S
-
-    %% Natural deaths (out of each compartment, no sink nodes)
     S -->|"μ · S"|
     I -->|"μ · I"|
     R -->|"μ · R"|
