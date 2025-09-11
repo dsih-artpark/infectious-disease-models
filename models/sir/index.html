@@ -1484,16 +1484,16 @@ It divides the population into three compartments:  </p>
 <hr />
 <h2 id="transition-diagram">Transition Diagram<a class="headerlink" href="#transition-diagram" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart LR
-    ["S"] --&gt;|"β · S · I / N"| I["I"]
+    S["S"] --&gt;|"β · S · I / N"| I["I"]
     I --&gt;|"γ · I"| R["R"]
 
     %% Natural births (into S)
-    --&gt;|"μ · N"| S
+    birth(("")) --&gt;|"μ · N"| S
 
     %% Natural deaths (out of each compartment, no sink nodes)
-    S --&gt;|"μ · S"|
-    I --&gt;|"μ · I"|
-    R --&gt;|"μ · R"|</code></pre>
+    S --&gt;|"μ · S"| death1((""))
+    I --&gt;|"μ · I"| death2((""))
+    R --&gt;|"μ · R"| death3((""))</code></pre>
 <hr />
 <h2 id="sir-model-configuration">SIR Model Configuration<a class="headerlink" href="#sir-model-configuration" title="Permanent link">&para;</a></h2>
 <p>Below is an example configuration for the <strong>SIR model</strong> in YAML format.</p>
