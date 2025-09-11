@@ -13,12 +13,16 @@ It divides the population into three compartments:
 
 ```mermaid
 flowchart LR
-    S -->|"β * S * I / N"| I
-    I -->|"γ * I"| R
-    N -->|"μ * N"| S
-    S -->|"μ * S"| X1[∅]
-    I -->|"μ * I"| X2[∅]
-    R -->|"μ * R"| X3[∅]
+    ["S"] -->|"β · S · I / N"| I["I"]
+    I -->|"γ · I"| R["R"]
+
+    %% Natural births (into S)
+    -->|"μ · N"| S
+
+    %% Natural deaths (out of each compartment, no sink nodes)
+    S -->|"μ · S"|
+    I -->|"μ · I"|
+    R -->|"μ · R"|
 ```
 
 ---
@@ -31,13 +35,7 @@ Below is an example configuration for the **SIR model** in YAML format.
 SIR_model:
   compartments: [S, I, R]
   parameters: {beta: 0.25, gamma: 0.15, mu: 0.015}
-  transitions:
-    "S -> I": "beta * S * I / N"
-    "I -> R": "gamma * I"
-    "-> S": "mu * N"
-    "S ->": "mu * S"
-    "I ->": "mu * I"
-    "R ->": "mu * R"
+  transitions: {"S -> I": "beta * S * I / N", "I -> R": "gamma * I", "-> S": "mu * N", "S ->": "mu * S", "I ->": "mu * I", "R ->": "mu * R"}
   population: 1000
   initial_conditions: {S: 990, I: 10, R: 0}
   assumptions: The population is closed (no births or deaths). The disease is transmitted through direct contact. Immunity is permanent after recovery.
