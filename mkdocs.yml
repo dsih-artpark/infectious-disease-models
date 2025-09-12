@@ -69,7 +69,10 @@ nav:
         - SEIR Model: models/seir.md
         - SIS Model: models/sis.md
       - Published Models:
-        - TB Model: models/tb.md
+        - TB Model: 
+          - models/TB_Kuddus_2022.md
   - References: references.md
 extra_javascript:
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+  - https://unpkg.com/mermaid@10/dist/mermaid.min.js
+  - js/mermaid-init.js

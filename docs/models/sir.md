@@ -13,12 +13,12 @@ It divides the population into three compartments:
 
 ```mermaid
 flowchart LR
-    S["S"] -->|"β · S · I / N"| I["I"]
-    I -->|"γ · I"| R["R"]
-    -->|"μ · N"| S
-    S -->|"μ · S"|
-    I -->|"μ · I"|
-    R -->|"μ · R"|
+    S -->|"β * S * I / N"| I
+    I -->|"γ * I"| R
+    N -->|"μ * N"| S
+    S -->|"μ * S"| X1[∅]
+    I -->|"μ * I"| X2[∅]
+    R -->|"μ * R"| X3[∅]
 ```
 
 ---
