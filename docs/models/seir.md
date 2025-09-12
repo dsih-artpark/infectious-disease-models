@@ -35,7 +35,7 @@ timescale: 15
 noise_std: 5.0
 subset_ratio: 0.7
 optimizers: [Nelder-Mead, BFGS, L-BFGS-B]
-SIR_model:
+SEIR_model:
   compartments: [S, E, I, R]
   parameters: {beta: 0.3, sigma: 0.1, gamma: 0.1, mu: 0.01}
   transitions: {"S -> E": "beta * S * I / N", "E -> I": "sigma * E", "I -> R": "gamma * I", "-> S": "mu * N", "S ->": "mu * S", "E ->": "mu * E", "I ->": "mu * I", "R ->": "mu * R"}
