@@ -45,6 +45,7 @@ Below is an example configuration for the **TB model** in YAML format.
 
 ```yaml
 timescale: 15
+time_unit: years
 noise_std: 5.0
 subset_ratio: 0.7
 optimizers: [Nelder-Mead, BFGS, L-BFGS-B]
@@ -58,5 +59,4 @@ TB_model:
   plot_settings:
     scale_by_population: true   
     per_unit: 100000        
-    time_unit: years
 ```

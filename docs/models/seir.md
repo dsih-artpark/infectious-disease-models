@@ -32,6 +32,7 @@ Below is an example configuration for the **SEIR model** in YAML format.
 
 ```yaml
 timescale: 15
+time_unit: days
 noise_std: 5.0
 subset_ratio: 0.7
 optimizers: [Nelder-Mead, BFGS, L-BFGS-B]

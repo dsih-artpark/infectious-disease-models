@@ -10,6 +10,7 @@ metadata:
   version: v0.1.0
 
 timescale: 15
+time_unit: years
 noise_std: 5.0
 subset_ratio: 0.7
 optimizers: [Nelder-Mead, BFGS, L-BFGS-B]
