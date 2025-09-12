@@ -63,4 +63,9 @@ TB_Kuddus_2022_model:
 
 TB_ayinla_2021_model:   
   compartments: [S, V, E, I1, I2, T, R]
-  parameters: { }
+  parameters: {Lambda: 5, mu: 0.15, beta: variable, theta: [0.067, 0.1], xi: [0.0, 0.1, 0.98, 0.95], omega: [0.0, 1.0], k: 0.02, tau: [1.5, 3.5], delta: 0.12, sigma: [0.0, 1.0], p: [0.0, 1.0]}
+  transitions: {"-> S": "Lambda", "S -> V": "xi * S", "V -> S": "theta * V", "S -> E": "(1 - omega) * Lambda * S", "V -> E": "(1 - omega) * Lambda * V", "E -> I": "k * E + p * Lambda * E", "I -> R": "tau * I", "I ->": "delta * I", "T -> I": "sigma * T", "T -> R": "tau * T", "S ->": "mu * S", "V ->": "mu * V", "E ->": "mu * E", "I ->": "mu * I", "T ->": "mu * T", "R ->": "mu * R"}
+  population: 1000
+  initial_conditions: {S: 990, V: 0, E: 5, I: 5, T: 0, R: 0}
+  force_of_infection: "lambda = beta * I / N"
+  assumptions: The model includes vaccination, waning immunity, reinfection among treated individuals, and exogenous re-infection. The population is dynamic, with recruitment (Λ) and natural death (μ). Vaccine efficacy reduces infection risk by factor (ω). Recovery does not always confer full immunity due to reinfection processes.
