@@ -1417,6 +1417,29 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../TB_Ayinla_2021/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    TB_Ayinla_2021
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1546,6 +1569,7 @@ It divides the population into four compartments:  </p>
 <h2 id="seir-model-configuration">SEIR Model Configuration<a class="headerlink" href="#seir-model-configuration" title="Permanent link">&para;</a></h2>
 <p>Below is an example configuration for the <strong>SEIR model</strong> in YAML format.</p>
 <div class="highlight"><pre><span></span><code><span class="nt">timescale</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">15</span>
+<span class="nt">time_unit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">days</span>
 <span class="nt">noise_std</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5.0</span>
 <span class="nt">subset_ratio</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.7</span>
 <span class="nt">optimizers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">Nelder-Mead</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">BFGS</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">L-BFGS-B</span><span class="p p-Indicator">]</span>
