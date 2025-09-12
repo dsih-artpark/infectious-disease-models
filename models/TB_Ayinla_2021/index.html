@@ -61,6 +61,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#tb_ayinla_2021-model" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -1367,6 +1372,21 @@
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    TB_Ayinla_2021
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
         
@@ -1379,6 +1399,70 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#biological-interpretation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Biological Interpretation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#model-assumptions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Model Assumptions
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#compartmental-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      Compartmental Diagram
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tb_ayinla_2021-model-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      TB_Ayinla_2021 Model Configuration
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -1447,6 +1531,61 @@
   
   
   
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#biological-interpretation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Biological Interpretation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#model-assumptions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Model Assumptions
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#compartmental-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      Compartmental Diagram
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tb_ayinla_2021-model-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      TB_Ayinla_2021 Model Configuration
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -1462,9 +1601,98 @@
 
 
 
-  <h1>TB_Ayinla_2021</h1>
+<h1 id="tb_ayinla_2021-model">TB_Ayinla_2021 Model<a class="headerlink" href="#tb_ayinla_2021-model" title="Permanent link">&para;</a></h1>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
+<p>This model is adapted from <strong>Ayinla et al. (2021)</strong>, who divide the total population <span class="arithmatex">\(N\)</span> into seven mutually exclusive classes:</p>
+<ul>
+<li><strong>S</strong>: Susceptible individuals  </li>
+<li><strong>V</strong>: Vaccinated individuals  </li>
+<li><strong>E</strong>: Latently infected individuals (unaware of their condition)  </li>
+<li><strong>I1</strong>: Undiagnosed infectious individuals  </li>
+<li><strong>I2</strong>: Diagnosed infectious individuals  </li>
+<li><strong>T</strong>: Treated individuals  </li>
+<li><strong>R</strong>: Recovered individuals  </li>
+</ul>
+<hr />
+<h2 id="biological-interpretation">Biological Interpretation<a class="headerlink" href="#biological-interpretation" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Susceptible (S)</strong> individuals are those at risk of acquiring TB infection.  </li>
+<li><strong>Vaccinated (V)</strong> individuals have received a vaccine, which reduces their risk of infection but may wane over time (waning immunity, parameter <span class="arithmatex">\(\theta\)</span>).  </li>
+<li><strong>Latently infected (E)</strong> individuals harbor the TB pathogen without showing clinical symptoms. They are unaware of their condition until diagnosed, often by a <strong>tuberculin skin test</strong>.  </li>
+<li>Latency can be <strong>fast</strong> (1–5 years) or <strong>slow</strong> (several years).  </li>
+<li><strong>Undiagnosed infectious (I1)</strong> are actively infectious but not yet diagnosed.  </li>
+<li><strong>Diagnosed infectious (I2)</strong> are identified as TB cases and may transition to treatment.  </li>
+<li><strong>Treated individuals (T)</strong> undergo therapy, but reinfection is possible (<span class="arithmatex">\(\sigma\)</span>).  </li>
+<li><strong>Recovered (R)</strong> individuals regain health, but may not acquire permanent immunity and can be reinfected (<span class="arithmatex">\(p\)</span>).  </li>
+</ul>
+<hr />
+<h2 id="model-assumptions">Model Assumptions<a class="headerlink" href="#model-assumptions" title="Permanent link">&para;</a></h2>
+<ul>
+<li>The population is <strong>dynamic</strong>, with recruitment (<span class="arithmatex">\(\Lambda\)</span>) and natural death (<span class="arithmatex">\(\mu\)</span>).  </li>
+<li>Vaccination occurs at rate <span class="arithmatex">\(\xi\)</span>, and vaccine efficacy (<span class="arithmatex">\(\omega\)</span>) reduces susceptibility.  </li>
+<li>Vaccination protection wanes at rate <span class="arithmatex">\(\theta\)</span>.  </li>
+<li>Transmission occurs via <strong>force of infection</strong>:</li>
+</ul>
+<div class="arithmatex">\[
+\lambda = \frac{\beta c (I_1 + I_2)}{N}
+\]</div>
+<ul>
+<li>Latently infected individuals may progress to active TB (<span class="arithmatex">\(E \to I_1\)</span> or <span class="arithmatex">\(E \to I_2\)</span>) at rate <span class="arithmatex">\(k\)</span>.  </li>
+<li>Treated individuals can experience <strong>reinfection</strong> (<span class="arithmatex">\(\sigma\)</span>) or recover fully (<span class="arithmatex">\(\tau\)</span>).  </li>
+<li>Exogenous reinfection occurs at rate <span class="arithmatex">\(p\)</span>.  </li>
+<li>TB-induced deaths occur in infectious compartments at rate <span class="arithmatex">\(\delta\)</span>.  </li>
+</ul>
+<hr />
+<h2 id="compartmental-diagram">Compartmental Diagram<a class="headerlink" href="#compartmental-diagram" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart LR
+    %% Compartments
+    S["S"] --&gt;|"ξ · S"| V["V"]
+    V --&gt;|"θ · V"| S
 
+    S --&gt;|"β (I1+I2)/N"| E["E"]
+    V --&gt;|"β (I1+I2)/N"| E
 
+    E --&gt;|"k · E"| I1["I1"]
+    E --&gt;|"k · E"| I2["I2"]
+
+    I1 --&gt;|"γ · I1"| R["R"]
+    I1 --&gt;|"ϕ · I1"| I2
+    I1 --&gt;|"δ · I1"| X1[∅]
+
+    I2 --&gt;|"ω · I2"| T["T"]
+    I2 --&gt;|"δ · I2"| X2[∅]
+
+    T --&gt;|"σ · T"| I1
+    T --&gt;|"τ · T"| R
+
+    R --&gt;|"p · λ · R"| E
+
+    %% Recruitment and natural death
+    N[" "] --&gt;|"Λ"| S
+    S --&gt;|"μ · S"| X3[∅]
+    V --&gt;|"μ · V"| X4[∅]
+    E --&gt;|"μ · E"| X5[∅]
+    I1 --&gt;|"μ · I1"| X6[∅]
+    I2 --&gt;|"μ · I2"| X7[∅]
+    T --&gt;|"μ · T"| X8[∅]
+    R --&gt;|"μ · R"| X9[∅]</code></pre>
+<hr />
+<h2 id="tb_ayinla_2021-model-configuration">TB_Ayinla_2021 Model Configuration<a class="headerlink" href="#tb_ayinla_2021-model-configuration" title="Permanent link">&para;</a></h2>
+<p>Below is an example configuration for the <strong>TB_Ayinla_2021 model</strong> in YAML format.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">timescale</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span>
+<span class="nt">time_unit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">years</span>
+<span class="nt">noise_std</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5.0</span>
+<span class="nt">subset_ratio</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.7</span>
+<span class="nt">optimizers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">Nelder-Mead</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">BFGS</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">L-BFGS-B</span><span class="p p-Indicator">]</span>
+<span class="nt">TB_ayinla_2021_model</span><span class="p">:</span><span class="w">   </span>
+<span class="w">  </span><span class="nt">compartments</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">S</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">V</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">E</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">I1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">I2</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">T</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">R</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">parameters</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">Lambda</span><span class="p">:</span><span class="w"> </span><span class="nv">5</span><span class="p p-Indicator">,</span><span class="nt"> mu</span><span class="p">:</span><span class="w"> </span><span class="nv">0.15</span><span class="p p-Indicator">,</span><span class="nt"> beta</span><span class="p">:</span><span class="w"> </span><span class="nv">variable</span><span class="p p-Indicator">,</span><span class="nt"> theta</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.067</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.1</span><span class="p p-Indicator">],</span><span class="nt"> xi</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.98</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.95</span><span class="p p-Indicator">],</span><span class="nt"> omega</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1.0</span><span class="p p-Indicator">],</span><span class="nt"> k</span><span class="p">:</span><span class="w"> </span><span class="nv">0.02</span><span class="p p-Indicator">,</span><span class="nt"> tau</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">1.5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">3.5</span><span class="p p-Indicator">],</span><span class="nt"> delta</span><span class="p">:</span><span class="w"> </span><span class="nv">0.12</span><span class="p p-Indicator">,</span><span class="nt"> sigma</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1.0</span><span class="p p-Indicator">],</span><span class="nt"> p</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1.0</span><span class="p p-Indicator">]}</span>
+<span class="w">  </span><span class="nt">transitions</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="s">&quot;-&gt;</span><span class="nv"> </span><span class="s">S&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;Lambda&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;S</span><span class="nv"> </span><span class="s">-&gt;</span><span class="nv"> </span><span class="s">V&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;xi</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">S&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;V</span><span class="nv"> </span><span class="s">-&gt;</span><span class="nv"> </span><span class="s">S&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;theta</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">V&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;S</span><span class="nv"> </span><span class="s">-&gt;</span><span class="nv"> </span><span class="s">E&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;(1</span><span class="nv"> </span><span class="s">-</span><span class="nv"> </span><span class="s">omega)</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">Lambda</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">S&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;V</span><span class="nv"> </span><span class="s">-&gt;</span><span class="nv"> </span><span class="s">E&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;(1</span><span class="nv"> </span><span class="s">-</span><span class="nv"> </span><span class="s">omega)</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">Lambda</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">V&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;E</span><span class="nv"> </span><span class="s">-&gt;</span><span class="nv"> </span><span class="s">I&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;k</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">E</span><span class="nv"> </span><span class="s">+</span><span class="nv"> </span><span class="s">p</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">Lambda</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">E&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;I</span><span class="nv"> </span><span class="s">-&gt;</span><span class="nv"> </span><span class="s">R&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;tau</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">I&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;I</span><span class="nv"> </span><span class="s">-&gt;&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;delta</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">I&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;T</span><span class="nv"> </span><span class="s">-&gt;</span><span class="nv"> </span><span class="s">I&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;sigma</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">T&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;T</span><span class="nv"> </span><span class="s">-&gt;</span><span class="nv"> </span><span class="s">R&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;tau</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">T&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;S</span><span class="nv"> </span><span class="s">-&gt;&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;mu</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">S&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;V</span><span class="nv"> </span><span class="s">-&gt;&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;mu</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">V&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;E</span><span class="nv"> </span><span class="s">-&gt;&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;mu</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">E&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;I</span><span class="nv"> </span><span class="s">-&gt;&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;mu</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">I&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;T</span><span class="nv"> </span><span class="s">-&gt;&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;mu</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">T&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;R</span><span class="nv"> </span><span class="s">-&gt;&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;mu</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">R&quot;</span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="nt">population</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+<span class="w">  </span><span class="nt">initial_conditions</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">S</span><span class="p">:</span><span class="w"> </span><span class="nv">990</span><span class="p p-Indicator">,</span><span class="nt"> V</span><span class="p">:</span><span class="w"> </span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="nt"> E</span><span class="p">:</span><span class="w"> </span><span class="nv">5</span><span class="p p-Indicator">,</span><span class="nt"> I</span><span class="p">:</span><span class="w"> </span><span class="nv">5</span><span class="p p-Indicator">,</span><span class="nt"> T</span><span class="p">:</span><span class="w"> </span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="nt"> R</span><span class="p">:</span><span class="w"> </span><span class="nv">0</span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="nt">force_of_infection</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;lambda</span><span class="nv"> </span><span class="s">=</span><span class="nv"> </span><span class="s">beta</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">I</span><span class="nv"> </span><span class="s">/</span><span class="nv"> </span><span class="s">N&quot;</span>
+<span class="w">  </span><span class="nt">assumptions</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The model includes vaccination, waning immunity, reinfection among treated individuals, and exogenous re-infection. The population is dynamic, with recruitment (Λ) and natural death (μ). Vaccine efficacy reduces infection risk by factor (ω). Recovery does not always confer full immunity due to reinfection processes.</span>
+</code></pre></div>
 
 
 
