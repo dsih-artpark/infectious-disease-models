@@ -71,6 +71,7 @@ nav:
       - Published Models:
         - TB Model: 
           - TB_Kuddus_2022: models/TB_Kuddus_2022.md
+          - TB_Ayinla_2021: models/TB_Ayinla_2021.md
   - References: references.md
 extra_javascript:
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
