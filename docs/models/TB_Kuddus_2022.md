@@ -44,6 +44,10 @@ flowchart LR
 Below is an example configuration for the **TB model** in YAML format.
 
 ```yaml
+timescale: 15
+noise_std: 5.0
+subset_ratio: 0.7
+optimizers: [Nelder-Mead, BFGS, L-BFGS-B]
 TB_model:  
   compartments: [S, Ls, Is, Lr, Ir, R]
   parameters: {mu: 0.0142857, beta_s: 1.57e-8, beta_r: 6.25e-9, alpha_s: 0.129, alpha_r: 0.129, omega_s: 0.287, omega_r: 0.12, rho: 0.07, phi_s: 0.37, phi_r: 0.37, tau_s: 0.94, tau_r: 0.78, gamma: 0.1 }

@@ -70,7 +70,7 @@ nav:
         - SIS Model: models/sis.md
       - Published Models:
         - TB Model: 
-          - models/TB_Kuddus_2022.md
+          - TB_Kuddus_2022: models/TB_Kuddus_2022.md
   - References: references.md
 extra_javascript:
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js

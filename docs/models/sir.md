@@ -28,6 +28,10 @@ flowchart LR
 Below is an example configuration for the **SIR model** in YAML format.
 
 ```yaml
+timescale: 15
+noise_std: 5.0
+subset_ratio: 0.7
+optimizers: [Nelder-Mead, BFGS, L-BFGS-B]
 SIR_model:
   compartments: [S, I, R]
   parameters: {beta: 0.25, gamma: 0.15, mu: 0.015}

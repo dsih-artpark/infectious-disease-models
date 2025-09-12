@@ -26,6 +26,10 @@ flowchart LR
 Below is an example configuration for the **SIS model** in YAML format.
 
 ```yaml
+timescale: 15
+noise_std: 5.0
+subset_ratio: 0.7
+optimizers: [Nelder-Mead, BFGS, L-BFGS-B]
 SIS_model:
   compartments: [S, I]
   parameters: {beta: 0.3, gamma: 0.1, mu: 0.01}
