@@ -1,4 +1,4 @@
-# TB Model
+# TB_Kuddus_2022 Model
 
 ## Overview  
 
@@ -39,9 +39,9 @@ flowchart LR
 
 ---
 
-## TB Model Configuration
+## TB_Kuddus_2022 Model Configuration
 
-Below is an example configuration for the **TB model** in YAML format.
+Below is an example configuration for the **TB_Kuddus_2022 model** in YAML format.
 
 ```yaml
 timescale: 15
@@ -49,7 +49,7 @@ time_unit: years
 noise_std: 5.0
 subset_ratio: 0.7
 optimizers: [Nelder-Mead, BFGS, L-BFGS-B]
-TB_model:  
+TB_Kuddus_2022_model:  
   compartments: [S, Ls, Is, Lr, Ir, R]
   parameters: {mu: 0.0142857, beta_s: 1.57e-8, beta_r: 6.25e-9, alpha_s: 0.129, alpha_r: 0.129, omega_s: 0.287, omega_r: 0.12, rho: 0.07, phi_s: 0.37, phi_r: 0.37, tau_s: 0.94, tau_r: 0.78, gamma: 0.1 }
   transitions: {"R -> S": "gamma * R", "Is -> S": "phi_s * Is", "Ir -> S": "phi_r * Ir", "S -> Ls": "beta_s * Is * S / N", "S -> Lr": "beta_r * Ir * S / N","S ->": "mu * S", "-> S": "mu * N", "Ls -> Is": "alpha_s * Ls", "Ls ->": "mu * Ls", "Is -> R": "omega_s * Is", "Is -> R_extra": "(1 - rho) * tau_s * Is" , "Is ->": "mu * Is", "Is -> Ir": "rho * tau_s * Is", "Lr -> Ir": "alpha_r * Lr", "Lr ->": "mu * Lr", "Ir -> R": "omega_r * Ir", "Ir -> R_extra": "tau_r * Ir", "Ir ->": "mu * Ir", "Ir -> S": "phi_r * Ir", "R ->": "mu * R"}
