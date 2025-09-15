@@ -84,9 +84,9 @@ time_unit: years
 noise_std: 5.0
 subset_ratio: 0.7
 optimizers: [Nelder-Mead, BFGS, L-BFGS-B]
-TB_sulayman_2021_model:   
+TB_Sulayman_2021_model:   
   compartments: [S, V, E, I, R]
-  parameters: {Lambda: 5, mu: 0.15, beta: 0.25, theta: [0.067, 0.1], xi: [0.0, 0.1, 0.98, 0.95], omega: [0.0, 1.0], k: 0.02, tau: [1.5, 3.5], delta: 0.12, sigma: [0.0, 1.0], p: [0.0, 1.0]}
+  parameters: {Lambda: 5, mu: 0.15, beta: 0.25, theta: 0.089, xi: [0.0, 0.1, 0.98, 0.95], omega: [0.0, 1.0], k: 0.02, tau: [1.5, 3.5], delta: 0.12, sigma: [0.0, 1.0], p: [0.0, 1.0]}
   transitions: {"-> S": "Lambda", "S -> V": "xi * S", "V -> S": "theta * V", "S -> E": "beta * S * I", "V -> E": "omega * betaa * V * I", "E -> I": "k * E + p * beta * E * I", "I -> R": "tau * I", "I ->": "(mu + delta) * I", "S ->": "mu * S", "V ->": "mu * V", "E ->": "mu * E", "I ->": "mu * I", "R ->": "mu * R", "R -> E": "sigma * beta * I * R"}
   population: 100000
   assumptions: Sulayman et al. (2021) propose an SVEIRE TB model incorporating:
