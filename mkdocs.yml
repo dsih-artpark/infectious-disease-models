@@ -69,7 +69,7 @@ nav:
         - SEIR Model: models/seir.md
         - SIS Model: models/sis.md
       - Published Models:
-        - TB Model: 
+        - TB Models: 
           - TB_Kuddus_2022: models/TB_Kuddus_2022.md
           - TB_Sulayman_2021: models/TB_Sulayman_2021.md
   - References: references.md
