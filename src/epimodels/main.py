@@ -17,10 +17,10 @@ args = parser.parse_args()
 
 MODEL_NAME = args.model
 MODEL_CFG = cfg[MODEL_NAME]
-TIME = cfg["timescale"]
-NOISE_STD = cfg["noise_std"]
-SUBSET_RATIO = cfg["subset_ratio"]
-OPTIMIZERS = cfg["optimizers"]
+TIME = cfg["simulation_time"]
+NOISE_STD = cfg["calibration_settings"]["noise_std"]
+SUBSET_RATIO = cfg["calibration_settings"]["subset_ratio"]
+OPTIMIZERS = cfg["calibration_settings"]["optimizers"]
 
 PARAMS = MODEL_CFG["parameters"]
 param_names = list(PARAMS.keys())
