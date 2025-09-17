@@ -42,6 +42,14 @@ SEIR_model:
  plot_settings:
     y_scale: linear
     scale_by_population: false
+ calibration_settings:
+    target_data: synthetic_data.csv # or file_name.csv for real data  
+    noise_std: 5.0
+    subset_ratio: 0.7
+    optimizers: [Nelder-Mead, BFGS, L-BFGS-B]
+    update_config: false
+    
+
 
 SIS_model:
   compartments: [S, I]
