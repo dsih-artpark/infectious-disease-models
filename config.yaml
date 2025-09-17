@@ -25,6 +25,9 @@ SIR_model:
   initial_conditions: {S: 990, I: 10, R: 0}
   assumptions: The population is closed (no births or deaths). The disease is transmitted through direct contact. Immunity is permanent after recovery.
   time_unit: days
+  plot_settings:
+    y_scale: linear
+    scale_by_population: false
 
 SEIR_model:
  compartments: [S, E, I, R] 
@@ -34,6 +37,9 @@ SEIR_model:
  initial_conditions: {S: 990, E: 0, I: 10, R: 0}
  assumptions: The population is closed (no births or deaths). The disease has an exposed stage before becoming infectious. Immunity is permanent after recovery.
  time_unit: days
+ plot_settings:
+    y_scale: linear
+    scale_by_population: false
 
 SIS_model:
   compartments: [S, I]
@@ -43,6 +49,9 @@ SIS_model:
   initial_conditions: {S: 990, I: 10}
   assumptions: The population is closed (no births or deaths). The disease does not confer permanent immunity. After recovery, individuals return to the susceptible class (no immunity).
   time_unit: days
+  plot_settings:
+    y_scale: linear
+    scale_by_population: false
 
 SIS_model_test:
   compartments: [S, I]
@@ -52,6 +61,9 @@ SIS_model_test:
   initial_conditions: {S: 990, I: 10}
   assumptions: The population is closed (no births or deaths). The disease does not confer permanent immunity. After recovery, individuals return to the susceptible class (no immunity).
   time_unit: days
+  plot_settings:
+    y_scale: linear
+    scale_by_population: false
 
 
 TB_Kuddus_2022_model:   
