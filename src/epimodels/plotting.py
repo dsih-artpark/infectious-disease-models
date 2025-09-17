@@ -6,7 +6,6 @@ import numpy as np
 
 def plot_simulation_only(time_points, compartments, true_data, plot_dir,
                          model_cfg=None, population=None, compartment_choice=None):
-    """Always plot the baseline true simulation, excluding 'S' and compound compartments."""
     os.makedirs(plot_dir, exist_ok=True)
 
     # Defaults
@@ -14,46 +13,43 @@ def plot_simulation_only(time_points, compartments, true_data, plot_dir,
     time_for_plot = time_points
     xlabel = "Days"
     ylabel = "Population"
+    yscale = "linear"
 
     # Apply scaling/time axis settings if available
     if model_cfg and "plot_settings" in model_cfg:
         settings = model_cfg["plot_settings"]
         if settings.get("time_unit") == "years":
-            time_for_plot = time_points 
             xlabel = "Time (years)"
         if settings.get("scale_by_population", False) and population:
             per_unit = settings.get("per_unit", 100000)
             scale = per_unit / population
             ylabel = f"Cases per {per_unit}"
+        if settings.get("y_scale", "linear") == "log":
+            yscale = "log"
 
     scaled_data = true_data * scale
 
-    # Plot all compartments except 'S'
     plt.figure(figsize=(10, 6))
     for i, comp in enumerate(compartments):
         if comp == "S":
             continue
         plt.plot(time_for_plot, scaled_data[:, i], label=f"{comp} (true)")
 
-    # Highlight chosen compartment if valid (and not compound)
     if compartment_choice and "+" not in compartment_choice:
         if compartment_choice in compartments and compartment_choice != "S":
             comp_index = compartments.index(compartment_choice)
-            highlight_series = scaled_data[:, comp_index]
-            plt.plot(time_for_plot, highlight_series,
+            plt.plot(time_for_plot, scaled_data[:, comp_index],
                      label=f"{compartment_choice} (highlight)", linewidth=2.5)
 
     plt.title("True Simulation of Compartments (excluding S)")
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
+    plt.yscale(yscale)
     plt.legend()
     plt.grid()
     plt.tight_layout()
-    # plt.xlim(0,0.25)
     plt.savefig(os.path.join(plot_dir, "plot_simulation.png"))
     plt.close()
-
-
 
 
 def plot_calibration_results(time_points, compartments, true_data, noisy_data,
