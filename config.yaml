@@ -99,10 +99,18 @@ TB_Kuddus_2022_model:
   population: 100000
   initial_conditions: {Ls: 400, Is: 300, Lr: 10, Ir: 400, R: 5, S: 98885}
   assumptions: TB transmission with drug-sensitive (DS) and drug-resistant (DR) strains, based on Kuddus (2022).
+  simulation_time: 15
   time_unit: years
   plot_settings:
+    y_scale: linear
     scale_by_population: true   
-    per_unit: 100000        
+    per_unit: 100000   
+  calibration_settings:   
+    target_data: TB_data.csv # or file_name.csv for real data  
+    noise_std: 5.0
+    subset_ratio: 0.7
+    optimizers: [Nelder-Mead, BFGS, L-BFGS-B]
+    update_config: false  
     
 
 TB_sulayman_2021_model:   
@@ -117,4 +125,5 @@ TB_sulayman_2021_model:
       - Recruitment inflow (Λ)
       - Disease progression from exposed (E) to infected (I) via rate (k)
       - Recovery of infected individuals at rate (τ)
+  simulation_time: 50
   time_unit: years
