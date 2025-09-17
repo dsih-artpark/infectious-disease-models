@@ -10,7 +10,7 @@ metadata:
   version: v0.1.0
 
 timescale: 15
-time_unit: years
+
 noise_std: 5.0
 subset_ratio: 0.7
 optimizers: [Nelder-Mead, BFGS, L-BFGS-B]
@@ -23,8 +23,9 @@ SIR_model:
   transitions: {"S -> I": "beta * S * I / N", "I -> R": "gamma * I", "-> S": "mu * N", "S ->": "mu * S", "I ->": "mu * I", "R ->": "mu * R"}
   population: 1000
   initial_conditions: {S: 990, I: 10, R: 0}
-  assunptions: The population is closed (no births or deaths). The disease is transmitted through direct contact. Immunity is permanent after recovery.'
- 
+  assumptions: The population is closed (no births or deaths). The disease is transmitted through direct contact. Immunity is permanent after recovery.
+  time_unit: days
+
 SEIR_model:
  compartments: [S, E, I, R] 
  parameters: {beta: 0.3, sigma: 0.1, gamma: 0.1, mu: 0.01}
@@ -32,6 +33,7 @@ SEIR_model:
  population: 1000
  initial_conditions: {S: 990, E: 0, I: 10, R: 0}
  assumptions: The population is closed (no births or deaths). The disease has an exposed stage before becoming infectious. Immunity is permanent after recovery.
+ time_unit: days
 
 SIS_model:
   compartments: [S, I]
@@ -40,6 +42,7 @@ SIS_model:
   population: 1000
   initial_conditions: {S: 990, I: 10}
   assumptions: The population is closed (no births or deaths). The disease does not confer permanent immunity. After recovery, individuals return to the susceptible class (no immunity).
+  time_unit: days
 
 SIS_model_test:
   compartments: [S, I]
@@ -48,6 +51,7 @@ SIS_model_test:
   population: 1000
   initial_conditions: {S: 990, I: 10}
   assumptions: The population is closed (no births or deaths). The disease does not confer permanent immunity. After recovery, individuals return to the susceptible class (no immunity).
+  time_unit: days
 
 
 TB_Kuddus_2022_model:   
@@ -57,10 +61,11 @@ TB_Kuddus_2022_model:
   population: 100000
   initial_conditions: {Ls: 400, Is: 300, Lr: 10, Ir: 400, R: 5, S: 98885}
   assumptions: TB transmission with drug-sensitive (DS) and drug-resistant (DR) strains, based on Kuddus (2022).
+  time_unit: years
   plot_settings:
     scale_by_population: true   
     per_unit: 100000        
-    time_unit: years
+    
 
 TB_sulayman_2021_model:   
   compartments: [S, V, E, I, R]
@@ -74,3 +79,4 @@ TB_sulayman_2021_model:
       - Recruitment inflow (Λ)
       - Disease progression from exposed (E) to infected (I) via rate (k)
       - Recovery of infected individuals at rate (τ)
+  time_unit: years

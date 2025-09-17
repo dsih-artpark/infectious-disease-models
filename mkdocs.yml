@@ -41,7 +41,7 @@ markdown_extensions:
       generic: true
 nav:
   - Home: index.md
-  - Github Repo: https://github.com/dsih-artpark/infectious-disease-models.git
+ # - Github Repo: https://github.com/dsih-artpark/infectious-disease-models.git
   - Presentations:
       - "Generalized Framework (2025-08-12)": presentations/generalized_framework_2025-08-12.pdf
   - Configuration:
