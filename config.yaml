@@ -9,13 +9,6 @@ metadata:
   python_version: '3.11'
   version: v0.1.0
 
-timescale: 15
-
-noise_std: 5.0
-subset_ratio: 0.7
-optimizers: [Nelder-Mead, BFGS, L-BFGS-B]
-
-
 
 SIR_model:
   compartments: [S, I, R]
@@ -24,11 +17,20 @@ SIR_model:
   population: 1000
   initial_conditions: {S: 990, I: 10, R: 0}
   assumptions: The population is closed (no births or deaths). The disease is transmitted through direct contact. Immunity is permanent after recovery.
+  simulation_time: 160
   time_unit: days
   plot_settings:
     y_scale: linear
     scale_by_population: false
+  calibration_settings:
+    target_data: synthetic_data.csv # or file_name.csv for real data
+    noise_std: 5.0
+    subset_ratio: 0.7
+    optimizers: [Nelder-Mead, BFGS, L-BFGS-B]
+    update_config: false
+    
 
+    
 SEIR_model:
  compartments: [S, E, I, R] 
  parameters: {beta: 0.3, sigma: 0.1, gamma: 0.1, mu: 0.01}
@@ -64,6 +66,7 @@ SIS_model_test:
   plot_settings:
     y_scale: linear
     scale_by_population: false
+
 
 
 TB_Kuddus_2022_model:   
