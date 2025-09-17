@@ -106,7 +106,7 @@ TB_Kuddus_2022_model:
     scale_by_population: true   
     per_unit: 100000   
   calibration_settings:   
-    target_data: TB_data.csv # or file_name.csv for real data  
+    target_data: TB_synthetic_data.csv # or file_name.csv for real data  
     noise_std: 5.0
     subset_ratio: 0.7
     optimizers: [Nelder-Mead, BFGS, L-BFGS-B]
