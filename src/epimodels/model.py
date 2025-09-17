@@ -32,10 +32,11 @@ class CompartmentalModel:
         self.parameters.update(new_params)
                                
     def compute_transition_rates(self, state, extras=None):
-        local_env = {**state, **self.parameters, "N": self.population if self.population else max(sum(state.values()), 1e-8)}
+        local_env = {**state, **self.parameters, "N": sum(state.values())}
         if extras:
             local_env.update(extras)
-        local_env['N'] = self.population if self.population else max(sum(state.values()), 1e-8)
+        # local_env['N'] = self.population if self.population else max(sum(state.values()), 1e-8)
+        local_env["N"] = sum(state.values())
         deltas = {c: 0.0 for c in self.compartments}
         for tr in self.transitions:
             src = tr['from']
@@ -58,6 +59,11 @@ class CompartmentalModel:
         sol = odeint(self.ode_rhs, y0, time_points, args=(extras_fn,))
         return sol
 
-    def add_noise(self, data, noise_std, seed=42):
+    def add_noise(self, data, noise_std, seed=42, mode="gaussian"):
         np.random.seed(seed)
-        return data + np.random.normal(0, noise_std, data.shape)
+        if mode == "gaussian":
+            return data + np.random.normal(0, noise_std, data.shape)
+        elif mode == "poisson":
+            return np.random.poisson(np.maximum(data, 0))
+        else:
+            raise ValueError(f"Unknown noise mode: {mode}")
