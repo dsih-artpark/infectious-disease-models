@@ -58,11 +58,6 @@ nav:
   - Debugging:
       - Issues Encountered: debugging/issues_encountered.md
       - Improvements: debugging/improvements.md
-  - Developer Guide:
-      - Overview: dev/index.md
-      - model.py: dev/model.md
-      - calibration.py: dev/calibration.md
-      - plotting.py: dev/plotting.md
   - Example Models:
       - Standard Models:
         - SIR Model: models/sir.md
@@ -72,6 +67,11 @@ nav:
         - TB Model: 
           - TB_Kuddus_2022: models/TB_Kuddus_2022.md
           - TB_Sulayman_2021: models/TB_Sulayman_2021.md
+  - Developer Guide:
+    - Overview: dev/index.md
+    - model.py: dev/model.md
+    - calibration.py: dev/calibration.md
+    - plotting.py: dev/plotting.md
   - References: references.md
 extra_javascript:
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
