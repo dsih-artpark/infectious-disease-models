@@ -15,12 +15,10 @@ It divides the population into three compartments:
 flowchart LR
     S -->|"β * S * I / N"| I
     I -->|"γ * I"| R
-    %% Inflow from the population
     dummy([ ]) -->|"μ * N"| S
-    %% Natural deaths removed from compartments
-    S -->|"μ * S"| 
-    I -->|"μ * I"| 
-    R -->|"μ * R"| 
+    S -.->|"μ * S"| endS(( ))
+    I -.->|"μ * I"| endI(( ))
+    R -.->|"μ * R"| endR(( ))
 ```
 
 ---
