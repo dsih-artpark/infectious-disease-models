@@ -62,7 +62,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#plottingpy-visualization-utilities" class="md-skip">
+        <a href="#plotting-module" class="md-skip">
           Skip to content
         </a>
       
@@ -1432,6 +1432,30 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#plot_simulation_onlytime_points-compartments-true_data-plot_dir-model_cfgnone-populationnone-compartment_choicenone" class="md-nav__link">
+    <span class="md-ellipsis">
+      plot_simulation_only(time_points, compartments, true_data, plot_dir, model_cfg=None, population=None, compartment_choice=None)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#plot_calibration_resultstime_points-compartments-true_data-noisy_data-subset_t-subset_infected-fitted_results-model_name-plot_dir-true_paramsnone-param_namesnone-mcmc_samplernone-model_cfgnone-populationnone-compartment_choicei" class="md-nav__link">
+    <span class="md-ellipsis">
+      plot_calibration_results(time_points, compartments, true_data, noisy_data, subset_t, subset_infected, fitted_results, model_name, plot_dir, true_params=None, param_names=None, mcmc_sampler=None, model_cfg=None, population=None, compartment_choice="I")
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1514,6 +1538,30 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#plot_simulation_onlytime_points-compartments-true_data-plot_dir-model_cfgnone-populationnone-compartment_choicenone" class="md-nav__link">
+    <span class="md-ellipsis">
+      plot_simulation_only(time_points, compartments, true_data, plot_dir, model_cfg=None, population=None, compartment_choice=None)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#plot_calibration_resultstime_points-compartments-true_data-noisy_data-subset_t-subset_infected-fitted_results-model_name-plot_dir-true_paramsnone-param_namesnone-mcmc_samplernone-model_cfgnone-populationnone-compartment_choicei" class="md-nav__link">
+    <span class="md-ellipsis">
+      plot_calibration_results(time_points, compartments, true_data, noisy_data, subset_t, subset_infected, fitted_results, model_name, plot_dir, true_params=None, param_names=None, mcmc_sampler=None, model_cfg=None, population=None, compartment_choice="I")
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1541,22 +1589,67 @@
 
 
 
-<h1 id="plottingpy-visualization-utilities">plotting.py — Visualization Utilities<a class="headerlink" href="#plottingpy-visualization-utilities" title="Permanent link">&para;</a></h1>
-<p>This module generates plots for simulation results, noisy data, parameter fits, and MCMC results.</p>
+<h1 id="plotting-module">Plotting Module<a class="headerlink" href="#plotting-module" title="Permanent link">&para;</a></h1>
+<p>The <code>plotting.py</code> module provides utilities for visualizing simulation results, noisy data, parameter estimation, and MCMC posterior distributions.</p>
 <hr />
 <h2 id="functions">Functions<a class="headerlink" href="#functions" title="Permanent link">&para;</a></h2>
-<ul>
-<li><code>plot_simulation(traj, t, out_path)</code> — Plots clean simulation trajectories.</li>
-<li><code>plot_noisy(noisy_traj, sampled_points, out_path)</code> — Plots noisy observed data.</li>
-<li><code>plot_comparison(true_traj, fitted_traj, sampled_points, out_path)</code> — Compares fitted vs. true trajectories.</li>
-<li><code>parameter_estimation_plot(fit_results, out_path)</code> — Shows estimated parameters from optimizers.</li>
-<li><code>mcmc_corner_plot(samples, out_path)</code> — Corner plot of posterior parameter distributions.</li>
-</ul>
+<h3 id="plot_simulation_onlytime_points-compartments-true_data-plot_dir-model_cfgnone-populationnone-compartment_choicenone"><code>plot_simulation_only(time_points, compartments, true_data, plot_dir, model_cfg=None, population=None, compartment_choice=None)</code><a class="headerlink" href="#plot_simulation_onlytime_points-compartments-true_data-plot_dir-model_cfgnone-populationnone-compartment_choicenone" title="Permanent link">&para;</a></h3>
+<p>Plots the clean simulation trajectories for all compartments, optionally highlighting a chosen compartment.<br />
+<strong>Parameters</strong>
+- <code>time_points</code> — Array of time points.
+- <code>compartments</code> — List of compartment names.
+- <code>true_data</code> — Simulated trajectories.
+- <code>plot_dir</code> — Directory to save plots.
+- <code>model_cfg</code> — Optional model configuration (for scaling/time units).
+- <code>population</code> — Population size for per-unit scaling.
+- <code>compartment_choice</code> — Compartment to highlight.</p>
+<hr />
+<h3 id="plot_calibration_resultstime_points-compartments-true_data-noisy_data-subset_t-subset_infected-fitted_results-model_name-plot_dir-true_paramsnone-param_namesnone-mcmc_samplernone-model_cfgnone-populationnone-compartment_choicei"><code>plot_calibration_results(time_points, compartments, true_data, noisy_data, subset_t, subset_infected, fitted_results, model_name, plot_dir, true_params=None, param_names=None, mcmc_sampler=None, model_cfg=None, population=None, compartment_choice="I")</code><a class="headerlink" href="#plot_calibration_resultstime_points-compartments-true_data-noisy_data-subset_t-subset_infected-fitted_results-model_name-plot_dir-true_paramsnone-param_namesnone-mcmc_samplernone-model_cfgnone-populationnone-compartment_choicei" title="Permanent link">&para;</a></h3>
+<p>Generates comprehensive calibration plots, including:</p>
+<ol>
+<li>Noisy data for all compartments  </li>
+<li>Comparison of true vs noisy vs fitted trajectories for calibration compartments  </li>
+<li>Parameter estimation bar plots for fitted parameters and MCMC mean  </li>
+<li>MCMC corner plot  </li>
+</ol>
+<p><strong>Parameters</strong>
+- <code>time_points</code> — Array of simulation time points.
+- <code>compartments</code> — List of compartment names.
+- <code>true_data</code> — Clean simulated trajectories.
+- <code>noisy_data</code> — Noisy observed data.
+- <code>subset_t</code> — Time points used for fitting.
+- <code>subset_infected</code> — Observed data for calibration compartments.
+- <code>fitted_results</code> — Dictionary of fitted results from optimizers.
+- <code>model_name</code> — Name of the model.
+- <code>plot_dir</code> — Directory to save plots.
+- <code>true_params</code> — Optional dictionary of true parameter values.
+- <code>param_names</code> — List of parameter names for plotting.
+- <code>mcmc_sampler</code> — Optional emcee sampler object for posterior visualization.
+- <code>model_cfg</code> — Optional model configuration for scaling/time settings.
+- <code>population</code> — Population size for per-unit scaling.
+- <code>compartment_choice</code> — Compartment(s) to highlight in plots.</p>
 <hr />
 <h2 id="example-usage">Example Usage<a class="headerlink" href="#example-usage" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>    <span class="kn">from</span><span class="w"> </span><span class="nn">plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_simulation</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_simulation_only</span><span class="p">,</span> <span class="n">plot_calibration_results</span>
 
-    <span class="n">plot_simulation</span><span class="p">(</span><span class="n">traj</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="s2">&quot;plots/SIR_model/plot_simulation.png&quot;</span><span class="p">)</span>
+<span class="c1"># Plot clean simulation</span>
+<span class="n">plot_simulation_only</span><span class="p">(</span><span class="n">time_points</span><span class="p">,</span> <span class="n">compartments</span><span class="p">,</span> <span class="n">true_data</span><span class="p">,</span> <span class="s2">&quot;plots/SIR_model&quot;</span><span class="p">)</span>
+
+<span class="c1"># Plot calibration results</span>
+<span class="n">plot_calibration_results</span><span class="p">(</span>
+    <span class="n">time_points</span><span class="p">,</span>
+    <span class="n">compartments</span><span class="p">,</span>
+    <span class="n">true_data</span><span class="p">,</span>
+    <span class="n">noisy_data</span><span class="p">,</span>
+    <span class="n">subset_t</span><span class="p">,</span>
+    <span class="n">subset_infected</span><span class="p">,</span>
+    <span class="n">fitted_results</span><span class="p">,</span>
+    <span class="s2">&quot;SIR_model&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;plots/SIR_model&quot;</span><span class="p">,</span>
+    <span class="n">true_params</span><span class="o">=</span><span class="n">PARAMS</span><span class="p">,</span>
+    <span class="n">param_names</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">PARAMS</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span>
+    <span class="n">mcmc_sampler</span><span class="o">=</span><span class="n">sampler</span>
+<span class="p">)</span>
 </code></pre></div>
 
 
