@@ -16,14 +16,14 @@ SIR_model:
   transitions: {"S -> I": "beta * S * I / N", "I -> R": "gamma * I", "-> S": "mu * N", "S ->": "mu * S", "I ->": "mu * I", "R ->": "mu * R"}
   population: 1000
   initial_conditions: {S: 990, I: 10, R: 0}
-  assumptions: The population is closed (no births or deaths). The disease is transmitted through direct contact. Immunity is permanent after recovery.
+  assumptions: "The population is closed (no births or deaths). The disease is transmitted through direct contact. Immunity is permanent after recovery."
   simulation_time: 160
   time_unit: days
   plot_settings:
     y_scale: linear
     scale_by_population: false
   calibration_settings:
-    target_data: synthetic_data.csv # or file_name.csv for real data
+    target_data: noisy_data.csv 
     noise_std: 5.0
     subset_ratio: 0.7
     optimizers: [Nelder-Mead, BFGS, L-BFGS-B]
@@ -122,7 +122,8 @@ TB_sulayman_2021_model:
   parameters: {Lambda: 5, mu: 0.15, beta: 0.25, theta: 0.069, xi: 0.5, omega: 0.5, k: 0.02, tau: 2.5, delta: 0.12, sigma: 0.5, p: 0.5}
   transitions: {"-> S": "Lambda", "S -> V": "xi * S", "V -> S": "theta * V", "S -> E": "beta * S * I", "V -> E": "omega * betaa * V * I", "E -> I": "k * E + p * beta * E * I", "I -> R": "tau * I", "I ->": "(mu + delta) * I", "S ->": "mu * S", "V ->": "mu * V", "E ->": "mu * E", "I ->": "mu * I", "R ->": "mu * R", "R -> E": "sigma * beta * I * R"}
   population: 100000
-  assumptions: Sulayman et al. (2021) propose an SVEIRE TB model incorporating:
+  assumptions: |
+    Sulayman et al. (2021) propose an SVEIRE TB model incorporating:
       - Vaccination (V) with waning immunity (θ) and imperfect efficacy (ω)
       - Exogenous reinfection (p) and reinfection among recovered (σ)
       - Natural mortality (μ) and TB-induced mortality (δ)

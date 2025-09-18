@@ -1,18 +1,19 @@
 import argparse
 import os
 import numpy as np
+import yaml
+
 from model import CompartmentalModel, Population
 from config import cfg
 from calibration import Calibrator
 from plotting import plot_simulation_only, plot_calibration_results
-import yaml
+
 
 parser = argparse.ArgumentParser(description="Run simulation and calibration for a compartmental model.")
 parser.add_argument("--model", type=str, required=True, help="Model name as defined in config (e.g., SIR_model)")
 parser.add_argument("--calibrate", action="store_true", help="Run parameter calibration")
 parser.add_argument("--update_config", action="store_true", help="Update config file with fitted parameters")
 parser.add_argument("--compartment", type=str, default="I", help="Compartment to calibrate on (default: 'I')")
-# parser.add_argument("--config", type=str, default="config.yml", help="Path to YAML config file")
 args = parser.parse_args()
 
 MODEL_NAME = args.model
@@ -21,27 +22,27 @@ TIME = MODEL_CFG["simulation_time"]
 NOISE_STD = MODEL_CFG["calibration_settings"]["noise_std"]
 SUBSET_RATIO = MODEL_CFG["calibration_settings"]["subset_ratio"]
 OPTIMIZERS = MODEL_CFG["calibration_settings"]["optimizers"]
+TARGET_DATA = MODEL_CFG["calibration_settings"]["target_data"]
 y_scale = MODEL_CFG["plot_settings"]["y_scale"]
 scale_by_pop = MODEL_CFG["plot_settings"]["scale_by_population"]
 PARAMS = MODEL_CFG["parameters"]
 param_names = list(PARAMS.keys())
 COMPARTMENTS = MODEL_CFG["compartments"]
+
+# Build transitions
 TRANSITIONS = []
 for k, expr in MODEL_CFG['transitions'].items():
     src, dst = k.split('->') if '->' in k else (None, k)
     src = src.strip() if src else None
     dst = dst.strip()
-
-    # Normalize destination (remove suffix like _extra, _1, _2, etc.)
-    if dst and "_" in dst:
+    if dst and "_" in dst:  # normalize suffixes
         dst = dst.split("_")[0]
-
     TRANSITIONS.append({'from': src, 'to': dst, 'rate': expr})
 
 INIT_CONDITIONS = MODEL_CFG["initial_conditions"]
 POPULATION = MODEL_CFG["population"]
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PLOT_DIR = os.path.join("plots", MODEL_NAME)
 DATA_DIR = os.path.join("data", MODEL_NAME)
 os.makedirs(PLOT_DIR, exist_ok=True)
@@ -52,14 +53,29 @@ time_points = np.linspace(0, TIME, TIME + 1)
 pop = Population(POPULATION, INIT_CONDITIONS)
 model = CompartmentalModel(COMPARTMENTS, PARAMS, TRANSITIONS, population=POPULATION)
 
-true_data = np.array(model.simulate(INIT_CONDITIONS, time_points))
+# --- Step 1: simulate or load data ---
+true_path = os.path.join(DATA_DIR, "true_data.csv")
+noisy_path = os.path.join(DATA_DIR, "noisy_data.csv")
+time_path = os.path.join(DATA_DIR, "time_points.csv")
 
-np.random.seed(42)
-noisy_data = model.add_noise(true_data, NOISE_STD)
+if os.path.exists(true_path) and os.path.exists(noisy_path) and os.path.exists(time_path):
+    true_data = np.loadtxt(true_path, delimiter=",")
+    noisy_data = np.loadtxt(noisy_path, delimiter=",")
+    time_points = np.loadtxt(time_path, delimiter=",")
+else:
+    true_data = np.array(model.simulate(INIT_CONDITIONS, time_points))
+    np.random.seed(42)
+    noisy_data = model.add_noise(true_data, NOISE_STD)
 
-np.savetxt(os.path.join(DATA_DIR, "true_data.csv"), true_data, delimiter=",")
-np.savetxt(os.path.join(DATA_DIR, "noisy_data.csv"), noisy_data, delimiter=",")
-np.savetxt(os.path.join(DATA_DIR, "time_points.csv"), time_points, delimiter=",")
+    np.savetxt(true_path, true_data, delimiter=",")
+    np.savetxt(noisy_path, noisy_data, delimiter=",")
+    np.savetxt(time_path, time_points, delimiter=",")
+
+# Load calibration target
+target_path = os.path.join(DATA_DIR, os.path.basename(TARGET_DATA))
+if not os.path.exists(target_path):
+    raise FileNotFoundError(f"Target data file '{TARGET_DATA}' not found in {DATA_DIR}")
+target_data = np.loadtxt(target_path, delimiter=",")
 
 # --- Step 2: calibration (optional) ---
 fitted_results = None
@@ -67,7 +83,6 @@ sampler = None
 subset_t = None
 subset_infected = None
 if args.calibrate:
-    # Support compound compartments like "Is+Ir"
     if "+" in args.compartment:
         comp_parts = [c.strip() for c in args.compartment.split("+")]
         for c in comp_parts:
@@ -81,19 +96,16 @@ if args.calibrate:
             )
         comp_indices = [COMPARTMENTS.index(args.compartment)]
 
-    # Subset time points
     subset_indices = np.sort(
         np.random.choice(range(TIME + 1), size=int((TIME + 1) * SUBSET_RATIO), replace=False)
     )
     subset_t = time_points[subset_indices]
 
-    # If compound: sum across multiple compartments
     if len(comp_indices) > 1:
-        subset_infected = noisy_data[subset_indices][:, comp_indices].sum(axis=1)
+        subset_infected = target_data[subset_indices][:, comp_indices].sum(axis=1)
     else:
-        subset_infected = noisy_data[subset_indices, comp_indices[0]]
+        subset_infected = target_data[subset_indices, comp_indices[0]]
 
-    # Pass indices instead of a single name
     calibrator = Calibrator(model, param_names, compartment=comp_indices)
     fitted_results = calibrator.fit(
         initial_conditions=INIT_CONDITIONS,
@@ -107,11 +119,9 @@ if args.calibrate:
     extras_fn = {
         "initial_conditions": INIT_CONDITIONS,
         "compartment_indices": comp_indices,
-        "sigma": 5.0,
+        "sigma": NOISE_STD,
     }
-    sampler = Calibrator.run_mcmc(
-        model=model,
-        param_names=param_names,
+    sampler = calibrator.run_mcmc(
         I_obs=subset_infected,
         t_obs=subset_t,
         extras_fn=extras_fn,
@@ -142,7 +152,6 @@ plot_simulation_only(
     compartment_choice=args.compartment,
 )
 
-# Only: plot calibration/fitting results if calibration is run
 if args.calibrate and fitted_results is not None:
     plot_calibration_results(
         time_points=time_points,
