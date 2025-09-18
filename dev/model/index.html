@@ -62,7 +62,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#modelpy-core-model-classes" class="md-skip">
+        <a href="#model-module" class="md-skip">
           Skip to content
         </a>
       
@@ -1458,17 +1458,17 @@
   
 </li>
         
-          <li class="md-nav__item">
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#example-usage" class="md-nav__link">
     <span class="md-ellipsis">
       Example Usage
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -1661,17 +1661,17 @@
   
 </li>
         
-          <li class="md-nav__item">
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#example-usage" class="md-nav__link">
     <span class="md-ellipsis">
       Example Usage
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -1691,12 +1691,13 @@
 
 
 
-<h1 id="modelpy-core-model-classes">model.py — Core Model Classes<a class="headerlink" href="#modelpy-core-model-classes" title="Permanent link">&para;</a></h1>
-<p>This module defines the primary classes used for simulation: <strong>Population</strong> and <strong>CompartmentalModel</strong>.</p>
+<h1 id="model-module">Model Module<a class="headerlink" href="#model-module" title="Permanent link">&para;</a></h1>
+<p>The <code>model.py</code> module defines the core classes for epidemic simulation: <strong>Population</strong> and <strong>CompartmentalModel</strong>.<br />
+These classes handle ODE integration, state transitions, noise injection, and sampling of timepoints.</p>
 <hr />
 <h2 id="population-class">Population Class<a class="headerlink" href="#population-class" title="Permanent link">&para;</a></h2>
 <h3 id="purpose">Purpose<a class="headerlink" href="#purpose" title="Permanent link">&para;</a></h3>
-<p>Represents the population in which the epidemic model is simulated and validates initial conditions.</p>
+<p>Represents the population in which the epidemic model runs and validates initial conditions.</p>
 <h3 id="attributes">Attributes<a class="headerlink" href="#attributes" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>N</code> (<strong>int</strong>) — Total population size.</li>
@@ -1707,47 +1708,56 @@
 <li><code>__init__(self, N, assumptions=None)</code><br />
   Validates that <code>N &gt; 0</code>. Stores population size and optional assumptions.</li>
 <li><code>__repr__(self)</code><br />
-  Returns a human-readable summary.</li>
+  Returns a human-readable summary of the population.</li>
 </ul>
 <hr />
 <h2 id="compartmentalmodel-class">CompartmentalModel Class<a class="headerlink" href="#compartmentalmodel-class" title="Permanent link">&para;</a></h2>
 <h3 id="purpose_1">Purpose<a class="headerlink" href="#purpose_1" title="Permanent link">&para;</a></h3>
-<p>Encapsulates all model logic: ODE simulation, noise injection, and timepoint sampling.</p>
+<p>Encapsulates all model logic, including:</p>
+<ul>
+<li>ODE simulation of compartments</li>
+<li>Noise injection for synthetic data</li>
+<li>Sampling of time points for calibration</li>
+</ul>
 <h3 id="attributes_1">Attributes<a class="headerlink" href="#attributes_1" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>compartments</code> (<strong>list[str]</strong>) — Names of model compartments.</li>
 <li><code>parameters</code> (<strong>dict</strong>) — Parameter name → value.</li>
 <li><code>transitions</code> (<strong>dict</strong>) — Mapping <code>FROM-&gt;TO</code> → expression string.</li>
-<li><code>population</code> (<strong>Population</strong>) — Linked Population object.</li>
-<li><code>initial_conditions</code> (<strong>dict</strong>) — Initial values for each compartment.</li>
+<li><code>population</code> (<strong>Population</strong>) — Linked population object.</li>
+<li><code>initial_conditions</code> (<strong>dict</strong>) — Initial compartment values.</li>
 </ul>
 <h3 id="key-methods">Key Methods<a class="headerlink" href="#key-methods" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>compute_transition_rates(self, y, params)</code><br />
-  Parses transitions and evaluates rates for given state and parameters.</li>
+  Evaluates transition rates for a given state and parameter set.</li>
 <li><code>compute_rhs(self, t, y, params)</code><br />
-  Constructs the system of ODEs (<code>dC/dt</code>).</li>
+  Constructs the system of ODEs (<code>dC/dt</code>) for integration.</li>
 <li><code>simulate(self, y0, t, params)</code><br />
   Integrates the ODE system using <code>odeint</code> or <code>solve_ivp</code>.</li>
 <li><code>add_noise(self, trajectories, sigma)</code><br />
   Adds Gaussian noise to simulation outputs.</li>
 <li><code>sample_timepoints(self, trajectories, ratio)</code><br />
-  Randomly selects observation points for parameter fitting.</li>
+  Randomly selects observation points for parameter fitting or calibration.</li>
 </ul>
 <hr />
-<h3 id="example-usage">Example Usage<a class="headerlink" href="#example-usage" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>    <span class="kn">from</span><span class="w"> </span><span class="nn">model</span><span class="w"> </span><span class="kn">import</span> <span class="n">Population</span><span class="p">,</span> <span class="n">CompartmentalModel</span>
+<h2 id="example-usage">Example Usage<a class="headerlink" href="#example-usage" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">model</span><span class="w"> </span><span class="kn">import</span> <span class="n">Population</span><span class="p">,</span> <span class="n">CompartmentalModel</span>
 
-    <span class="n">pop</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
-    <span class="n">sir_model</span> <span class="o">=</span> <span class="n">CompartmentalModel</span><span class="p">(</span>
-        <span class="n">compartments</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;S&quot;</span><span class="p">,</span> <span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="s2">&quot;R&quot;</span><span class="p">],</span>
-        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;beta&quot;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span> <span class="s2">&quot;gamma&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">},</span>
-        <span class="n">transitions</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;S-&gt;I&quot;</span><span class="p">:</span> <span class="s2">&quot;beta * S * I / N&quot;</span><span class="p">,</span> <span class="s2">&quot;I-&gt;R&quot;</span><span class="p">:</span> <span class="s2">&quot;gamma * I&quot;</span><span class="p">},</span>
-        <span class="n">population</span><span class="o">=</span><span class="n">pop</span><span class="p">,</span>
-        <span class="n">initial_conditions</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;S&quot;</span><span class="p">:</span> <span class="mi">990</span><span class="p">,</span> <span class="s2">&quot;I&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s2">&quot;R&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
-    <span class="p">)</span>
+<span class="c1"># Define population</span>
+<span class="n">pop</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
 
-    <span class="n">t</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">sir_model</span><span class="o">.</span><span class="n">simulate</span><span class="p">()</span>
+<span class="c1"># Define SIR model</span>
+<span class="n">sir_model</span> <span class="o">=</span> <span class="n">CompartmentalModel</span><span class="p">(</span>
+    <span class="n">compartments</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;S&quot;</span><span class="p">,</span> <span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="s2">&quot;R&quot;</span><span class="p">],</span>
+    <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;beta&quot;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span> <span class="s2">&quot;gamma&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">},</span>
+    <span class="n">transitions</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;S-&gt;I&quot;</span><span class="p">:</span> <span class="s2">&quot;beta * S * I / N&quot;</span><span class="p">,</span> <span class="s2">&quot;I-&gt;R&quot;</span><span class="p">:</span> <span class="s2">&quot;gamma * I&quot;</span><span class="p">},</span>
+    <span class="n">population</span><span class="o">=</span><span class="n">pop</span><span class="p">,</span>
+    <span class="n">initial_conditions</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;S&quot;</span><span class="p">:</span> <span class="mi">990</span><span class="p">,</span> <span class="s2">&quot;I&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s2">&quot;R&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+<span class="p">)</span>
+
+<span class="c1"># Run simulation</span>
+<span class="n">t</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">sir_model</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">y0</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;S&quot;</span><span class="p">:</span> <span class="mi">990</span><span class="p">,</span> <span class="s2">&quot;I&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s2">&quot;R&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span> <span class="n">t</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">160</span><span class="p">,</span> <span class="mi">161</span><span class="p">))</span>
 </code></pre></div>
 
 
