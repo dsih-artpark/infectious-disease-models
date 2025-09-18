@@ -1558,10 +1558,12 @@ It divides the population into three compartments:  </p>
 <pre class="mermaid"><code>flowchart LR
     S --&gt;|"β * S * I / N"| I
     I --&gt;|"γ * I"| R
-    N --&gt;|"μ * N"| S
-    S -.-&gt;|"μ * S"| endS(( ))
-    I -.-&gt;|"μ * I"| endI(( ))
-    R -.-&gt;|"μ * R"| endR(( ))</code></pre>
+    %% Inflow from the population
+    dummy([ ]) --&gt;|"μ * N"| S
+    %% Natural deaths removed from compartments
+    S --&gt;|"μ * S"| 
+    I --&gt;|"μ * I"| 
+    R --&gt;|"μ * R"| </code></pre>
 <hr />
 <h2 id="sir-model-configuration">SIR Model Configuration<a class="headerlink" href="#sir-model-configuration" title="Permanent link">&para;</a></h2>
 <p>Below is an example configuration for the <strong>SIR model</strong> in YAML format.</p>
