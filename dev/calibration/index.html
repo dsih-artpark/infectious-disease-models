@@ -62,7 +62,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#calibrationpy-parameter-fitting-and-mcmc" class="md-skip">
+        <a href="#calibration-module" class="md-skip">
           Skip to content
         </a>
       
@@ -1403,13 +1403,22 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#functions" class="md-nav__link">
+  <a href="#overview" class="md-nav__link">
     <span class="md-ellipsis">
-      Functions
+      Overview
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Functions">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#key-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      Key Components
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Key Components">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1439,17 +1448,17 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#example-usage" class="md-nav__link">
-    <span class="md-ellipsis">
-      Example Usage
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage-in-mainpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usage in main.py
+    </span>
+  </a>
   
 </li>
       
@@ -1541,13 +1550,22 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#functions" class="md-nav__link">
+  <a href="#overview" class="md-nav__link">
     <span class="md-ellipsis">
-      Functions
+      Overview
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Functions">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#key-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      Key Components
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Key Components">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1577,17 +1595,17 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#example-usage" class="md-nav__link">
-    <span class="md-ellipsis">
-      Example Usage
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage-in-mainpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usage in main.py
+    </span>
+  </a>
   
 </li>
       
@@ -1607,36 +1625,54 @@
 
 
 
-<h1 id="calibrationpy-parameter-fitting-and-mcmc">calibration.py — Parameter Fitting and MCMC<a class="headerlink" href="#calibrationpy-parameter-fitting-and-mcmc" title="Permanent link">&para;</a></h1>
-<p>This module implements optimization-based and Bayesian parameter estimation.</p>
+<h1 id="calibration-module">Calibration Module<a class="headerlink" href="#calibration-module" title="Permanent link">&para;</a></h1>
+<p>The <code>calibration.py</code> module provides tools for fitting model parameters to data using both <strong>optimization methods</strong> and <strong>Bayesian inference (MCMC)</strong>.<br />
+This is essential when comparing simulated epidemic trajectories with noisy or real-world data.</p>
 <hr />
-<h2 id="functions">Functions<a class="headerlink" href="#functions" title="Permanent link">&para;</a></h2>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
+<p>Calibration enables:</p>
+<ul>
+<li>Parameter estimation from data.</li>
+<li>Comparison of different optimization strategies (Nelder-Mead, BFGS, L-BFGS-B).</li>
+<li>Bayesian inference via <strong>MCMC sampling</strong> (<code>emcee</code>) for posterior distributions.</li>
+<li>Integration with the <code>main.py</code> workflow for end-to-end simulation and fitting.</li>
+</ul>
+<hr />
+<h2 id="key-components">Key Components<a class="headerlink" href="#key-components" title="Permanent link">&para;</a></h2>
 <h3 id="loss_functiontheta-model-sampled_times-observed_data-fit_compartments"><code>loss_function(theta, model, sampled_times, observed_data, fit_compartments)</code><a class="headerlink" href="#loss_functiontheta-model-sampled_times-observed_data-fit_compartments" title="Permanent link">&para;</a></h3>
-<p>Computes the loss between simulated and observed data for selected compartments.</p>
+<p>Computes the loss between simulated and observed data for specified compartments.</p>
 <p><strong>Parameters</strong>
-- <code>theta</code> (<strong>list[float]</strong>) — Parameter vector.
-- <code>model</code> (<strong>CompartmentalModel</strong>) — Model to simulate.
-- <code>sampled_times</code> (<strong>list[float]</strong>) — Time points used for fitting.
-- <code>observed_data</code> (<strong>np.ndarray</strong>) — Observed noisy data.
-- <code>fit_compartments</code> (<strong>list[str]</strong>) — Compartments included in the loss.</p>
+- <code>theta</code> (<code>list[float]</code>) — Candidate parameter vector.
+- <code>model</code> (<code>CompartmentalModel</code>) — Model instance to simulate.
+- <code>sampled_times</code> (<code>list[float]</code>) — Time points to evaluate the simulation.
+- <code>observed_data</code> (<code>np.ndarray</code>) — Observed noisy or real data.
+- <code>fit_compartments</code> (<code>list[str]</code>) — Compartments included in the loss calculation.</p>
+<p><strong>Returns</strong>
+- A scalar loss value (lower is better).</p>
 <hr />
 <h3 id="fit_with_optimizersmodel-optimizers"><code>fit_with_optimizers(model, optimizers, ...)</code><a class="headerlink" href="#fit_with_optimizersmodel-optimizers" title="Permanent link">&para;</a></h3>
-<p>Runs selected optimizers (e.g., Nelder-Mead, BFGS, L-BFGS-B) to fit parameters.</p>
+<p>Fits model parameters using classical optimization algorithms.</p>
+<p><strong>Supported optimizers</strong>
+- Nelder-Mead
+- BFGS
+- L-BFGS-B</p>
+<p><strong>Returns</strong>
+- Dictionary of fitted parameters and loss values for each optimizer.</p>
 <hr />
 <h3 id="run_mcmcmodel"><code>run_mcmc(model, ...)</code><a class="headerlink" href="#run_mcmcmodel" title="Permanent link">&para;</a></h3>
-<p>Uses the <strong>emcee</strong> sampler to estimate parameter posterior distributions.</p>
+<p>Runs Bayesian calibration with the <strong>emcee</strong> sampler.</p>
 <p><strong>Workflow</strong>
-1. Define prior bounds.
-2. Initialize walkers inside bounds.
-3. Simulate the model and compute log-likelihood.
-4. Save and plot posterior samples.</p>
+1. Define prior bounds for parameters.
+2. Initialize walkers inside the prior region.
+3. Simulate the model for each walker position.
+4. Compute log-likelihood vs. observed data.
+5. Generate posterior samples for uncertainty quantification.</p>
+<p><strong>Returns</strong>
+- <code>sampler</code> object containing posterior chains.</p>
 <hr />
-<h3 id="example-usage">Example Usage<a class="headerlink" href="#example-usage" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>```python
-from calibration import fit_with_optimizers
-
-results = fit_with_optimizers(model, [&quot;BFGS&quot;, &quot;Nelder-Mead&quot;], ...)
-```
+<h2 id="usage-in-mainpy">Usage in <code>main.py</code><a class="headerlink" href="#usage-in-mainpy" title="Permanent link">&para;</a></h2>
+<p>Calibration is optional and controlled via CLI flags:</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>main.py<span class="w"> </span>--model<span class="w"> </span>SIR_model<span class="w"> </span>--calibrate<span class="w"> </span>--compartment<span class="w"> </span>I
 </code></pre></div>
 
 
