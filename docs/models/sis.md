@@ -26,11 +26,6 @@ flowchart LR
 Below is an example configuration for the **SIS model** in YAML format.
 
 ```yaml
-timescale: 15
-time_unit: days
-noise_std: 5.0
-subset_ratio: 0.7
-optimizers: [Nelder-Mead, BFGS, L-BFGS-B]
 SIS_model:
   compartments: [S, I]
   parameters: {beta: 0.3, gamma: 0.1, mu: 0.01}
@@ -38,4 +33,15 @@ SIS_model:
   population: 1000
   initial_conditions: {S: 990, I: 10}
   assumptions: The population is closed (no births or deaths). The disease does not confer permanent immunity. After recovery, individuals return to the susceptible class (no immunity).
+  simulation_time: 160
+  time_unit: days
+  plot_settings:
+    y_scale: linear
+    scale_by_population: false
+  calibration_settings:
+    target_data: synthetic_data.csv # or file_name.csv for real data    
+    noise_std: 5.0
+    subset_ratio: 0.7
+    optimizers: [Nelder-Mead, BFGS, L-BFGS-B]
+    update_config: false
 ```

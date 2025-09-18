@@ -28,16 +28,26 @@ flowchart LR
 Below is an example configuration for the **SIR model** in YAML format.
 
 ```yaml
-timescale: 15
-time_unit: days
-noise_std: 5.0
-subset_ratio: 0.7
-optimizers: [Nelder-Mead, BFGS, L-BFGS-B]
 SIR_model:
   compartments: [S, I, R]
   parameters: {beta: 0.25, gamma: 0.15, mu: 0.015}
   transitions: {"S -> I": "beta * S * I / N", "I -> R": "gamma * I", "-> S": "mu * N", "S ->": "mu * S", "I ->": "mu * I", "R ->": "mu * R"}
   population: 1000
   initial_conditions: {S: 990, I: 10, R: 0}
-  assumptions: The population is closed (no births or deaths). The disease is transmitted through direct contact. Immunity is permanent after recovery.
+  assumptions: "The population is closed (no births or deaths). The disease is transmitted through direct contact. Immunity is permanent after recovery."
+  simulation_time: 160
+  time_unit: days
+  plot_settings:
+    y_scale: linear
+    scale_by_population: false
+  calibration_settings:
+    target_data: noisy_data.csv 
+    noise_std: 5.0
+    subset_ratio: 0.7
+    optimizers: [Nelder-Mead, BFGS, L-BFGS-B]
+    update_config: false
+    parameter_bounds:
+      beta: [0.0, 5.0]
+      gamma: [0.0, 2.0]
+      mu: [0.0, 1.0]
 ```

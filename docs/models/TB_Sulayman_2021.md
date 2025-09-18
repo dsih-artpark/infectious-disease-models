@@ -79,21 +79,29 @@ flowchart LR
 Below is an example configuration for the **TB_Sulayman_2021 model** in YAML format.
 
 ```yaml
-timescale: 50
-time_unit: years
-noise_std: 5.0
-subset_ratio: 0.7
-optimizers: [Nelder-Mead, BFGS, L-BFGS-B]
-TB_Sulayman_2021_model:   
+TB_sulayman_2021_model:   
   compartments: [S, V, E, I, R]
-  parameters: {Lambda: 5, mu: 0.15, beta: 0.25, theta: 0.089, xi: [0.0, 0.1, 0.98, 0.95], omega: [0.0, 1.0], k: 0.02, tau: [1.5, 3.5], delta: 0.12, sigma: [0.0, 1.0], p: [0.0, 1.0]}
+  parameters: {Lambda: 5, mu: 0.15, beta: 0.25, theta: 0.069, xi: 0.5, omega: 0.5, k: 0.02, tau: 2.5, delta: 0.12, sigma: 0.5, p: 0.5}
   transitions: {"-> S": "Lambda", "S -> V": "xi * S", "V -> S": "theta * V", "S -> E": "beta * S * I", "V -> E": "omega * betaa * V * I", "E -> I": "k * E + p * beta * E * I", "I -> R": "tau * I", "I ->": "(mu + delta) * I", "S ->": "mu * S", "V ->": "mu * V", "E ->": "mu * E", "I ->": "mu * I", "R ->": "mu * R", "R -> E": "sigma * beta * I * R"}
   population: 100000
-  assumptions: Sulayman et al. (2021) propose an SVEIRE TB model incorporating:
+  assumptions: |
+    Sulayman et al. (2021) propose an SVEIRE TB model incorporating:
       - Vaccination (V) with waning immunity (θ) and imperfect efficacy (ω)
       - Exogenous reinfection (p) and reinfection among recovered (σ)
       - Natural mortality (μ) and TB-induced mortality (δ)
       - Recruitment inflow (Λ)
       - Disease progression from exposed (E) to infected (I) via rate (k)
       - Recovery of infected individuals at rate (τ)
+  simulation_time: 50
+  time_unit: years
+  plot_settings:
+    y_scale: linear
+    scale_by_population: true   
+    per_unit: 100000
+  calibration_settings:
+    target_data: TB_data.csv # or file_name.csv for real data  
+    noise_std: 5.0
+    subset_ratio: 0.7
+    optimizers: [Nelder-Mead, BFGS, L-BFGS-B]
+    update_config: false
 ```

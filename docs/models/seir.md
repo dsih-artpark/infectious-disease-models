@@ -31,18 +31,24 @@ flowchart LR
 Below is an example configuration for the **SEIR model** in YAML format.
 
 ```yaml
-timescale: 15
-time_unit: days
-noise_std: 5.0
-subset_ratio: 0.7
-optimizers: [Nelder-Mead, BFGS, L-BFGS-B]
 SEIR_model:
-  compartments: [S, E, I, R]
-  parameters: {beta: 0.3, sigma: 0.1, gamma: 0.1, mu: 0.01}
-  transitions: {"S -> E": "beta * S * I / N", "E -> I": "sigma * E", "I -> R": "gamma * I", "-> S": "mu * N", "S ->": "mu * S", "E ->": "mu * E", "I ->": "mu * I", "R ->": "mu * R"}
-  population: 1000
-  initial_conditions: {S: 990, E: 0, I: 10, R: 0}
-  assumptions: The population is closed (no births or deaths). The disease has an exposed stage before becoming infectious. Immunity is permanent after recovery.
+ compartments: [S, E, I, R] 
+ parameters: {beta: 0.3, sigma: 0.1, gamma: 0.1, mu: 0.01}
+ transitions: {"S -> E": "beta * S * I / N", "E -> I": "sigma * E", "I -> R": "gamma * I", "-> S": "mu * N", "S ->": "mu * S", "E ->": "mu * E", "I ->": "mu * I", "R ->": "mu * R"}
+ population: 1000
+ initial_conditions: {S: 990, E: 0, I: 10, R: 0}
+ assumptions: The population is closed (no births or deaths). The disease has an exposed stage before becoming infectious. Immunity is permanent after recovery.
+ simulation_time: 160
+ time_unit: days
+ plot_settings:
+    y_scale: linear
+    scale_by_population: false
+ calibration_settings:
+    target_data: synthetic_data.csv # or file_name.csv for real data  
+    noise_std: 5.0
+    subset_ratio: 0.7
+    optimizers: [Nelder-Mead, BFGS, L-BFGS-B]
+    update_config: false
 ```
 
 
