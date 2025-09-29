@@ -1,14 +1,17 @@
 import os
 import numpy as np
-from src.epimodels.plotting import plot_simulation_only, plot_calibration_results
+import matplotlib
+matplotlib.use("Agg")  # ✅ Force non-GUI backend for pytest
+
+from epimodels.plotting import plot_simulation_only, plot_calibration_results
 
 def test_plot_simulation_only(tmp_path):
     t = np.linspace(0, 10, 11)
     compartments = ["S", "I", "R"]
-    true_data = np.vstack([1000 - i for i in t]).T  # dummy
+    true_data = np.random.rand(len(t), 3)  # dummy data
     outdir = tmp_path / "plots"
-    plot_simulation_only(t, compartments, np.random.rand(len(t), 3), str(outdir))
-    assert os.path.exists(outdir / "plot_simulation.png")
+    plot_simulation_only(t, compartments, true_data, str(outdir))
+    assert (outdir / "plot_simulation.png").exists()
 
 def test_plot_calibration_results(tmp_path):
     t = np.linspace(0, 10, 11)
@@ -32,4 +35,4 @@ def test_plot_calibration_results(tmp_path):
         true_params={"beta": 0.3, "gamma": 0.1},
         param_names=["beta", "gamma"]
     )
-    assert os.path.exists(outdir / "plot_comparison.png")
+    assert (outdir / "plot_comparison.png").exists()
