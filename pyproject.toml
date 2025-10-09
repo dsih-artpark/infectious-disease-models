@@ -24,6 +24,8 @@ dependencies = [
     "mkdocs-material-extensions",
     "pymdown-extensions",
     "tqdm",
+    "vulture>=2.14",
+    "pytest>=8.4.2",
 ]
 
 [project.optional-dependencies]

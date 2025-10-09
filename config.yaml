@@ -63,6 +63,7 @@ SIS_model:
   population: 1000
   initial_conditions: {S: 990, I: 10}
   assumptions: The population is closed (no births or deaths). The disease does not confer permanent immunity. After recovery, individuals return to the susceptible class (no immunity).
+  tags: [standard_model]
   simulation_time: 160
   time_unit: days
   plot_settings:
@@ -74,6 +75,7 @@ SIS_model:
     subset_ratio: 0.7
     optimizers: [Nelder-Mead, BFGS, L-BFGS-B]
     update_config: false
+
 
 SIS_model_test:
   compartments: [S, I]
@@ -103,6 +105,7 @@ TB_Kuddus_2022_model:
   population: 100000
   initial_conditions: {Ls: 400, Is: 300, Lr: 10, Ir: 400, R: 5, S: 98885}
   assumptions: TB transmission with drug-sensitive (DS) and drug-resistant (DR) strains, based on Kuddus (2022).
+  tags: [Tuberculosis, drug_resistance]
   simulation_time: 15
   time_unit: years
   plot_settings:
