@@ -79,13 +79,13 @@ model = CompartmentalModel(COMPARTMENTS, PARAMS, TRANSITIONS, population=POPULAT
 true_path = os.path.join(DATA_DIR, "true_data.csv")
 noisy_path = os.path.join(DATA_DIR, "noisy_data.csv")
 time_path = os.path.join(DATA_DIR, "time_points.csv")
-
+extras_fn = build_extras_fn(MODEL_CFG)
 if os.path.exists(true_path) and os.path.exists(noisy_path) and os.path.exists(time_path):
     true_data = np.loadtxt(true_path, delimiter=",")
     noisy_data = np.loadtxt(noisy_path, delimiter=",")
     time_points = np.loadtxt(time_path, delimiter=",")
 else:
-    true_data = np.array(model.simulate(INIT_CONDITIONS, time_points))
+    true_data = np.array(model.simulate(INIT_CONDITIONS, time_points, extras_fn=extras_fn))
     np.random.seed(42)
     noisy_data = model.add_noise(true_data, NOISE_STD)
 
@@ -136,13 +136,9 @@ if args.calibrate:
         subset_data=subset_infected,
         optimizers=OPTIMIZERS,
         compartments=COMPARTMENTS,
+        extras_fn=extras_fn,
     )
 
-    extras_fn = {
-        "initial_conditions": INIT_CONDITIONS,
-        "compartment_indices": comp_indices,
-        "sigma": NOISE_STD,
-    }
     sampler = calibrator.run_mcmc(
         I_obs=subset_infected,
         t_obs=subset_t,

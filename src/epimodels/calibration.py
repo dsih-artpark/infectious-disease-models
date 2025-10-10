@@ -17,10 +17,10 @@ class Calibrator:
         self.parameter_bounds = parameter_bounds or {p: (1e-5, 5) for p in param_names}
         self.scale_by_population = scale_by_population
 
-    def loss_function(self, param_array, initial_conditions, time_points, target_data, comp_indices):
+    def loss_function(self, param_array, initial_conditions, time_points, target_data, comp_indices, extras_fn=None):
         self.model.parameters = dict(zip(self.param_names, param_array))
         try:
-            sim = self.model.simulate(initial_conditions, time_points)
+            sim = self.model.simulate(initial_conditions, time_points, extras_fn=extras_fn)
             if len(comp_indices) > 1:
                 sim_values = np.array(sim)[:, comp_indices].sum(axis=1)
             else:
@@ -88,7 +88,7 @@ class Calibrator:
         return sampler
 
     def fit(self, initial_conditions, full_time_points, subset_t, subset_data,
-            optimizers, compartments):
+        optimizers, compartments, extras_fn=None):
         results = {}
         initial_guess = np.array([self.model.parameters[p] for p in self.param_names])
         bounds = [self.parameter_bounds.get(p, (1e-8, 10.0)) for p in self.param_names]
@@ -98,13 +98,13 @@ class Calibrator:
             res = minimize(
                 self.loss_function,
                 x0=initial_guess,
-                args=(initial_conditions, subset_t, subset_data, comp_indices),
+                args=(initial_conditions, subset_t, subset_data, comp_indices,extras_fn),
                 method=method,
                 bounds=bounds if method in ['L-BFGS-B', 'TNC'] else None
             )
             fitted_params = dict(zip(self.param_names, res.x))
             self.model.parameters = fitted_params
-            full_trajectory = np.array(self.model.simulate(initial_conditions, full_time_points))
+            full_trajectory = np.array(self.model.simulate(initial_conditions, full_time_points, extras_fn=extras_fn))
             if self.scale_by_population and self.model.population:
                 full_trajectory = full_trajectory / self.model.population
             results[method] = {
