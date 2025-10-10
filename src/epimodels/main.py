@@ -19,6 +19,28 @@ args = parser.parse_args()
 MODEL_NAME = args.model
 MODEL_CFG = cfg[MODEL_NAME]
 TIME = MODEL_CFG["simulation_time"]
+# Optional time-varying parameter helper 
+def build_extras_fn(model_cfg):
+    """Return a function that provides time-dependent parameters if defined."""
+    if "time_varying" not in model_cfg:
+        return None
+
+    def extras_fn(t, y):
+        extras = {}
+        for param, spec in model_cfg["time_varying"].items():
+            if isinstance(spec, dict) and "schedule" in spec:
+                # Example: schedule = [{"t": 5, "value": 0.05}, {"t": 10, "value": 0.01}]
+                last_value = spec.get("default", model_cfg["parameters"].get(param, 0))
+                for entry in sorted(spec["schedule"], key=lambda e: e["t"]):
+                    if t >= entry["t"]:
+                        last_value = entry["value"]
+                extras[param] = last_value
+            elif callable(spec):
+                extras[param] = spec(t)
+        return extras
+
+    return extras_fn
+
 NOISE_STD = MODEL_CFG["calibration_settings"]["noise_std"]
 SUBSET_RATIO = MODEL_CFG["calibration_settings"]["subset_ratio"]
 OPTIMIZERS = MODEL_CFG["calibration_settings"]["optimizers"]

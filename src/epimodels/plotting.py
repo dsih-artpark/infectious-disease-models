@@ -31,8 +31,6 @@ def plot_simulation_only(time_points, compartments, true_data, plot_dir,
 
     plt.figure(figsize=(10, 6))
     for i, comp in enumerate(compartments):
-        if comp == "S":
-            continue
         plt.plot(time_for_plot, scaled_data[:, i], label=f"{comp} (true)")
 
     if compartment_choice and "+" not in compartment_choice:
