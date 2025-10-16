@@ -1,4 +1,3 @@
-# time_varying_params.py
 import numpy as np
 import pandas as pd
 import os
