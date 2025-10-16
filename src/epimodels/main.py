@@ -19,6 +19,8 @@ args = parser.parse_args()
 MODEL_NAME = args.model
 MODEL_CFG = cfg[MODEL_NAME]
 TIME = MODEL_CFG["simulation_time"]
+param_series = generate_param_series(MODEL_CFG, output_dir=os.path.join("data", MODEL_NAME))
+extras_fn = make_extras_fn_from_series(param_series)
 # Optional time-varying parameter helper 
 def build_extras_fn(model_cfg):
     """Return a function that provides time-dependent parameters if defined."""
@@ -79,7 +81,7 @@ model = CompartmentalModel(COMPARTMENTS, PARAMS, TRANSITIONS, population=POPULAT
 true_path = os.path.join(DATA_DIR, "true_data.csv")
 noisy_path = os.path.join(DATA_DIR, "noisy_data.csv")
 time_path = os.path.join(DATA_DIR, "time_points.csv")
-extras_fn = build_extras_fn(MODEL_CFG)
+# extras_fn = build_extras_fn(MODEL_CFG)
 if os.path.exists(true_path) and os.path.exists(noisy_path) and os.path.exists(time_path):
     true_data = np.loadtxt(true_path, delimiter=",")
     noisy_data = np.loadtxt(noisy_path, delimiter=",")
