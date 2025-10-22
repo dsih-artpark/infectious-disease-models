@@ -49,7 +49,7 @@ class Calibrator:
         param_dict = dict(zip(self.param_names, theta))
         self.model.set_parameters(param_dict)
         try:
-            sim_data = self.model.simulate(extras_fn['initial_conditions'], t_obs)
+            sim_data = self.model.simulate(extras_fn['initial_conditions'], t_obs, extras_fn=extras_fn.get("extras_fn"))
             comp_indices = extras_fn['compartment_indices']
             if len(comp_indices) > 1:
                 I_sim = sim_data[:, comp_indices].sum(axis=1)
