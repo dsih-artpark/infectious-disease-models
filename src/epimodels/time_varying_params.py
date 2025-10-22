@@ -1,57 +1,55 @@
+import os
 import numpy as np
 import pandas as pd
-import os
 
-def generate_param_series(model_cfg, output_dir="data/time_series"):
+def generate_param_series(model_cfg, output_dir="data/generated_params", time_key="simulation_time"):
     """
-    Generates time series for time-varying parameters defined in config.
-    Saves them as CSVs and returns a dictionary of arrays indexed by time.
+    Generate time-varying parameter series for the model.
+
+    Args:
+        model_cfg: dictionary containing model configuration
+        output_dir: folder where parameter CSVs are saved
+        time_key: key in model_cfg specifying simulation length
+    Returns:
+        param_series: dict of {param_name: np.ndarray of values}
     """
     os.makedirs(output_dir, exist_ok=True)
-    TIME = model_cfg["simulation_time"]
-    t_values = np.arange(TIME + 1)
+    T = model_cfg.get(time_key, 100)
+    time = np.linspace(0, T, T + 1)
+
     param_series = {}
+    if "parameters" not in model_cfg:
+        raise ValueError("Model config must have 'parameters' defined.")
 
-    if "time_varying" not in model_cfg:
-        return None
+    for param_name, base_value in model_cfg["parameters"].items():
+        # Example: define simple patterns or noise
+        if param_name.lower() == "beta":
+            series = base_value * (1 + 0.2 * np.sin(2 * np.pi * time / 30))  # periodic variation
+        elif param_name.lower() == "gamma":
+            series = base_value * (1 + 0.1 * np.exp(-time / 50))  # slow decay
+        else:
+            series = np.full_like(time, base_value, dtype=float)
 
-    for param, spec in model_cfg["time_varying"].items():
-        values = np.zeros_like(t_values, dtype=float)
+        # Save each series
+        df = pd.DataFrame({"time": time, param_name: series})
+        df.to_csv(os.path.join(output_dir, f"{param_name}_series.csv"), index=False)
+        param_series[param_name] = series
 
-        # Option 1: schedule-based (piecewise constant)
-        if isinstance(spec, dict) and "schedule" in spec:
-            last_value = spec.get("default", model_cfg["parameters"].get(param, 0))
-            for i, t in enumerate(t_values):
-                for entry in sorted(spec["schedule"], key=lambda e: e["t"]):
-                    if t >= entry["t"]:
-                        last_value = entry["value"]
-                values[i] = last_value
-
-        # Option 2: formula or callable (e.g., sinusoidal beta(t))
-        elif callable(spec):
-            values = np.array([spec(t) for t in t_values])
-
-        # Option 3: file-based input (if 'file' key is given)
-        elif isinstance(spec, dict) and "file" in spec:
-            path = spec["file"]
-            df = pd.read_csv(path)
-            values = np.interp(t_values, df["time"], df[param])
-
-        # Save to CSV
-        csv_path = os.path.join(output_dir, f"{param}_series.csv")
-        pd.DataFrame({"time": t_values, param: values}).to_csv(csv_path, index=False)
-        param_series[param] = values
-
+    # save combined time series file
+    combined = pd.DataFrame({"time": time, **param_series})
+    combined.to_csv(os.path.join(output_dir, "all_params_series.csv"), index=False)
     return param_series
 
 
 def make_extras_fn_from_series(param_series):
-    """Builds an extras_fn(t, y) that returns parameter values from precomputed arrays."""
-    if param_series is None:
-        return None
+    """
+    Build a callable extras_fn(t, y) that returns current param values
+    from generated series.
+    """
+    time_points = np.arange(len(next(iter(param_series.values()))))
 
     def extras_fn(t, y):
-        t_idx = int(np.clip(round(t), 0, len(next(iter(param_series.values()))) - 1))
-        return {param: values[t_idx] for param, values in param_series.items()}
+        idx = int(np.clip(round(t), 0, len(time_points) - 1))
+        return {param: values[idx] for param, values in param_series.items()}
 
     return extras_fn

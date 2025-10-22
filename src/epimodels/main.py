@@ -9,6 +9,7 @@ from calibration import Calibrator
 from plotting import plot_simulation_only, plot_calibration_results
 from time_varying_params import generate_param_series, make_extras_fn_from_series
 
+
 parser = argparse.ArgumentParser(description="Run simulation and calibration for a compartmental model.")
 parser.add_argument("--model", type=str, required=True, help="Model name as defined in config (e.g., SIR_model)")
 parser.add_argument("--calibrate", action="store_true", help="Run parameter calibration")
