@@ -33,11 +33,11 @@ def plot_simulation_only(time_points, compartments, true_data, plot_dir,
     for i, comp in enumerate(compartments):
         plt.plot(time_for_plot, scaled_data[:, i], label=f"{comp} (true)")
 
-    if compartment_choice and "+" not in compartment_choice:
-        if compartment_choice in compartments and compartment_choice != "S":
-            comp_index = compartments.index(compartment_choice)
-            plt.plot(time_for_plot, scaled_data[:, comp_index],
-                     label=f"{compartment_choice} (highlight)", linewidth=2.5)
+    #if compartment_choice and "+" not in compartment_choice:
+     #   if compartment_choice in compartments and compartment_choice != "S":
+      #      comp_index = compartments.index(compartment_choice)
+        #    plt.plot(time_for_plot, scaled_data[:, comp_index],
+         #            label=f"{compartment_choice} (highlight)", linewidth=2.5)
 
     plt.title("True Simulation of Compartments (excluding S)")
     plt.xlabel(xlabel)
