@@ -20,7 +20,7 @@ class Calibrator:
     def loss_function(self, param_array, initial_conditions, time_points, target_data, comp_indices, extras_fn=None):
         self.model.parameters = dict(zip(self.param_names, param_array))
         try:
-            sim = self.model.simulate(initial_conditions, time_points, extras_fn=extras_fn)
+            sim = self.model.simulate(initial_conditions, time_points, extras_fn=extras_fn.get("extras_fn"))
             if len(comp_indices) > 1:
                 sim_values = np.array(sim)[:, comp_indices].sum(axis=1)
             else:
