@@ -29,12 +29,12 @@ The generator function produces time series and writes CSV(s) to `data/<MODEL_NA
 
 **Example CSV format (`data/SIR_model/beta.csv`):**
 ```csv
-time,beta
-0,0.30
-1,0.30
-2,0.30
-3,0.30
-4,0.30
-5,0.10
-6,0.10
-...
+    time,beta
+    0,0.30
+    1,0.29
+    2,0.30
+    3,0.28
+    4,0.30
+    5,0.10
+    ...
+```
