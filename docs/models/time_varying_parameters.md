@@ -1,4 +1,10 @@
-# Overview
+# Time-Varying Parameters
+
+In this framework, time-varying parameters such as the transmission rate `β(t)` or recovery rate `γ(t)` are generated as **time series files** (CSV) under `data/<model_name>/` and then used for **simulation**, **calibration**, and **plotting**.
+
+---
+
+## Overview
 
 In real-world epidemic modeling, parameters such as the infection rate (β) or recovery rate (γ) rarely stay constant.  
 They can change over time due to interventions, behavioral changes, vaccination drives, or environmental factors.
