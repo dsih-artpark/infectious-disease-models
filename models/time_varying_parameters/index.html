@@ -62,7 +62,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#time-varying-parmeters" class="md-skip">
+        <a href="#time-varying-parameters" class="md-skip">
           Skip to content
         </a>
       
@@ -1270,6 +1270,19 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Time-Varying Parameters
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -1281,6 +1294,49 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#defining-time-varying-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Defining Time-Varying Parameters
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Defining Time-Varying Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-sir_model-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example — SIR_model Configuration
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -1476,6 +1532,38 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#defining-time-varying-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      Defining Time-Varying Parameters
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Defining Time-Varying Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-sir_model-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example — SIR_model Configuration
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -1490,10 +1578,39 @@
 
 
 
-<h1 id="time-varying-parmeters">Time varying Parmeters<a class="headerlink" href="#time-varying-parmeters" title="Permanent link">&para;</a></h1>
-<p>In real-world epidemic modeling, parameters such as the infection rate (β) or recovery rate (γ) rarely stay constant.
-They can change over time due to interventions, behavior changes, vaccination drives, or environmental factors.</p>
-<p>Our framework supports time-varying parameters through a flexible design that lets you define parameter schedules, generate parameter series, and integrate them directly into simulations and calibration workflows.</p>
+<h1 id="time-varying-parameters">Time-Varying Parameters<a class="headerlink" href="#time-varying-parameters" title="Permanent link">&para;</a></h1>
+<p>In real-world epidemic modeling, parameters such as the infection rate (β) or recovery rate (γ) rarely stay constant.<br />
+They can change over time due to interventions, behavioral changes, vaccination drives, or environmental factors.</p>
+<p>Our framework supports <strong>time-varying parameters</strong> through a flexible design that lets you:</p>
+<ul>
+<li>Define parameter schedules in YAML configuration  </li>
+<li>Generate parameter time series automatically  </li>
+<li>Integrate them directly into simulations and calibration workflows  </li>
+</ul>
+<hr />
+<h2 id="defining-time-varying-parameters">Defining Time-Varying Parameters<a class="headerlink" href="#defining-time-varying-parameters" title="Permanent link">&para;</a></h2>
+<p>You can define how parameters evolve over time directly in your model configuration file (<code>config.yml</code>) under the <code>time_varying</code> section.</p>
+<h3 id="example-sir_model-configuration">Example — <code>SIR_model</code> Configuration<a class="headerlink" href="#example-sir_model-configuration" title="Permanent link">&para;</a></h3>
+<p>```yaml
+SIR_model:
+  compartments: [S, I, R]
+  parameters:
+    beta: 0.3
+    gamma: 0.1</p>
+<p>time_varying:
+    beta:
+      default: 0.3
+      schedule:
+        - {t: 5, value: 0.1}
+        - {t: 10, value: 0.05}</p>
+<p>transitions:
+    S -&gt; I: beta * S * I / N
+    I -&gt; R: gamma * I</p>
+<p>initial_conditions:
+    S: 990
+    I: 10
+    R: 0</p>
+<p>simulation_time: 30</p>
 
 
 
