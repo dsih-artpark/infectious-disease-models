@@ -62,7 +62,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#time-varying-parameters" class="md-skip">
+        <a href="#overview" class="md-skip">
           Skip to content
         </a>
       
@@ -1311,26 +1311,11 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#defining-time-varying-parameters" class="md-nav__link">
+  <a href="#generating-parameter-series" class="md-nav__link">
     <span class="md-ellipsis">
-      Defining Time-Varying Parameters
+      Generating parameter series
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="Defining Time-Varying Parameters">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#example-sir_model-configuration" class="md-nav__link">
-    <span class="md-ellipsis">
-      Example — SIR_model Configuration
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -1539,26 +1524,11 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#defining-time-varying-parameters" class="md-nav__link">
+  <a href="#generating-parameter-series" class="md-nav__link">
     <span class="md-ellipsis">
-      Defining Time-Varying Parameters
+      Generating parameter series
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="Defining Time-Varying Parameters">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#example-sir_model-configuration" class="md-nav__link">
-    <span class="md-ellipsis">
-      Example — SIR_model Configuration
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -1578,39 +1548,40 @@
 
 
 
-<h1 id="time-varying-parameters">Time-Varying Parameters<a class="headerlink" href="#time-varying-parameters" title="Permanent link">&para;</a></h1>
+<h1 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h1>
 <p>In real-world epidemic modeling, parameters such as the infection rate (β) or recovery rate (γ) rarely stay constant.<br />
 They can change over time due to interventions, behavioral changes, vaccination drives, or environmental factors.</p>
-<p>Our framework supports <strong>time-varying parameters</strong> through a flexible design that lets you:</p>
-<ul>
-<li>Define parameter schedules in YAML configuration  </li>
-<li>Generate parameter time series automatically  </li>
-<li>Integrate them directly into simulations and calibration workflows  </li>
-</ul>
+<p>Parameters like the transmission rate <code>β(t)</code> or recovery rate <code>γ(t)</code> are often nonstationary in practice (interventions, seasonality, behaviour).<br />
+Our framework separates <strong>generation</strong> of a parameter time series (saved to <code>data/</code>) from <strong>consumption</strong> of that series by simulators and calibrators.</p>
+<p>Workflow summary:</p>
+<ol>
+<li>Generate param series → <code>data/&lt;MODEL_NAME&gt;/beta.csv</code>, <code>data/&lt;MODEL_NAME&gt;/gamma.csv</code>  </li>
+<li>Build an <code>extras_fn</code> wrapper to provide parameter values at each simulation time step.  </li>
+<li>Pass <code>extras_fn</code> into <code>model.simulate(...)</code> and calibration routines like <code>Calibrator.fit()</code> and <code>Calibrator.run_mcmc()</code>.  </li>
+<li>Use the saved CSVs for plotting and record keeping.</li>
+</ol>
 <hr />
-<h2 id="defining-time-varying-parameters">Defining Time-Varying Parameters<a class="headerlink" href="#defining-time-varying-parameters" title="Permanent link">&para;</a></h2>
-<p>You can define how parameters evolve over time directly in your model configuration file (<code>config.yml</code>) under the <code>time_varying</code> section.</p>
-<h3 id="example-sir_model-configuration">Example — <code>SIR_model</code> Configuration<a class="headerlink" href="#example-sir_model-configuration" title="Permanent link">&para;</a></h3>
-<p>```yaml
-SIR_model:
-  compartments: [S, I, R]
-  parameters:
-    beta: 0.3
-    gamma: 0.1</p>
-<p>time_varying:
-    beta:
-      default: 0.3
-      schedule:
-        - {t: 5, value: 0.1}
-        - {t: 10, value: 0.05}</p>
-<p>transitions:
-    S -&gt; I: beta * S * I / N
-    I -&gt; R: gamma * I</p>
-<p>initial_conditions:
-    S: 990
-    I: 10
-    R: 0</p>
-<p>simulation_time: 30</p>
+<h2 id="generating-parameter-series">Generating parameter series<a class="headerlink" href="#generating-parameter-series" title="Permanent link">&para;</a></h2>
+<p>The generator function produces time series and writes CSV(s) to <code>data/&lt;MODEL_NAME&gt;/</code>.</p>
+<p><strong>Example behavior of <code>time_varying_params.generate_param_series</code>:</strong></p>
+<ul>
+<li>Input: <code>model_cfg</code> (the YAML for the model) and <code>output_dir</code> (e.g. <code>data/SIR_model</code>)</li>
+<li>Output: Writes CSV files such as:</li>
+<li><code>data/SIR_model/beta.csv</code></li>
+<li><code>data/SIR_model/gamma.csv</code> (if configured)</li>
+<li>Return value: a dictionary-like <code>param_series</code> (in-memory arrays) for immediate use.</li>
+</ul>
+<p><strong>Example CSV format (<code>data/SIR_model/beta.csv</code>):</strong>
+```csv
+time,beta
+0,0.30
+1,0.30
+2,0.30
+3,0.30
+4,0.30
+5,0.10
+6,0.10
+...</p>
 
 
 
