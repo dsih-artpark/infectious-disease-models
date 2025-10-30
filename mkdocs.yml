@@ -63,11 +63,12 @@ nav:
         - SIR Model: models/sir.md
         - SEIR Model: models/seir.md
         - SIS Model: models/sis.md
+      - Time-Varying Parameters: models/time_varying_parameters.md
       - Published Models:
         - TB Model: 
           - TB_Kuddus_2022: models/TB_Kuddus_2022.md
           - TB_Sulayman_2021: models/TB_Sulayman_2021.md
-      - Time-Varying Parameters: models/time_varying_parameters.md
+      
   - Developer Guide:
     - Overview: dev/index.md
     - model.py: dev/model.md
