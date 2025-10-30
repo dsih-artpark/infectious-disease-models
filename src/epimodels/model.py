@@ -32,9 +32,7 @@ class CompartmentalModel:
         self.parameters.update(new_params)
                                
     def compute_transition_rates(self, state, extras=None):
-        local_env = {**state, **self.parameters, "N": sum(state.values())}
-        if extras:
-            local_env.update(extras)
+        local_env = {**state, **extras, "N": sum(state.values())} if extras else {**state, **self.parameters, "N": sum(state.values())}
         # local_env['N'] = self.population if self.population else max(sum(state.values()), 1e-8)
         local_env["N"] = sum(state.values())
         deltas = {c: 0.0 for c in self.compartments}
@@ -51,7 +49,11 @@ class CompartmentalModel:
     def ode_rhs(self, y, t, extras_fn=None):
         state = {c: y[i] for i, c in enumerate(self.compartments)}
         extras = extras_fn(t, y) if extras_fn else None
-        deltas = self.compute_transition_rates(state, extras)
+        if extras:
+            dynamic_params = {**self.parameters, **extras}
+        else:
+            dynamic_params = self.parameters
+        deltas = self.compute_transition_rates(state, extras=dynamic_params)
         return [deltas[c] for c in self.compartments]
 
     def simulate(self, initial_conditions, time_points, extras_fn=None):
